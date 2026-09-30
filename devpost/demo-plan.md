@@ -44,9 +44,11 @@ Narrative goal: “A candidate is not promoted because it sounds smarter; it mus
 Click **Benchmark**.
 
 Show the eight-case suite and pause on:
-**Under-specified intent → HOLD**
+- **Under-specified intent → HOLD**
+- **Conflicting constraints → HOLD**
+- **Short but specific → PROMOTE**
 
-Narrative goal: “The demo is not cherry-picked. WOLF can refuse promotion when evidence is insufficient.”
+Narrative goal: “The demo is not cherry-picked. WOLF distinguishes short-but-specific requests from vague or contradictory ones, and can hold a high-scoring candidate when request integrity fails.”
 
 ## 1:50–2:00 — close
 End on:
