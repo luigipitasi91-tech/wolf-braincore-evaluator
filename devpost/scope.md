@@ -4,47 +4,59 @@ status: approved
 ---
 # WOLF BrainCore Evaluator
 
-One line: a focused evaluation lab that tests whether a proposed AI planning workflow actually improves ambiguous requests before that workflow is promoted into an agent.
+One line: an independent evaluation lab that tests whether a proposed AI planning workflow actually improves a request before that workflow is promoted into an agent.
 
 ## The Unique Kernel
-A cognitive change does **not** count as an improvement because it sounds smarter. WOLF runs the same request through a baseline and a structured BrainCore path, measures both with the same transparent rubric, and returns `PROMOTE`, `HOLD`, or `REJECT`.
+A cognitive change does **not** count as an improvement because it sounds smarter. WOLF separates request integrity from candidate scoring, runs baseline and candidate through the same transparent rubric, and returns `PROMOTE`, `HOLD`, or `REJECT`.
 
 ## Who It's For
 Builders of AI agents who change prompts, skills, planning logic, or cognitive workflows and need evidence that a change is actually better.
 
-The common failure mode is vibe-based evaluation: reading one answer and deciding the new version “looks smarter.” That makes regressions easy to miss.
+The failure mode WOLF targets is vibe-based evaluation: one output looks more sophisticated, so the new version gets promoted even when it lost a constraint, hid uncertainty, or misunderstood the request.
 
 ## The Core Loop
-The builder enters one request through a minimal WOLF landing screen. WOLF creates a baseline and BrainCore candidate, scores both on five fixed dimensions, applies critical-gap guards, and issues a SHA-256 evidence receipt.
+1. User enters one request through the minimal WOLF landing screen.
+2. Request Integrity checks semantic specificity, contradictions, and evaluator-gaming language.
+3. Domain Packs add evidence requirements when the request is finance- or browser-agent-related.
+4. Baseline and BrainCore candidate receive the same request.
+5. WOLF scores both on five fixed dimensions.
+6. Critical blockers can stop promotion even when the numeric score is high.
+7. WOLF issues finality and a SHA-256 evidence receipt.
+8. An eight-case balanced/adversarial benchmark checks known regression modes.
 
-A fixed four-case benchmark can then test the same planner/rubric across multiple request types, including an intentionally under-specified case that must not auto-promote.
+## Transfer Evidence
+The PoC also contains two non-UI transfer packs:
+- 10 finance-analysis families distilled from user-supplied screenshots into evidence requirements, without copying the original prompt text;
+- 6 browser-agent cases exercising a provider-neutral 10-point Browser Runtime Contract derived from global platform research.
+
+Structured outputs from an external agent can also be normalized into the same WOLF Plan schema, so WOLF is not limited to grading its own candidate generator.
 
 ## Inspiration & Identity
-The final product is intentionally minimal: a centered wolf emblem and one W search action on entry, with the technical evidence revealed only after evaluation. The idea is inspired by the broader Na0mi/Xi0/WOLF principle that completion is not the same as verified success, but this hackathon implementation is new code built from an empty project.
+The product is intentionally minimal: a centered wolf emblem and one W action on entry, with technical evidence revealed only after evaluation.
 
-## Why This Matters to the Learner
-The learner wants Na0mi to improve without blindly accepting every new skill or prompt. WOLF is the independent evaluator that prevents “new” from being treated as “better.”
+Earlier Na0mi/Xi0/WOLF work influenced the **idea** of authority, verification and finality, but this hackathon implementation is new code built from an empty project. No Na0mi V12 source code is reused.
 
 ## What "Working" Looks Like
-A judge opens the app, sees only the WOLF emblem and one request bar, submits a request with **W**, and immediately sees:
-
+A judge opens the app, sees only WOLF + one request bar, submits with **W**, then sees:
 - baseline vs BrainCore plans;
-- five measurable planning-quality scores;
-- exact strengths and gaps;
-- a deterministic promotion decision;
-- a SHA-256 receipt;
-- an optional fixed four-case benchmark showing both promotion and fail-closed behavior.
+- request-integrity status;
+- five planning-quality metrics;
+- exact blockers/reasons;
+- deterministic finality;
+- SHA-256 receipt;
+- optional 8-case benchmark with both pass and fail-closed outcomes.
 
-The “oh, that's cool” beat is seeing a vague request become a testable candidate plan and then watching WOLF refuse to promote an under-specified benchmark case.
+The key moment is that WOLF can say **HOLD** to a candidate that scores highly if the request itself is contradictory or insufficiently specified.
 
 ## The POC Boundary
-In scope: one responsive browser app, deterministic plan generation, deterministic evaluation, three finality states, one-request interaction, four fixed benchmark cases, critical-gap guards, and verifiable receipts.
+In scope: responsive browser app, deterministic plan generation, independent request-integrity gate, five-metric evaluation, three finality states, eight core regression cases, finance/browser transfer packs, external-candidate normalization, and verifiable receipts.
 
 ## Later
-Real LLM adapters, larger regression suites, multiple trials for nondeterministic models, persistent benchmark history, human-labelled calibration, model-vs-model comparisons, Na0mi skill registry integration, and CI promotion gates.
+Real live model adapters, repeated trials for nondeterministic models, human-labelled calibration, persistent benchmark history, CI promotion gates, and direct Na0mi integration.
 
 ## Explicitly Cut
-- **No Na0mi V12 source code reuse** — V12 contributes only design lessons.
-- **No external LLM/API calls** — removes keys, cost, latency, and judging fragility.
-- **No automatic self-modification** — promotion is evidence, not a live rewrite.
-- **No login/database dependency** — unnecessary for proving the kernel.
+- no Na0mi V12 source-code reuse;
+- no live external LLM dependency in the judge path;
+- no paid browser provider dependency;
+- no automatic self-modification;
+- no login/database requirement.
