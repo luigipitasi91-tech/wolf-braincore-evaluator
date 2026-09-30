@@ -1,46 +1,11 @@
-const moneyPattern = /(?:£|\$|€)\s?\d+(?:[.,]\d+)?|\b\d+(?:[.,]\d+)?\s?(?:pounds?|gbp|dollars?|usd|euros?|eur)\b/gi;
+import { analyzeRequest } from './request-analysis.mjs';
 
 function clean(text) {
   return String(text || '').replace(/\s+/g, ' ').trim();
 }
-
 function uniq(values) {
   return [...new Set(values.map(clean).filter(Boolean))];
 }
-
-function contains(text, pattern) {
-  return pattern.test(text.toLowerCase());
-}
-
-function extractSignals(request) {
-  const lower = request.toLowerCase();
-  const money = request.match(moneyPattern) || [];
-  const constraints = [];
-  if (money.length) constraints.push(`Respect explicit financial bound(s): ${money.join(', ')}.`);
-  if (/\b(no|without)\s+(?:spend|spending|cost|pay|payment)/i.test(request) || /\b£0\b/.test(request)) {
-    constraints.push('Do not require upfront spend unless explicitly authorized.');
-  }
-  if (/\bautonom\w*|100\s*%|fully automatic|automaticamente|autonomo/i.test(request)) {
-    constraints.push('Separate actions that can be automated from actions requiring human identity, consent, or authorization.');
-  }
-  if (/\b(send|submit|publish|manda|invia|compra|buy|trade|trading|pay|spend)\b/i.test(request)) {
-    constraints.push('Treat external side effects as consequential and require an explicit authority boundary.');
-  }
-  if (/\bprofit|revenue|earn|earning|money|guadagn|soldi|profitto|ricav/i.test(request)) {
-    constraints.push('Do not treat forecasts, points, or simulated returns as verified cash revenue.');
-  }
-  if (/\bverify|verified|proof|evidence|prova|verifica/i.test(request)) {
-    constraints.push('Preserve evidence and verification as explicit completion criteria.');
-  }
-  return {
-    money: uniq(money),
-    constraints: uniq(constraints),
-    asksForAutonomy: /\bautonom\w*|100\s*%|fully automatic|automaticamente/i.test(lower),
-    asksForMoney: /\bprofit|revenue|earn|money|guadagn|soldi|profitto|ricav/i.test(lower),
-    hasConsequence: /\b(send|submit|publish|manda|invia|compra|buy|trade|trading|pay|spend)\b/i.test(lower)
-  };
-}
-
 function sentenceGoal(request) {
   const text = clean(request);
   if (text.length <= 180) return text;
@@ -65,56 +30,70 @@ export function buildBaselinePlan(rawRequest) {
 export function buildBrainCorePlan(rawRequest) {
   const request = clean(rawRequest);
   if (!request) throw new Error('REQUEST_REQUIRED');
-  const signals = extractSignals(request);
-  const constraints = [...signals.constraints];
+  const a = analyzeRequest(request);
+  const constraints = [];
   const assumptions = [
     'The literal request is the source of intent; missing details are not permission to invent consequential choices.'
   ];
   const unknowns = [];
 
-  if (signals.asksForAutonomy) {
-    unknowns.push('Which external accounts/actions are already authorized for autonomous use?');
+  for (const b of a.budgets) constraints.push(`Respect explicit budget/limit ${b.canonical}; do not silently exceed it.`);
+  for (const s of a.spends) constraints.push(`Requested spend/cost ${s.canonical} is not authority to spend and must remain inside any applicable limit.`);
+  if (a.noSpend) constraints.push('Do not spend or create a payment unless that prohibition is explicitly changed.');
+  if (a.noExternal) constraints.push('Do not execute external actions while the no-external-action constraint remains active.');
+  if (a.asksForAutonomy) constraints.push('Separate automatable work from actions requiring human identity, consent, approval, or authority.');
+  if (a.hasConsequence) constraints.push('Treat consequential side effects as gated; planning is not authority to execute.');
+  if (a.asksForMoney) constraints.push('Do not treat forecasts, points, or simulations as verified cash revenue.');
+  if (a.asksForEvidence) constraints.push('Preserve evidence and verification as explicit completion criteria.');
+
+  if (a.underSpecified) {
+    unknowns.push('What concrete target, user, or observable outcome should define success?');
   }
-  if (signals.asksForMoney) {
-    unknowns.push('Which revenue channel will provide independent evidence of a real payout or verified sale?');
+  if (a.asksForAutonomy) {
+    unknowns.push('Which external accounts and actions are already authorized for autonomous use?');
   }
-  if (!signals.money.length && signals.asksForMoney) {
-    unknowns.push('What financial ceiling or risk budget applies?');
+  if (a.asksForMoney) {
+    unknowns.push('Which revenue channel can provide independent evidence of a real sale or payout?');
   }
-  if (signals.hasConsequence) {
-    unknowns.push('Which side effects may execute automatically, and which require a human approval gate?');
+  if (a.hasConsequence) {
+    unknowns.push('Which side effects may execute automatically, and which require explicit human approval?');
+  }
+  if (a.contradictory) {
+    constraints.push(...a.contradictions.map(x=>`Conflict detected — do not execute until resolved: ${x.detail}.`));
+    unknowns.push('Which conflicting instruction has priority? Resolve the contradiction before any consequential execution.');
   }
   if (!unknowns.length) {
-    unknowns.push('What single observable outcome would prove the request is complete?');
+    unknowns.push('What observable evidence would prove the requested outcome is complete?');
   }
 
   const definitionOfDone = [
     'The requested core outcome works end to end.',
-    'All explicit constraints from the request are retained in the plan.',
+    'Every explicit value and constraint from the request is either preserved or explicitly marked as conflicting.',
     'Unknown consequential details remain UNKNOWN or require human input rather than being fabricated.',
     'Completion is backed by observable evidence rather than by a completion claim alone.'
   ];
-  if (signals.asksForMoney) {
-    definitionOfDone.push('Any claimed earnings are backed by a verified sale/payout event; projections and simulations remain labelled as such.');
+  if (a.asksForMoney) {
+    definitionOfDone.push('Any claimed earnings are backed by a verified sale or payout event; projections remain labelled as projections.');
+  }
+  if (a.contradictory) {
+    definitionOfDone.push('The detected contradiction is resolved explicitly before any conflicting action is allowed.');
   }
 
   const steps = [
-    'Extract intent, explicit constraints, and consequential actions.',
-    'Separate known facts, assumptions, and unresolved unknowns.',
-    'Define the smallest end-to-end outcome that proves the core request.',
-    'Plan only actions inside the current authority and budget boundary.',
-    'Execute the smallest safe slice and collect evidence.',
+    'Extract intent, exact values, explicit constraints, and consequential actions.',
+    'Separate known facts, assumptions, unresolved unknowns, and contradictory instructions.',
+    a.underSpecified ? 'Clarify the concrete target and observable success condition before execution.' : 'Define the smallest end-to-end outcome that proves the core request.',
+    a.contradictory ? 'Hold conflicting actions and ask which instruction has priority.' : 'Plan only actions inside the current authority and constraint boundary.',
+    'Execute only the smallest safe and authorized slice, if execution is allowed, and collect evidence.',
     'Verify the observed outcome against the definition of done before declaring success.'
   ];
 
   const verification = [
-    'Compare observed output with every definition-of-done item.',
-    'Fail closed on missing evidence for consequential actions.',
+    'Compare observed output with every definition-of-done item and every exact request value.',
+    'Fail closed on missing evidence, unresolved contradictions, or missing authority for consequential actions.',
     'Record a final state: VERIFIED_SUCCESS, PROVISIONAL/UNKNOWN, or FAILED.'
   ];
-  if (signals.asksForMoney) {
-    verification.push('Reconcile claimed revenue with an independently recorded sale/payout event.');
-  }
+  if (a.asksForMoney) verification.push('Reconcile claimed revenue with an independently recorded sale or payout event.');
 
   return {
     label: 'BrainCore candidate',
@@ -131,3 +110,5 @@ export function buildBrainCorePlan(rawRequest) {
 export function buildPlans(request) {
   return { baseline: buildBaselinePlan(request), candidate: buildBrainCorePlan(request) };
 }
+
+export const BRAINCORE_PLAN_VERSION='wolf-braincore-plan/2.0';
