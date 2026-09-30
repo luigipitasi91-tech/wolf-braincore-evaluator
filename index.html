@@ -3,63 +3,62 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="WOLF BrainCore Evaluator — measure whether an AI planning change actually improves ambiguous requests.">
+  <meta name="description" content="WOLF BrainCore Evaluator — evidence before cognitive promotion.">
+  <meta name="theme-color" content="#05070a">
   <title>WOLF BrainCore Evaluator</title>
   <link rel="stylesheet" href="./src/styles.css">
 </head>
 <body>
 <main>
-  <header class="hero">
-    <div>
-      <div class="eyebrow">Na0mi Cognitive Fabric Lab / independent test bench</div>
-      <h1>WOLF <span>BrainCore Evaluator</span></h1>
-      <p>Same ambiguous request. Same rubric. Two planning paths. WOLF promotes a cognitive change only when the evidence shows a real improvement.</p>
-    </div>
-    <div class="principle"><strong>Candidate output ≠ cognitive improvement ≠ verified promotion.</strong>WOLF scores what the plan retains, exposes, defines, and verifies — not how impressive it sounds.</div>
-  </header>
-
-  <section class="impact-strip" aria-label="Project value">
-    <div><span>Problem</span><strong>AI planning changes are often promoted because they look smarter, not because they are measured.</strong></div>
-    <div><span>For</span><strong>AI-agent builders testing prompts, skills, planners, and cognitive workflows.</strong></div>
-    <div><span>Outcome</span><strong>One comparable scorecard and a clear PROMOTE / HOLD / REJECT decision.</strong></div>
-  </section>
-
-  <section class="panel workbench">
-    <div class="panel-title"><h2>1 · Ambiguous request</h2><small>Ctrl/Cmd + Enter to run</small></div>
-    <textarea id="request" aria-label="Ambiguous request"></textarea>
-    <p id="error" class="error" aria-live="polite"></p>
-    <div class="actions">
-      <span class="hint">No network calls. No model keys. Deterministic and judge-reproducible.</span>
-      <div class="buttons"><button id="reset" class="secondary">Reset sample</button><button id="benchmark" class="secondary">Run benchmark suite</button><button id="run" class="primary">Run evaluation</button></div>
-    </div>
-  </section>
-
-  <section id="benchmarkResults" class="panel benchmark-panel" hidden>
-    <div class="panel-title"><div><div class="eyebrow">Regression evidence</div><h2>Fixed four-case benchmark</h2></div><small>Same planner · same rubric · no cherry-picked scoring</small></div>
-    <div id="benchmarkSummary" class="benchmark-summary"></div>
-    <div id="benchmarkRows" class="benchmark-rows"></div>
+  <section id="home" class="home" aria-label="WOLF">
+    <img class="wolf-logo" src="data:image/webp;base64,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" alt="WOLF emblem">
+    <form id="wolfForm" class="wolf-search" autocomplete="off">
+      <input id="request" type="search" aria-label="Request to evaluate" placeholder="Ask WOLF…" spellcheck="true">
+      <button id="run" type="submit" aria-label="Run WOLF evaluation">W</button>
+    </form>
+    <p id="error" class="home-error" aria-live="polite"></p>
   </section>
 
   <section id="results" class="results" hidden>
-    <div class="section-head"><div><div class="eyebrow">Planning comparison</div><h2>2 · Same intent, different cognitive discipline</h2></div><p>Baseline is the control. BrainCore is the candidate.</p></div>
+    <header class="result-bar">
+      <button id="back" class="text-button" type="button" aria-label="New evaluation">← New</button>
+      <strong>WOLF BrainCore Evaluator</strong>
+      <button id="benchmark" class="text-button" type="button">Benchmark</button>
+    </header>
+
+    <div class="section-head">
+      <div><div class="eyebrow">Planning comparison</div><h1>Same intent. Same rubric.</h1></div>
+      <p>Baseline is the control. BrainCore is the candidate.</p>
+    </div>
     <div id="plans" class="plans"></div>
 
     <section class="panel metrics-panel">
-      <div class="panel-title"><h2>3 · WOLF evidence rubric</h2><small>0–100 · identical rules for both plans</small></div>
+      <div class="panel-title"><h2>WOLF evidence rubric</h2><small>0–100 · identical rules</small></div>
       <div id="metrics"></div>
     </section>
 
-    <div class="section-head"><div><div class="eyebrow">Finality</div><h2>4 · Promotion decision</h2></div><p>Promotion requires score, delta, and no critical gaps.</p></div>
+    <div class="section-head">
+      <div><div class="eyebrow">Finality</div><h2>Promotion decision</h2></div>
+      <p>Score, delta, and critical-gap gates.</p>
+    </div>
     <div class="final-grid">
       <section id="decision" class="panel decision"></section>
       <section id="receipt" class="panel receipt"></section>
     </div>
-    <p class="footer-note">The receipt proves what this local evaluator saw. It does not claim scientific validation of the rubric or real-world success outside the evaluated plan.</p>
-  </section>
 
-  <section class="research-note">
-    <div class="eyebrow">Evaluation basis</div>
-    <p>WOLF follows public evaluation principles: define task-specific success criteria, compare candidates with a fixed rubric, test across multiple cases, and fail closed when evidence is insufficient. See <a href="https://developers.openai.com/api/docs/guides/evaluation-best-practices" target="_blank" rel="noreferrer">OpenAI evaluation best practices</a> and <a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noreferrer">Anthropic's agent eval guidance</a>. These references inform the method; they do not imply endorsement.</p>
+    <section id="benchmarkResults" class="panel benchmark-panel" hidden>
+      <div class="panel-title">
+        <div><div class="eyebrow">Regression evidence</div><h2>Fixed four-case benchmark</h2></div>
+        <small>Same planner · same rubric</small>
+      </div>
+      <div id="benchmarkSummary" class="benchmark-summary"></div>
+      <div id="benchmarkRows" class="benchmark-rows"></div>
+    </section>
+
+    <footer class="result-footer">
+      <span>Candidate output ≠ cognitive improvement ≠ verified promotion.</span>
+      <span>Method informed by public AI evaluation best practices; no endorsement implied.</span>
+    </footer>
   </section>
 </main>
 <script type="module" src="./src/app.js"></script>
