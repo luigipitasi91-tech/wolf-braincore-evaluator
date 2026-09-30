@@ -1,5 +1,6 @@
 import { buildPlans } from './braincore.mjs';
 import { comparePlans, METRIC_LABELS } from './evaluator.mjs';
+import { runBenchmark } from './benchmark.mjs';
 
 const SAMPLE = 'Create an autonomous app that makes money for me with a £100 budget. It should work as independently as possible, never pretend revenue is real without proof, and ask me only when a human decision is genuinely required.';
 
@@ -7,7 +8,9 @@ const $ = sel => document.querySelector(sel);
 const requestEl = $('#request');
 const runBtn = $('#run');
 const resetBtn = $('#reset');
+const benchmarkBtn = $('#benchmark');
 const errorEl = $('#error');
+const benchmarkResultsEl = $('#benchmarkResults');
 const resultsEl = $('#results');
 
 requestEl.value = SAMPLE;
@@ -52,6 +55,24 @@ async function sha256(value) {
   const bytes = new TextEncoder().encode(value);
   const digest = await crypto.subtle.digest('SHA-256', bytes);
   return [...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function renderBenchmark() {
+  const rows = runBenchmark();
+  const counts = rows.reduce((acc,row)=>{acc[row.finality]=(acc[row.finality]||0)+1;return acc;},{});
+  $('#benchmarkSummary').innerHTML = `
+    <div><span>Cases</span><strong>${rows.length}</strong></div>
+    <div><span>Promote</span><strong>${counts.PROMOTE||0}</strong></div>
+    <div><span>Hold</span><strong>${counts.HOLD||0}</strong></div>
+    <div><span>Reject</span><strong>${counts.REJECT||0}</strong></div>`;
+  $('#benchmarkRows').innerHTML = rows.map(row=>`
+    <div class="benchmark-row">
+      <div><strong>${escapeHtml(row.title)}</strong><small>${escapeHtml(row.request)}</small></div>
+      <span>${row.baseline} → ${row.candidate}</span>
+      <b class="benchmark-finality ${row.finality.toLowerCase()}">${row.finality}</b>
+    </div>`).join('');
+  benchmarkResultsEl.hidden = false;
+  benchmarkResultsEl.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 async function runEvaluation() {
@@ -99,5 +120,6 @@ async function runEvaluation() {
 }
 
 runBtn.addEventListener('click', runEvaluation);
+benchmarkBtn.addEventListener('click', renderBenchmark);
 resetBtn.addEventListener('click', ()=>{ requestEl.value=SAMPLE; errorEl.textContent=''; requestEl.focus(); });
 requestEl.addEventListener('keydown', e=>{ if ((e.ctrlKey||e.metaKey) && e.key==='Enter') runEvaluation(); });
