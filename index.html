@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="WOLF BrainCore Evaluator — measure whether an AI planning change actually improves ambiguous requests.">
+  <title>WOLF BrainCore Evaluator</title>
+  <link rel="stylesheet" href="./src/styles.css">
+</head>
+<body>
+<main>
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Na0mi Cognitive Fabric Lab / independent test bench</div>
+      <h1>WOLF <span>BrainCore Evaluator</span></h1>
+      <p>Same ambiguous request. Same rubric. Two planning paths. WOLF promotes a cognitive change only when the evidence shows a real improvement.</p>
+    </div>
+    <div class="principle"><strong>Candidate output ≠ cognitive improvement ≠ verified promotion.</strong>WOLF scores what the plan retains, exposes, defines, and verifies — not how impressive it sounds.</div>
+  </header>
+
+  <section class="panel workbench">
+    <div class="panel-title"><h2>1 · Ambiguous request</h2><small>Ctrl/Cmd + Enter to run</small></div>
+    <textarea id="request" aria-label="Ambiguous request"></textarea>
+    <p id="error" class="error" aria-live="polite"></p>
+    <div class="actions">
+      <span class="hint">No network calls. No model keys. Deterministic and judge-reproducible.</span>
+      <div class="buttons"><button id="reset" class="secondary">Reset sample</button><button id="run" class="primary">Run evaluation</button></div>
+    </div>
+  </section>
+
+  <section id="results" class="results" hidden>
+    <div class="section-head"><div><div class="eyebrow">Planning comparison</div><h2>2 · Same intent, different cognitive discipline</h2></div><p>Baseline is the control. BrainCore is the candidate.</p></div>
+    <div id="plans" class="plans"></div>
+
+    <section class="panel metrics-panel">
+      <div class="panel-title"><h2>3 · WOLF evidence rubric</h2><small>0–100 · identical rules for both plans</small></div>
+      <div id="metrics"></div>
+    </section>
+
+    <div class="section-head"><div><div class="eyebrow">Finality</div><h2>4 · Promotion decision</h2></div><p>Promotion requires score, delta, and no critical gaps.</p></div>
+    <div class="final-grid">
+      <section id="decision" class="panel decision"></section>
+      <section id="receipt" class="panel receipt"></section>
+    </div>
+    <p class="footer-note">The receipt proves what this local evaluator saw. It does not claim scientific validation of the rubric or real-world success outside the evaluated plan.</p>
+  </section>
+</main>
+<script type="module" src="./src/app.js"></script>
+</body>
+</html>
