@@ -58,3 +58,4 @@ Activity mode: focused alternative.
 
 ## Revisions
 - Mobile results visibility fixed — CSS `.results { display:grid }` overrode the HTML `hidden` state; added `[hidden]{display:none!important}` and tightened responsive layout for phone widths.
+\n## Competition Delivery\n- [x] Public repository ready\n- [x] Public live demo ready\n- [x] Public YouTube demo ready: https://www.youtube.com/watch?v=PMyaJutqnRE\n- [x] Final mobile/live verification passed: Baseline 49/100 → BrainCore 94/100 → PROMOTE\n- [ ] Devpost submission — blocked only by account login\n
