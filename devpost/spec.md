@@ -7,7 +7,7 @@ status: approved
 ## How This Works, In Plain Language
 The project is a zero-dependency browser application plus a tiny Node static server. A planner creates baseline and BrainCore interpretations from the same request. A deterministic evaluator scores both with fixed rules, applies critical blockers, and produces finality. The browser hashes the evidence payload into a SHA-256 receipt.
 
-A fixed benchmark invokes exactly the same planner and evaluator across four cases.
+A fixed benchmark invokes exactly the same planner and evaluator across eight balanced/adversarial cases.
 
 ## The Core Journey Through the System
 User request → `app.js` validation → `braincore.mjs` baseline + candidate → `evaluator.mjs` five metrics + critical-gap guards → `PROMOTE/HOLD/REJECT` → receipt hash.
@@ -89,7 +89,7 @@ wolf-braincore-evaluator/
 ├── server.mjs
 ├── src/
 │   ├── app.js
-│   ├── benchmark.mjs
+│   ├── benchmark.mjs\n│   ├── request-integrity.mjs
 │   ├── braincore.mjs
 │   ├── evaluator.mjs
 │   └── styles.css
@@ -131,7 +131,7 @@ These references informed design choices; they do not imply endorsement.
 
 ## Simplifications
 - Deterministic heuristics instead of real LLM calls.
-- Four fixed benchmark cases rather than a large dataset.
+- Eight fixed benchmark cases rather than a large dataset.
 - Single in-memory run rather than persistence.
 - Three finality states rather than a broad taxonomy.
 
