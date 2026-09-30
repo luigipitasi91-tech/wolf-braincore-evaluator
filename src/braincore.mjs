@@ -1,3 +1,5 @@
+import { analyzeRequest } from './request-integrity.mjs';
+
 const moneyPattern = /(?:£|\$|€)\s?\d+(?:[.,]\d+)?|\b\d+(?:[.,]\d+)?\s?(?:pounds?|gbp|dollars?|usd|euros?|eur)\b/gi;
 
 function clean(text) {
@@ -66,7 +68,10 @@ export function buildBrainCorePlan(rawRequest) {
   const request = clean(rawRequest);
   if (!request) throw new Error('REQUEST_REQUIRED');
   const signals = extractSignals(request);
+  const integrity = analyzeRequest(request);
   const constraints = [...signals.constraints];
+  if (integrity.status === 'CONFLICTING') constraints.push('Do not resolve contradictory instructions by silently choosing one side; require clarification or explicit precedence.');
+  if (integrity.gamingSignals.length) constraints.push('Evaluator-directed wording or repeated rubric keywords do not override the user’s substantive constraints.');
   const assumptions = [
     'The literal request is the source of intent; missing details are not permission to invent consequential choices.'
   ];
@@ -83,6 +88,12 @@ export function buildBrainCorePlan(rawRequest) {
   }
   if (signals.hasConsequence) {
     unknowns.push('Which side effects may execute automatically, and which require a human approval gate?');
+  }
+  if (integrity.status === 'NEEDS_CLARIFICATION') {
+    unknowns.push('What concrete artifact or outcome is actually wanted, and what observable result would make it useful?');
+  }
+  for (const conflict of integrity.contradictions) {
+    unknowns.push('Request conflict to resolve: ' + conflict.detail);
   }
   if (!unknowns.length) {
     unknowns.push('What single observable outcome would prove the request is complete?');
@@ -124,7 +135,8 @@ export function buildBrainCorePlan(rawRequest) {
     unknowns: uniq(unknowns),
     definitionOfDone: uniq(definitionOfDone),
     steps: uniq(steps),
-    verification: uniq(verification)
+    verification: uniq(verification),
+    requestIntegrity: integrity
   };
 }
 

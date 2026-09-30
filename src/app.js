@@ -106,9 +106,17 @@ async function runEvaluation() {
 
     $('#plans').innerHTML = planCard(plans.baseline, comparison.baseline, 'baseline') + planCard(plans.candidate, comparison.candidate, 'candidate');
     $('#metrics').innerHTML = metricRows(comparison);
+    const integrity = comparison.requestIntegrity;
+    const integrityNotes = [
+      ...integrity.contradictions.map(x=>x.detail),
+      ...(integrity.gamingSignals.length ? ['Evaluator-gaming language detected.'] : []),
+      ...(integrity.status==='NEEDS_CLARIFICATION' ? ['The request is too vague to promote without clarification.'] : [])
+    ];
     $('#decision').innerHTML = `
       <div class="decision-badge ${statusClass}">${comparison.finality}</div>
       <div><h3>${comparison.finality === 'PROMOTE' ? 'Candidate clears the gate' : comparison.finality === 'HOLD' ? 'Improvement exists, evidence is not enough' : 'Candidate does not clear the gate'}</h3>
+      <p class="integrity-line"><strong>Request integrity:</strong> ${escapeHtml(integrity.status)} · specificity ${integrity.specificity}/100</p>
+      ${integrityNotes.length ? list(integrityNotes) : ''}
       ${list(comparison.reasons)}</div>`;
     $('#receipt').innerHTML = `
       <div><span>Request hash</span><code>${(await sha256(request)).slice(0,24)}…</code></div>

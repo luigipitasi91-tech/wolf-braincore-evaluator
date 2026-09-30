@@ -1,3 +1,5 @@
+import { analyzeRequest } from './request-integrity.mjs';
+
 const clamp = value => Math.max(0, Math.min(100, Math.round(value)));
 const array = value => Array.isArray(value) ? value.filter(Boolean) : [];
 const text = value => String(value || '').toLowerCase();
@@ -75,6 +77,7 @@ function verificationReadiness(plan) {
 }
 
 export function evaluatePlan(plan, request) {
+  const requestIntegrity = analyzeRequest(request);
   const metrics = {
     ambiguityResolution: ambiguityResolution(plan),
     assumptionExposure: assumptionExposure(plan),
@@ -94,9 +97,8 @@ export function evaluatePlan(plan, request) {
   if (metrics.constraintRetention < 65) gaps.push('CRITICAL_CONSTRAINT_RETENTION');
   if (metrics.verificationReadiness < 60) gaps.push('CRITICAL_VERIFICATION_GAP');
   if (metrics.definitionOfDone < 55) gaps.push('WEAK_DEFINITION_OF_DONE');
-  const requestWordCount = String(request || '').trim().split(/\s+/).filter(Boolean).length;
-  if (requestWordCount < 6) gaps.push('CRITICAL_INPUT_UNDERSPECIFIED');
-  return { metrics, total, gaps };
+  for (const blocker of requestIntegrity.blockers) if (!gaps.includes(blocker)) gaps.push(blocker);
+  return { metrics, total, gaps, requestIntegrity };
 }
 
 export function comparePlans(baselinePlan, candidatePlan, request) {
@@ -125,7 +127,7 @@ export function comparePlans(baselinePlan, candidatePlan, request) {
     if (critical.length) reasons.push(`Critical gaps remain: ${critical.join(', ')}.`);
   }
 
-  return { baseline, candidate, delta, finality, reasons };
+  return { baseline, candidate, delta, finality, reasons, requestIntegrity:candidate.requestIntegrity };
 }
 
 export const METRIC_LABELS = {

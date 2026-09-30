@@ -14,7 +14,7 @@ A minimalist cognitive evaluation lab for AI-agent builders who want evidence th
 5. The user sees score deltas and evidence behind each metric.
 6. WOLF issues `PROMOTE`, `HOLD`, or `REJECT`.
 7. A SHA-256 receipt records request hash, scores, finality, reasons, and timestamp.
-8. The user may open a fixed four-case benchmark to check that the planner/rubric does not only succeed on one hand-picked example.
+8. The user may open a fixed eight-case benchmark to check that the planner/rubric does not only succeed on one hand-picked example.
 
 Success is not “the candidate generated more text.” Success is that the evaluator can explain why a candidate should or should not be promoted.
 
@@ -67,7 +67,7 @@ Near-black background, restrained blue accent, generous negative space, strong v
 - Treats severely under-specified input as a critical blocker rather than auto-promoting it.
 
 ### Fixed benchmark
-- Four deterministic cases:
+- Eight deterministic cases:
   - bounded autonomy;
   - consequential publish;
   - under-specified intent;

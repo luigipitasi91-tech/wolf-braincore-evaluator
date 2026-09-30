@@ -9,13 +9,13 @@ This file is intentionally factual and not drafted Devpost prose.
 - Earlier work influenced the independent-verification/finality idea only.
 - Final public landing: centered wolf emblem + one request bar + W submit action.
 - Core flow: request → baseline + BrainCore candidate → five fixed metrics → critical-gap gates → PROMOTE/HOLD/REJECT → SHA-256 receipt.
-- Fixed four-case benchmark added to reduce cherry-picked-demo risk.
+- Fixed eight-case balanced/adversarial benchmark added to reduce cherry-picked-demo risk.
 - Severely under-specified input receives `CRITICAL_INPUT_UNDERSPECIFIED` and cannot auto-promote.
-- Automated verification: `npm test`, **11 passing tests**.
+- Automated verification: `npm test`, **15 passing tests**.
 - GitHub pull-request CI for the final code upgrade: PASS.
 - Public live verification:
   - canonical request: 49/100 baseline → 94/100 BrainCore → PROMOTE;
-  - benchmark: 4 cases / 3 PROMOTE / 1 HOLD;
+  - benchmark: 8 cases / 4 PROMOTE / 4 HOLD;
   - under-specified case: 38 → 88 → HOLD.
 - Runtime: browser + Node.js 20+ local static server.
 - External services/API keys required by the evaluator: none.

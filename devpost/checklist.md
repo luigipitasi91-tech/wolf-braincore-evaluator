@@ -13,7 +13,7 @@ Build mode: fast
 - [x] SHA-256 receipt records evaluated evidence.
 - [x] Responsive public demo is live.
 - [x] Minimal landing: wolf emblem + request bar + W only.
-- [x] Fixed four-case benchmark added.
+- [x] Fixed eight-case balanced/adversarial benchmark added.
 - [x] Severely under-specified input fails closed and cannot auto-promote.
 - [x] Automated benchmark regression tests added.
 
@@ -26,7 +26,7 @@ Build mode: fast
 ## Final verification
 GitHub CI: PASS.
 
-Automated tests: **11/11 PASS**.
+Automated tests: **15/15 PASS**.
 
 Public live verification:
 - Landing contains only centered wolf emblem + request bar + W.
@@ -58,7 +58,7 @@ Regression path:
 ## Revisions
 - Fixed early mobile `hidden` CSS bug.
 - Replaced information-heavy landing page with ultra-minimal WOLF entry point.
-- Added fixed four-case benchmark to reduce cherry-picked-demo risk.
+- Added fixed eight-case benchmark to reduce cherry-picked-demo risk.
 - Added `CRITICAL_INPUT_UNDERSPECIFIED`.
 - Added benchmark tests and reran CI.
 - Updated scope / PRD / spec / demo plan to match the shipped build.
