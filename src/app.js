@@ -5,15 +5,17 @@ import { runBenchmark } from './benchmark.mjs';
 const SAMPLE = 'Create an autonomous app that makes money for me with a £100 budget. It should work as independently as possible, never pretend revenue is real without proof, and ask me only when a human decision is genuinely required.';
 
 const $ = sel => document.querySelector(sel);
+const homeEl = $('#home');
+const formEl = $('#wolfForm');
 const requestEl = $('#request');
 const runBtn = $('#run');
-const resetBtn = $('#reset');
+const backBtn = $('#back');
 const benchmarkBtn = $('#benchmark');
 const errorEl = $('#error');
 const benchmarkResultsEl = $('#benchmarkResults');
 const resultsEl = $('#results');
 
-requestEl.value = SAMPLE;
+if (new URLSearchParams(location.search).get('demo') === '1') requestEl.value = SAMPLE;
 
 function escapeHtml(value='') {
   return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -79,47 +81,61 @@ async function runEvaluation() {
   const request = requestEl.value.trim();
   errorEl.textContent = '';
   if (!request) {
-    resultsEl.hidden = true;
-    errorEl.textContent = 'Enter a request before running the evaluation.';
+    errorEl.textContent = 'Write a request first.';
     requestEl.focus();
     return;
   }
 
-  const plans = buildPlans(request);
-  const comparison = comparePlans(plans.baseline, plans.candidate, request);
-  const receiptCore = {
-    receiptVersion:'wolf-braincore-receipt/1.0',
-    request,
-    baselineScore:comparison.baseline.total,
-    candidateScore:comparison.candidate.total,
-    delta:comparison.delta,
-    finality:comparison.finality,
-    candidateGaps:comparison.candidate.gaps,
-    reasons:comparison.reasons
-  };
-  const receiptHash = await sha256(JSON.stringify(receiptCore));
-  const issuedAt = new Date().toISOString();
-  const statusClass = comparison.finality.toLowerCase();
+  runBtn.disabled = true;
+  try {
+    const plans = buildPlans(request);
+    const comparison = comparePlans(plans.baseline, plans.candidate, request);
+    const receiptCore = {
+      receiptVersion:'wolf-braincore-receipt/1.0',
+      request,
+      baselineScore:comparison.baseline.total,
+      candidateScore:comparison.candidate.total,
+      delta:comparison.delta,
+      finality:comparison.finality,
+      candidateGaps:comparison.candidate.gaps,
+      reasons:comparison.reasons
+    };
+    const receiptHash = await sha256(JSON.stringify(receiptCore));
+    const issuedAt = new Date().toISOString();
+    const statusClass = comparison.finality.toLowerCase();
 
-  $('#plans').innerHTML = planCard(plans.baseline, comparison.baseline, 'baseline') + planCard(plans.candidate, comparison.candidate, 'candidate');
-  $('#metrics').innerHTML = metricRows(comparison);
-  $('#decision').innerHTML = `
-    <div class="decision-badge ${statusClass}">${comparison.finality}</div>
-    <div><h3>${comparison.finality === 'PROMOTE' ? 'Candidate clears the gate' : comparison.finality === 'HOLD' ? 'Improvement exists, evidence is not enough' : 'Candidate does not clear the gate'}</h3>
-    ${list(comparison.reasons)}</div>`;
-  $('#receipt').innerHTML = `
-    <div><span>Request hash</span><code>${(await sha256(request)).slice(0,24)}…</code></div>
-    <div><span>Baseline</span><strong>${comparison.baseline.total}/100</strong></div>
-    <div><span>BrainCore</span><strong>${comparison.candidate.total}/100</strong></div>
-    <div><span>Delta</span><strong>${comparison.delta>=0?'+':''}${comparison.delta}</strong></div>
-    <div><span>Finality</span><strong>${comparison.finality}</strong></div>
-    <div><span>Issued</span><code>${issuedAt}</code></div>
-    <div class="receipt-hash"><span>Receipt SHA-256</span><code>${receiptHash}</code></div>`;
-  resultsEl.hidden = false;
-  resultsEl.scrollIntoView({behavior:'smooth',block:'start'});
+    $('#plans').innerHTML = planCard(plans.baseline, comparison.baseline, 'baseline') + planCard(plans.candidate, comparison.candidate, 'candidate');
+    $('#metrics').innerHTML = metricRows(comparison);
+    $('#decision').innerHTML = `
+      <div class="decision-badge ${statusClass}">${comparison.finality}</div>
+      <div><h3>${comparison.finality === 'PROMOTE' ? 'Candidate clears the gate' : comparison.finality === 'HOLD' ? 'Improvement exists, evidence is not enough' : 'Candidate does not clear the gate'}</h3>
+      ${list(comparison.reasons)}</div>`;
+    $('#receipt').innerHTML = `
+      <div><span>Request hash</span><code>${(await sha256(request)).slice(0,24)}…</code></div>
+      <div><span>Baseline</span><strong>${comparison.baseline.total}/100</strong></div>
+      <div><span>BrainCore</span><strong>${comparison.candidate.total}/100</strong></div>
+      <div><span>Delta</span><strong>${comparison.delta>=0?'+':''}${comparison.delta}</strong></div>
+      <div><span>Finality</span><strong>${comparison.finality}</strong></div>
+      <div><span>Issued</span><code>${issuedAt}</code></div>
+      <div class="receipt-hash"><span>Receipt SHA-256</span><code>${receiptHash}</code></div>`;
+
+    benchmarkResultsEl.hidden = true;
+    homeEl.hidden = true;
+    resultsEl.hidden = false;
+    scrollTo({top:0,behavior:'smooth'});
+  } finally {
+    runBtn.disabled = false;
+  }
 }
 
-runBtn.addEventListener('click', runEvaluation);
+function newEvaluation() {
+  resultsEl.hidden = true;
+  benchmarkResultsEl.hidden = true;
+  homeEl.hidden = false;
+  errorEl.textContent = '';
+  requestEl.focus();
+}
+
+formEl.addEventListener('submit', e=>{ e.preventDefault(); runEvaluation(); });
 benchmarkBtn.addEventListener('click', renderBenchmark);
-resetBtn.addEventListener('click', ()=>{ requestEl.value=SAMPLE; errorEl.textContent=''; requestEl.focus(); });
-requestEl.addEventListener('keydown', e=>{ if ((e.ctrlKey||e.metaKey) && e.key==='Enter') runEvaluation(); });
+backBtn.addEventListener('click', newEvaluation);
