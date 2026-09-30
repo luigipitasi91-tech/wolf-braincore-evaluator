@@ -30,8 +30,14 @@
     <p id="error" class="error" aria-live="polite"></p>
     <div class="actions">
       <span class="hint">No network calls. No model keys. Deterministic and judge-reproducible.</span>
-      <div class="buttons"><button id="reset" class="secondary">Reset sample</button><button id="run" class="primary">Run evaluation</button></div>
+      <div class="buttons"><button id="reset" class="secondary">Reset sample</button><button id="benchmark" class="secondary">Run benchmark suite</button><button id="run" class="primary">Run evaluation</button></div>
     </div>
+  </section>
+
+  <section id="benchmarkResults" class="panel benchmark-panel" hidden>
+    <div class="panel-title"><div><div class="eyebrow">Regression evidence</div><h2>Fixed four-case benchmark</h2></div><small>Same planner · same rubric · no cherry-picked scoring</small></div>
+    <div id="benchmarkSummary" class="benchmark-summary"></div>
+    <div id="benchmarkRows" class="benchmark-rows"></div>
   </section>
 
   <section id="results" class="results" hidden>
@@ -49,6 +55,11 @@
       <section id="receipt" class="panel receipt"></section>
     </div>
     <p class="footer-note">The receipt proves what this local evaluator saw. It does not claim scientific validation of the rubric or real-world success outside the evaluated plan.</p>
+  </section>
+
+  <section class="research-note">
+    <div class="eyebrow">Evaluation basis</div>
+    <p>WOLF follows public evaluation principles: define task-specific success criteria, compare candidates with a fixed rubric, test across multiple cases, and fail closed when evidence is insufficient. See <a href="https://developers.openai.com/api/docs/guides/evaluation-best-practices" target="_blank" rel="noreferrer">OpenAI evaluation best practices</a> and <a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noreferrer">Anthropic's agent eval guidance</a>. These references inform the method; they do not imply endorsement.</p>
   </section>
 </main>
 <script type="module" src="./src/app.js"></script>
