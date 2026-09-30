@@ -43,7 +43,7 @@ Narrative goal: “A candidate is not promoted because it sounds smarter; it mus
 ## 1:30–1:50 — benchmark proof
 Click **Benchmark**.
 
-Show the four-case suite and pause on:
+Show the eight-case suite and pause on:
 **Under-specified intent → HOLD**
 
 Narrative goal: “The demo is not cherry-picked. WOLF can refuse promotion when evidence is insufficient.”
