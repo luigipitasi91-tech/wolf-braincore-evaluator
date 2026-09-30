@@ -1,6 +1,7 @@
 import { buildPlans } from './braincore.mjs';
 import { comparePlans, METRIC_LABELS } from './evaluator.mjs';
 import { runBenchmark } from './benchmark.mjs';
+import { runLiveResearch, looksItalian } from './live-research.mjs';
 
 const SAMPLE = 'Create an autonomous app that makes money for me with a £100 budget. It should work as independently as possible, never pretend revenue is real without proof, and ask me only when a human decision is genuinely required.';
 
@@ -13,6 +14,7 @@ const backBtn = $('#back');
 const benchmarkBtn = $('#benchmark');
 const errorEl = $('#error');
 const benchmarkResultsEl = $('#benchmarkResults');
+const researchResultsEl = $('#researchResults');
 const resultsEl = $('#results');
 
 if (new URLSearchParams(location.search).get('demo') === '1') requestEl.value = SAMPLE;
@@ -77,6 +79,46 @@ function renderBenchmark() {
   benchmarkResultsEl.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
+function renderResearch(request,research,integrity){
+  if(research.status==='NOT_RESEARCH_INTENT'){
+    researchResultsEl.hidden=true;
+    return;
+  }
+  const it=looksItalian(request);
+  $('#researchEyebrow').textContent=it?'Ricerca live':'Live research';
+  $('#researchTitle').textContent=it?'Evidenza trovata':'Research evidence';
+
+  if(research.status==='LIVE_RESEARCH_UNAVAILABLE'){
+    $('#researchMeta').textContent='Na0mi V12 · unavailable';
+    $('#researchIntro').textContent=it
+      ? 'La ricerca live non è disponibile in questo momento. WOLF non inventa risultati: sotto trovi solo l’audit della richiesta.'
+      : 'Live research is unavailable right now. WOLF does not fabricate results; only the request audit is shown below.';
+    $('#researchItems').innerHTML='';
+    researchResultsEl.hidden=false;
+    return;
+  }
+
+  const clarification=integrity?.status==='NEEDS_CLARIFICATION';
+  $('#researchMeta').textContent=`${research.provider||'Na0mi V12'} · ${research.resultCount} ${it?'risultati':'results'}`;
+  $('#researchIntro').textContent=clarification
+    ? (it
+      ? 'La richiesta è ampia: WOLF non sceglie automaticamente un mercato senza criteri come Paese, rischio e orizzonte. Intanto questa è una ricerca live iniziale.'
+      : 'The request is broad: WOLF will not choose a market automatically without criteria such as region, risk and horizon. Here is a live research starter.')
+    : (it
+      ? 'Risultati live recuperati da Na0mi V12. Sono evidenza provvisoria: apri le fonti prima di trattare una conclusione come verificata.'
+      : 'Live results retrieved by Na0mi V12. They are provisional evidence; open the sources before treating a conclusion as verified.');
+
+  $('#researchItems').innerHTML=(research.results||[]).length
+    ? research.results.map(item=>`
+      <article class="research-item">
+        <div class="research-source">${escapeHtml(item.source)}</div>
+        <a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">${escapeHtml(item.title)}</a>
+        ${item.snippet?`<p>${escapeHtml(item.snippet)}</p>`:''}
+      </article>`).join('')
+    : `<p class="empty">${it?'Nessun risultato live trovato.':'No live results found.'}</p>`;
+  researchResultsEl.hidden=false;
+}
+
 async function runEvaluation() {
   const request = requestEl.value.trim();
   errorEl.textContent = '';
@@ -87,9 +129,13 @@ async function runEvaluation() {
   }
 
   runBtn.disabled = true;
+  const previousLabel=runBtn.textContent;
+  runBtn.textContent='…';
   try {
+    const researchPromise=runLiveResearch(request,{depth:'DEEP'});
     const plans = buildPlans(request);
     const comparison = comparePlans(plans.baseline, plans.candidate, request);
+    const research = await researchPromise;
     const receiptCore = {
       receiptVersion:'wolf-braincore-receipt/1.0',
       request,
@@ -104,6 +150,7 @@ async function runEvaluation() {
     const issuedAt = new Date().toISOString();
     const statusClass = comparison.finality.toLowerCase();
 
+    renderResearch(request,research,comparison.requestIntegrity);
     $('#plans').innerHTML = planCard(plans.baseline, comparison.baseline, 'baseline') + planCard(plans.candidate, comparison.candidate, 'candidate');
     $('#metrics').innerHTML = metricRows(comparison);
     const integrity = comparison.requestIntegrity;
@@ -133,12 +180,14 @@ async function runEvaluation() {
     scrollTo({top:0,behavior:'smooth'});
   } finally {
     runBtn.disabled = false;
+    runBtn.textContent=previousLabel;
   }
 }
 
 function newEvaluation() {
   resultsEl.hidden = true;
   benchmarkResultsEl.hidden = true;
+  researchResultsEl.hidden = true;
   homeEl.hidden = false;
   errorEl.textContent = '';
   requestEl.focus();
