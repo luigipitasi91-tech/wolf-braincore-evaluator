@@ -1,7 +1,7 @@
 const clean=v=>String(v||'').replace(/\s+/g,' ').trim();
 const has=(text,re)=>re.test(clean(text));
 
-const FINANCE_RE=/\b(stock|stocks|share|shares|equity|equities|ticker|portfolio|dcf|wacc|dividend|dividends|earnings|quarterly|valuation|p\/e|eps|revenue|margin|rsi|macd|bollinger|fibonacci|support|resistance|insider|institutional|options|short squeeze|fed|inflation|gdp|macro|market cap|azioni|titolo|titoli|portafoglio|dividendi|trimestrali|valutazione|rischio|grafico|concorrenti|inflazione|pil)\b/i;
+const FINANCE_RE=/\b(stock|stocks|share|shares|equity|equities|ticker|portfolio|dcf|wacc|dividend|dividends|earnings|quarterly|valuation|p\/e|eps|rsi|macd|bollinger|fibonacci|support|resistance|insider|institutional|options|short squeeze|fed|inflation|gdp|macro|market cap|azioni|titolo|titoli|portafoglio|dividendi|trimestrali|valutazione|rischio|grafico|concorrenti|inflazione|pil)\b/i;
 const BROWSER_RE=/\b(browser|website|web site|webpage|portal|login|log in|form|checkout|scrape|scraping|crawl|click|browser agent|playwright|puppeteer|selenium|session|cookie|credentials|otp|2fa|tab|dom|sito|pagina web|portale|accedi|login|modulo)\b|\bmonitor\b.{0,40}\b(?:page|pages|site|sites|website|websites)\b/i;
 
 export const FINANCE_EVIDENCE_FAMILIES=[
