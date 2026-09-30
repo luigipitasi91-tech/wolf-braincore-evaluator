@@ -6,6 +6,14 @@ WOLF BrainCore Evaluator is a small, deterministic browser lab for testing wheth
 
 It was built as a new project during the **Build With AI: Basics** submission period. The concept draws on lessons from the learner's earlier Na0mi/Xi0/WOLF work, but **no source code from those projects is reused**.
 
+## Problem, audience, impact
+
+AI-agent builders often change prompts, skills, or planning logic and judge the new version by reading one answer and deciding that it "looks better." That makes regressions easy to miss.
+
+WOLF gives those builders a small independent test bench: the old and new planning paths face the same request and the same transparent rubric. The result is a concrete promotion decision instead of a subjective impression.
+
+The immediate impact is safer iteration: a candidate can be held or rejected when it loses constraints, hides assumptions, lacks a definition of done, or cannot explain how success will be verified.
+
 ## What it demonstrates
 
 1. Enter an ambiguous request.
@@ -57,7 +65,7 @@ The planning workflow follows the official Devpost Learn Skill Pack: <https://gi
 
 `devpost/learner-profile.md` is intentionally ignored because it contains personal learning context.
 
-## Demo path
+## Judge demo path
 
 Use the preloaded request and click **Run evaluation**. In under a minute you can show:
 
