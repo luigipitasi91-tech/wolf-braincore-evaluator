@@ -2,7 +2,7 @@ const clean = value => String(value || '').replace(/\s+/g,' ').trim();
 const lower = value => clean(value).toLowerCase();
 
 const ACTION_RE=/\b(deploy|publish|send|submit|buy|purchase|pay|spend|trade|delete|remove|launch|ship|make live|go live|invia|manda|pubblica|compra|paga|elimina)\b/i;
-const ARTIFACT_RE=/\b(app|website|site|page|pricing|staging|deployment|deploy|report|plan|email|message|api|backend|frontend|database|script|workflow|video|document|file|dashboard|checkout|research|analysis|test|tests|build|progetto|sito|pagina|rapporto|piano)\b/i;
+const ARTIFACT_RE=/\b(app|website|site|page|pricing|staging|deployment|deploy|report|plan|email|message|api|backend|frontend|database|script|workflow|video|document|file|dashboard|checkout|research|analysis|test|tests|progetto|sito|pagina|rapporto|piano)\b/i;
 const VAGUE_RE=/\b(something|somehow|thing|stuff|useful|good|better|nice|anything|whatever|help me|improve it|qualcosa|utile|meglio|bello|in qualche modo)\b/ig;
 const NO_EXTERNAL_RE=/\b(do not|don't|never|without)\s+(?:take|perform|execute|make)?\s*(?:any\s+)?external action\b|\bno external actions?\b/i;
 const NO_ASK_RE=/\b(do not|don't|never)\s+ask\s+me\b/i;
