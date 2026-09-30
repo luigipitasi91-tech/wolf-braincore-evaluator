@@ -22,9 +22,30 @@
   <section id="results" class="results" hidden>
     <header class="result-bar">
       <button id="back" class="text-button" type="button" aria-label="New evaluation">← New</button>
-      <strong>WOLF BrainCore Evaluator</strong>
+      <strong>WOLF</strong>
       <button id="benchmark" class="text-button" type="button">Benchmark</button>
     </header>
+
+    <section id="answerPanel" class="panel answer-panel">
+      <div class="answer-top">
+        <div class="eyebrow">WOLF ANSWER</div>
+        <span id="languageBadge" class="language-badge"></span>
+      </div>
+      <h1 id="answerText"></h1>
+      <div id="answerQuestions" class="answer-questions"></div>
+    </section>
+
+    <section id="marketLens" class="panel market-panel" hidden>
+      <div class="panel-title">
+        <div><div class="eyebrow">MARKET INTELLIGENCE</div><h2 id="marketTitle">Market Lens</h2></div>
+        <span id="marketReadOnly" class="read-only-badge">READ ONLY</span>
+      </div>
+      <p id="marketSummary" class="market-summary"></p>
+      <div id="marketCards" class="market-cards"></div>
+      <div id="marketFocus" class="market-focus" hidden></div>
+      <div id="marketQuestions" class="market-questions"></div>
+      <div id="marketMeta" class="market-meta"></div>
+    </section>
 
     <section id="researchResults" class="panel research-panel" hidden>
       <div class="panel-title">
@@ -33,40 +54,46 @@
       </div>
       <p id="researchIntro" class="research-intro"></p>
       <div id="researchItems" class="research-items"></div>
+      <p id="sourceFidelity" class="source-fidelity"></p>
     </section>
 
-    <div class="section-head">
-      <div><div class="eyebrow">Planning comparison</div><h1>Same intent. Same rubric.</h1></div>
-      <p>Baseline is the control. BrainCore is the candidate.</p>
-    </div>
-    <div id="plans" class="plans"></div>
+    <details id="auditDetails" class="audit-details">
+      <summary><span id="auditLabel">Open WOLF technical audit</span><span class="audit-chevron">⌄</span></summary>
+      <div class="audit-content">
+        <div class="section-head">
+          <div><div id="planningEyebrow" class="eyebrow">Planning comparison</div><h1 id="planningTitle">Same intent. Same rubric.</h1></div>
+          <p id="planningNote">Baseline is the control. BrainCore is the candidate.</p>
+        </div>
+        <div id="plans" class="plans"></div>
 
-    <section class="panel metrics-panel">
-      <div class="panel-title"><h2>WOLF evidence rubric</h2><small>0–100 · identical rules</small></div>
-      <div id="metrics"></div>
-    </section>
+        <section class="panel metrics-panel">
+          <div class="panel-title"><h2 id="rubricTitle">WOLF evidence rubric</h2><small id="rubricNote">0–100 · identical rules</small></div>
+          <div id="metrics"></div>
+        </section>
 
-    <div class="section-head">
-      <div><div class="eyebrow">Finality</div><h2>Promotion decision</h2></div>
-      <p>Score, delta, and critical-gap gates.</p>
-    </div>
-    <div class="final-grid">
-      <section id="decision" class="panel decision"></section>
-      <section id="receipt" class="panel receipt"></section>
-    </div>
+        <div class="section-head">
+          <div><div id="finalityEyebrow" class="eyebrow">Finality</div><h2 id="promotionTitle">Promotion decision</h2></div>
+          <p id="promotionNote">Score, delta, and critical-gap gates.</p>
+        </div>
+        <div class="final-grid">
+          <section id="decision" class="panel decision"></section>
+          <section id="receipt" class="panel receipt"></section>
+        </div>
 
-    <section id="benchmarkResults" class="panel benchmark-panel" hidden>
-      <div class="panel-title">
-        <div><div class="eyebrow">Regression evidence</div><h2>Fixed eight-case benchmark</h2></div>
-        <small>Same planner · same rubric</small>
+        <section id="benchmarkResults" class="panel benchmark-panel" hidden>
+          <div class="panel-title">
+            <div><div class="eyebrow">Regression evidence</div><h2>Fixed eight-case benchmark</h2></div>
+            <small>Same planner · same rubric</small>
+          </div>
+          <div id="benchmarkSummary" class="benchmark-summary"></div>
+          <div id="benchmarkRows" class="benchmark-rows"></div>
+        </section>
       </div>
-      <div id="benchmarkSummary" class="benchmark-summary"></div>
-      <div id="benchmarkRows" class="benchmark-rows"></div>
-    </section>
+    </details>
 
     <footer class="result-footer">
       <span>Candidate output ≠ cognitive improvement ≠ verified promotion.</span>
-      <span>Method informed by public AI evaluation best practices; no endorsement implied.</span>
+      <span>WOLF keeps research, market data, evaluation and execution authority separate.</span>
     </footer>
   </section>
 </main>
