@@ -29,17 +29,21 @@ No login or API key required.
 3. Score + delta + critical-gap promotion gates.
 4. `PROMOTE`, `HOLD`, or `REJECT`.
 5. SHA-256 evidence receipt.
-6. Fixed four-case benchmark to reduce cherry-picked-demo risk.
+6. Fixed eight-case benchmark to reduce cherry-picked-demo risk.
 7. Fail-closed behavior: severely under-specified input cannot auto-promote.
 
 Canonical demo result:
 **Baseline 49/100 → BrainCore 94/100 → PROMOTE**
 
-Benchmark:
+Benchmark now includes eight balanced/adversarial cases:
 - Bounded autonomy → PROMOTE
 - Consequential publish → PROMOTE
 - Under-specified intent → HOLD
 - Verification-first build → PROMOTE
+- Short but specific → PROMOTE
+- Long but vague → HOLD
+- Conflicting constraints → HOLD
+- Constraint override / evaluator gaming → HOLD
 
 ## Why deterministic?
 
