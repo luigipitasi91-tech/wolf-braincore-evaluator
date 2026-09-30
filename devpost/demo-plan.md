@@ -1,56 +1,65 @@
-# Demo recording plan
+# Competition demo plan — final minimal UI
 
-Target length: **about 2 minutes**. Keep the final uploaded video under 3 minutes.
+Target: **90–120 seconds**, never over 3 minutes.
 
-This is a shot list, not Devpost submission prose.
+## 0:00–0:12 — visual hook
+Open:
+https://wolf-braincore-evaluator.onrender.com/?demo=1
 
-## 0:00–0:20 — establish the problem
-Show the top of the live app. Keep the Problem / For / Outcome cards visible long enough to read.
+Show only the centered wolf emblem and the single W request bar.
 
-Goal for the viewer: understand that WOLF is for AI-agent builders who need evidence before promoting a new planning change.
+Narrative goal: “AI teams change prompts and agent logic constantly, but often judge improvement by vibe.”
 
-## 0:20–0:40 — show one ambiguous request
-Scroll to the preloaded request. Do not edit it. Show that the same request will be used for both planning paths.
+## 0:12–0:25 — one action
+The canonical request is already loaded with `?demo=1`.
 
-Press **Run evaluation**.
+Press **W**.
 
-## 0:40–1:15 — compare baseline and BrainCore
-Show the two plan cards.
+Narrative goal: “WOLF gives the old and new planning paths the exact same request and exact same rubric.”
 
-Pause on:
-- constraints;
-- assumptions;
-- unknowns;
-- definition of done;
-- verification.
+## 0:25–0:55 — baseline vs BrainCore
+Show:
+- Baseline 49/100
+- BrainCore 94/100
+- constraints / unknowns / definition of done / verification differences.
 
-Goal for the viewer: see that the candidate is more structured without changing the original request.
+Keep this section visual; do not read every bullet.
 
-## 1:15–1:40 — show the common rubric
-Scroll to the WOLF evidence rubric.
-
-Show that both plans are measured on the same five dimensions:
+## 0:55–1:15 — five fixed metrics
+Show:
 - ambiguity resolved;
 - assumptions exposed;
 - constraints retained;
 - definition of done;
 - verification readiness.
 
-## 1:40–2:00 — show finality and receipt
-Scroll to the final decision.
+Narrative goal: “This is not longer-text-wins scoring.”
 
-Show:
-- baseline score;
-- BrainCore score;
-- score delta;
-- PROMOTE / HOLD / REJECT;
-- SHA-256 receipt.
+## 1:15–1:30 — finality + receipt
+Show **PROMOTE** and the SHA-256 receipt.
 
-End on the principle: **Candidate output ≠ cognitive improvement ≠ verified promotion.**
+Narrative goal: “A candidate is not promoted because it sounds smarter; it must clear score, delta and critical-gap gates.”
 
-## Recording constraints
-- Record the real public app: https://wolf-braincore-evaluator.onrender.com
+## 1:30–1:50 — benchmark proof
+Click **Benchmark**.
+
+Show the four-case suite and pause on:
+**Under-specified intent → HOLD**
+
+Narrative goal: “The demo is not cherry-picked. WOLF can refuse promotion when evidence is insufficient.”
+
+## 1:50–2:00 — close
+End on:
+**Candidate output ≠ cognitive improvement ≠ verified promotion.**
+
+## Presentation rules
+- Show the real deployed app.
+- Explain problem → audience → working solution → evidence.
+- No unrelated tabs, notifications or private data.
 - No copyrighted music.
-- Avoid showing unrelated browser tabs, notifications, email, account data, or private project material.
-- Keep the screen recording readable at normal playback speed.
-- Upload publicly to YouTube or Vimeo.
+- Keep every visual readable at normal playback speed.
+
+Devpost presentation guidance applied:
+- set the problem quickly;
+- show the project working rather than only describing it;
+- keep the demo tightly scripted.
