@@ -16,6 +16,13 @@ Build mode: fast
 - [x] Fixed eight-case balanced/adversarial benchmark added.
 - [x] Severely under-specified input fails closed and cannot auto-promote.
 - [x] Automated benchmark regression tests added.
+- [x] Request Integrity Gate detects long-vague input, explicit contradictions, and evaluator-gaming language.
+- [x] Short but specific requests are no longer blocked by word count alone.
+- [x] Finance Evidence Pack: 10 transformed analysis families from user-provided screenshots.
+- [x] Browser Runtime Contract: 10 provider-neutral requirements informed by Canada / Australia / Europe / Asia research.
+- [x] Six browser-agent transfer cases pass the runtime contract.
+- [x] Ten finance transfer cases pass the evidence contract.
+- [x] External Candidate Contract added for normalized Na0mi / GPT / other-agent outputs.
 
 ## Hands-on checkpoints
 - [x] Early usable behavior explored.
@@ -26,7 +33,7 @@ Build mode: fast
 ## Final verification
 GitHub CI: PASS.
 
-Automated tests: **15/15 PASS**.
+Automated tests: **25/25 PASS**.
 
 Public live verification:
 - Landing contains only centered wolf emblem + request bar + W.
@@ -35,7 +42,7 @@ Public live verification:
 - SHA-256 receipt present.
 - Fixed benchmark present.
 - Under-specified benchmark case: **38 → 88 → HOLD**.
-- Benchmark summary: **4 cases / 3 PROMOTE / 1 HOLD / 0 REJECT**.
+- Benchmark summary: **8 cases / 4 PROMOTE / 4 HOLD / 0 REJECT**.
 
 ## Code tour
 Primary path:
@@ -59,6 +66,8 @@ Regression path:
 - Fixed early mobile `hidden` CSS bug.
 - Replaced information-heavy landing page with ultra-minimal WOLF entry point.
 - Added fixed eight-case benchmark to reduce cherry-picked-demo risk.
-- Added `CRITICAL_INPUT_UNDERSPECIFIED`.
+- Replaced raw word-count underspecification with semantic Request Integrity.
+- Added `CRITICAL_REQUEST_CONFLICT` and `CRITICAL_EVAL_GAMING`.
+- Added provider-neutral Browser Runtime Contract and Finance Evidence Pack.
 - Added benchmark tests and reran CI.
 - Updated scope / PRD / spec / demo plan to match the shipped build.
