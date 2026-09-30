@@ -159,7 +159,7 @@ main{min-height:100vh}
 .plan-card ul{padding-left:1.05rem}
 .plan-card li+li{margin-top:4px}
 .empty{color:var(--muted);font-style:italic}
-.answer-panel,.market-panel,.research-panel,.metrics-panel,.decision,.receipt,.benchmark-panel{padding:18px}
+.answer-panel,.adamo-panel,.market-panel,.research-panel,.metrics-panel,.decision,.receipt,.benchmark-panel{padding:18px}
 .answer-panel{
   border-color:#355f8d;
   background:radial-gradient(circle at 90% 0%,rgba(87,158,240,.10),transparent 36%),#0d1117;
@@ -172,6 +172,19 @@ main{min-height:100vh}
 }
 .answer-questions,.market-questions{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
 .question-chip{border:1px solid var(--line);background:#080c11;color:var(--muted);border-radius:999px;padding:7px 10px;font-size:.76rem}
+.adamo-panel{
+  border-color:#6f5933;
+  background:radial-gradient(circle at 90% 0%,rgba(240,200,90,.09),transparent 34%),linear-gradient(180deg,#12100b,#0b0c0f);
+}
+.adamo-analysis{font-size:1.05rem;line-height:1.55;margin:6px 0 14px;max-width:920px}
+.adamo-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.adamo-stats div,.adamo-candidate-grid div{border:1px solid var(--line);border-radius:10px;background:#080a0d;padding:10px}
+.adamo-stats span,.adamo-candidate-grid span{display:block;color:var(--muted);font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.adamo-stats strong{font-size:1.15rem}
+.adamo-section-title{font-size:.72rem;font-weight:850;text-transform:uppercase;letter-spacing:.1em;color:var(--hold);margin:14px 0 7px}
+.adamo-candidate-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.adamo-v8 p{margin:0;color:var(--muted)}
+.adamo-caveat{margin-top:14px;padding-top:11px;border-top:1px solid var(--line);color:#727b87;font-size:.76rem}
 .market-panel{border-color:#294d6e;background:linear-gradient(180deg,rgba(11,25,38,.98),rgba(9,14,20,.98))}
 .market-summary{color:var(--muted);margin:4px 0 14px}
 .market-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
@@ -294,6 +307,8 @@ main{min-height:100vh}
   .result-bar{grid-template-columns:auto 1fr auto;gap:10px}
   .result-bar strong{text-align:center;font-size:.78rem}
   .plans,.final-grid{grid-template-columns:1fr}
+  .adamo-stats{grid-template-columns:1fr 1fr}
+  .adamo-candidate-grid{grid-template-columns:1fr 1fr}
   .market-cards{grid-template-columns:1fr 1fr}
   .market-focus-grid{grid-template-columns:1fr 1fr}
   .section-head{align-items:flex-start;flex-direction:column;gap:6px}
@@ -313,7 +328,8 @@ main{min-height:100vh}
   .wolf-search button{width:46px;height:46px}
   .wolf-search input{padding-left:14px}
   .section-head h1{font-size:2rem}
-  .plan-card,.answer-panel,.market-panel,.research-panel,.metrics-panel,.decision,.receipt,.benchmark-panel{padding:14px}
+  .plan-card,.answer-panel,.adamo-panel,.market-panel,.research-panel,.metrics-panel,.decision,.receipt,.benchmark-panel{padding:14px}
+  .adamo-stats,.adamo-candidate-grid{grid-template-columns:1fr}
   .market-cards{grid-template-columns:1fr}
   .answer-panel h1{font-size:1.6rem}
   .result-bar strong{font-size:.7rem}

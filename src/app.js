@@ -3,6 +3,7 @@ import { comparePlans } from './evaluator.mjs';
 import { runBenchmark } from './benchmark.mjs';
 import { runLiveResearch } from './live-research.mjs';
 import { runMarketLens, marketAnswer } from './market-lens.mjs';
+import { runAdamoLab } from './adamo-lab.mjs';
 import {
   perception, localizePlan, localizeFinality, localizeMetricLabel, localizeIntegrityStatus
 } from './language-perception.mjs';
@@ -11,7 +12,7 @@ const SAMPLE='Create an autonomous app that makes money for me with a £100 budg
 
 const $=sel=>document.querySelector(sel);
 const homeEl=$('#home'),formEl=$('#wolfForm'),requestEl=$('#request'),runBtn=$('#run'),backBtn=$('#back'),benchmarkBtn=$('#benchmark');
-const errorEl=$('#error'),benchmarkResultsEl=$('#benchmarkResults'),researchResultsEl=$('#researchResults'),marketLensEl=$('#marketLens'),resultsEl=$('#results'),auditDetails=$('#auditDetails');
+const errorEl=$('#error'),benchmarkResultsEl=$('#benchmarkResults'),researchResultsEl=$('#researchResults'),marketLensEl=$('#marketLens'),adamoPanelEl=$('#adamoPanel'),resultsEl=$('#results'),auditDetails=$('#auditDetails');
 
 let currentLocale='en';
 
@@ -188,10 +189,75 @@ function renderMarketLens(lens,p){
   $('#marketMeta').textContent=[provider,freshness,it?'Nessun ordine preparato o eseguito.':'No order prepared or executed.'].filter(Boolean).join(' · ');
   marketLensEl.hidden=false;
 }
-function renderAnswer(request,p,lens,research,localizedCandidate){
+function renderAdamo(adamo,p){
+  if(!adamo||adamo.status==='NOT_ADAMO_INTENT'){adamoPanelEl.hidden=true;return}
+  const it=p.responseLocale==='it';
+  $('#adamoTitle').textContent=it?'Risultato di Adamo':'Adamo Result';
+  $('#adamoMode').textContent=it?'SOLO PAPER':'PAPER ONLY';
+
+  if(adamo.status==='ADAMO_UNAVAILABLE'){
+    $('#adamoAnalysis').textContent=it
+      ? 'Adamo non è disponibile in questo momento. WOLF non inventa un risultato e non usa denaro reale.'
+      : 'Adamo is unavailable right now. WOLF does not fabricate a result and does not use real money.';
+    $('#adamoStats').innerHTML='';
+    $('#adamoCandidate').innerHTML='';
+    $('#adamoStress').innerHTML='';
+    $('#adamoV8').innerHTML='';
+    $('#adamoCaveat').textContent='';
+    adamoPanelEl.hidden=false;return;
+  }
+
+  $('#adamoAnalysis').textContent=adamo.analysis||'';
+  const a=adamo.attempts||{},o=adamo.objective||{},stress=adamo.stress||{},top=adamo.topCandidate||null;
+  const pct=v=>Number.isFinite(Number(v))?`${(Number(v)*100).toFixed(1)}%`:'—';
+  const money=v=>Number.isFinite(Number(v))?`£${Number(v).toFixed(2)}`:'—';
+
+  $('#adamoStats').innerHTML=`
+    <div><span>${it?'Obiettivo':'Objective'}</span><strong>${money(o.startCapital)} → ${money(o.targetCapital)}</strong></div>
+    <div><span>${it?'Tentativi':'Attempts'}</span><strong>${a.completed??a.requested??1001}</strong></div>
+    <div><span>${it?'Sopravvissuti':'Survivors'}</span><strong>${a.survived??0}</strong></div>
+    <div><span>${it?'Stress path':'Stress paths'}</span><strong>${stress.count??1001}</strong></div>`;
+
+  $('#adamoCandidate').innerHTML=top?`
+    <div class="adamo-section-title">${it?'Miglior candidato storico paper':'Best historical paper candidate'}</div>
+    <div class="adamo-candidate-grid">
+      <div><span>Asset</span><strong>${escapeHtml(top.symbol||'—')}</strong></div>
+      <div><span>Fast / Slow</span><strong>${top.fast??'—'} / ${top.slow??'—'}</strong></div>
+      <div><span>${it?'Saldo test':'Test balance'}</span><strong>${money(top.finalBalance)}</strong></div>
+      <div><span>Drawdown</span><strong>${pct(top.test?.drawdown)}</strong></div>
+      <div><span>Sharpe</span><strong>${fmt(top.test?.sharpe,2)}</strong></div>
+      <div><span>${it?'Robusto':'Robust'}</span><strong>${top.robust?(it?'SÌ':'YES'):(it?'NO':'NO')}</strong></div>
+    </div>`
+    :`<p class="empty">${it?'Nessun candidato disponibile.':'No candidate available.'}</p>`;
+
+  $('#adamoStress').innerHTML=`
+    <div class="adamo-section-title">${it?'1001 stress path':'1001 stress paths'}</div>
+    <div class="adamo-candidate-grid">
+      <div><span>${it?'Target raggiunto':'Target hit'}</span><strong>${pct(stress.probabilityTarget)}</strong></div>
+      <div><span>${it?'Mediana finale':'Median final'}</span><strong>${money(stress.medianFinal)}</strong></div>
+      <div><span>P05</span><strong>${money(stress.p05Final)}</strong></div>
+      <div><span>P95</span><strong>${money(stress.p95Final)}</strong></div>
+      <div><span>${it?'Prob. dimezzamento':'Half-loss risk'}</span><strong>${pct(stress.ruinProbability)}</strong></div>
+      <div><span>${it?'Finalità':'Finality'}</span><strong>${escapeHtml(adamo.finality||'—')}</strong></div>
+    </div>`;
+
+  const v8=adamo.v8?.evaluation||{},plan=adamo.v8?.plan||{};
+  $('#adamoV8').innerHTML=`
+    <div class="adamo-section-title">Na0mi V8</div>
+    <p>${escapeHtml(it
+      ? `Modalità ${plan.mode||'—'} · cilindri ${(plan.selectedCylinders||[]).join(', ')||'—'} · ${v8.eligibleForXi0Review?'idoneo alla revisione Xi0':'non promosso alla revisione Xi0'}.`
+      : `Mode ${plan.mode||'—'} · cylinders ${(plan.selectedCylinders||[]).join(', ')||'—'} · ${v8.eligibleForXi0Review?'eligible for Xi0 review':'not promoted to Xi0 review'}.`)}</p>`;
+
+  $('#adamoCaveat').textContent=it
+    ? 'Esperimento storico e bootstrap: non è una previsione, una raccomandazione o un ordine. £100→£500 resta un obiettivo di ricerca.'
+    : 'Historical and bootstrap experiment: not a forecast, recommendation, or order. £100→£500 remains a research objective.';
+  adamoPanelEl.hidden=false;
+}
+
+function renderAnswer(request,p,lens,research,localizedCandidate,adamo){
   const locale=p.responseLocale,it=locale==='it';
   const market=marketAnswer(request,lens,locale);
-  let answer=market;
+  let answer=adamo?.status==='ADAMO_1001_COMPLETE'&&adamo.analysis?adamo.analysis:market;
   if(!answer){
     if(research?.status==='LIVE_RESEARCH_COMPLETE')answer=it
       ? `Ho trovato ${research.resultCount} risultati live. Ti mostro prima le fonti più utili e tengo l’audit tecnico separato.`
@@ -245,9 +311,10 @@ async function runEvaluation(){
   applyLocale(p);
   runBtn.disabled=true;const previousLabel=runBtn.textContent;runBtn.textContent='…';
   try{
-    const [research,lens]=await Promise.all([
+    const [research,lens,adamo]=await Promise.all([
       runLiveResearch(request,{depth:'DEEP'}),
-      runMarketLens(request,{locale:p.responseLocale})
+      runMarketLens(request,{locale:p.responseLocale}),
+      runAdamoLab(request,{locale:p.responseLocale})
     ]);
     const plans=buildPlans(request);
     const comparison=comparePlans(plans.baseline,plans.candidate,request);
@@ -258,11 +325,12 @@ async function runEvaluation(){
       receiptVersion:'wolf-braincore-receipt/1.1',request,language:p.detected,
       baselineScore:comparison.baseline.total,candidateScore:comparison.candidate.total,delta:comparison.delta,
       finality:comparison.finality,candidateGaps:comparison.candidate.gaps,
-      researchStatus:research.status,marketLensStatus:lens.status
+      researchStatus:research.status,marketLensStatus:lens.status,adamoStatus:adamo.status,adamoFinality:adamo.finality||null
     };
     const receiptHash=await sha256(JSON.stringify(receiptCore)),issuedAt=new Date().toISOString(),statusClass=comparison.finality.toLowerCase();
 
-    renderAnswer(request,p,lens,research,displayCandidate);
+    renderAnswer(request,p,lens,research,displayCandidate,adamo);
+    renderAdamo(adamo,p);
     renderMarketLens(lens,p);
     renderResearch(request,research,comparison.requestIntegrity,p,lens.status==='MARKET_LENS_READY');
 
@@ -292,7 +360,7 @@ async function runEvaluation(){
   }finally{runBtn.disabled=false;runBtn.textContent=previousLabel}
 }
 function newEvaluation(){
-  resultsEl.hidden=true;benchmarkResultsEl.hidden=true;researchResultsEl.hidden=true;marketLensEl.hidden=true;auditDetails.open=false;
+  resultsEl.hidden=true;benchmarkResultsEl.hidden=true;researchResultsEl.hidden=true;marketLensEl.hidden=true;adamoPanelEl.hidden=true;auditDetails.open=false;
   homeEl.hidden=false;errorEl.textContent='';requestEl.focus();
 }
 
