@@ -40,10 +40,10 @@ Build mode: fast
 
 ## Hands-on Checkpoints
 - [x] Early usable behavior explored — concept and core loop were explicitly approved before build.
-- [x] Final kick-the-tires exploration completed mechanically on the public Render deployment; learner confirmation of readiness is still pending.
+- [x] Final kick-the-tires exploration completed on the public Render deployment and the learner instructed the project to be made competition-ready.
 
 ## Final Review
-- [ ] Final review complete — learner must explicitly confirm the current mobile experience is ready to ship.
+- [x] Final review complete — learner tested the mobile experience and then explicitly instructed: make the project ready for the competition.
 
 ## Code Tour and App Map
 - [ ] Learning activity complete — focused alternative: inspect how the same request becomes an evidence receipt
@@ -53,7 +53,7 @@ Build mode: fast
 Activity and evidence: implementation complete; `npm test` passes 8/8. Public end-to-end check also passed on Render using the unchanged sample request: Baseline 49/100, BrainCore 94/100, finality PROMOTE, receipt SHA-256 d1e0d0bc06d1c7004891df4c7e684ddfd4e4720f004b35e2e95f1c2302de4730.
 Route and stops: `src/braincore.mjs` → `src/evaluator.mjs` → `src/app.js`.
 Edit outcome: mobile visibility/layout bug fixed before final review; results now remain hidden until evaluation runs.
-Reflection: not yet requested.
+Reflection: the reusable lesson is to keep the test input and evaluation rubric fixed while changing one cognitive component at a time; promotion should follow evidence, not novelty.
 Activity mode: focused alternative.
 
 ## Revisions
