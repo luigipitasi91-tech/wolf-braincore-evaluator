@@ -4,110 +4,115 @@ status: approved
 ---
 # WOLF BrainCore Evaluator — Product Requirements
 
-A minimalist cognitive evaluation lab for AI-agent builders who want evidence that a planning change improves ambiguous requests.
+A minimalist cognitive evaluation lab for AI-agent builders who want evidence that a planning change improves a request without introducing semantic or safety regressions.
 
-## The Core Journey
-1. The user lands on a screen containing only a centered WOLF emblem and one request bar.
-2. They enter a request and submit with the **W** button.
-3. The app produces a deliberately thin baseline interpretation and a structured BrainCore interpretation from the same request.
-4. WOLF evaluates both with the same five-dimension rubric.
-5. The user sees score deltas and evidence behind each metric.
-6. WOLF issues `PROMOTE`, `HOLD`, or `REJECT`.
-7. A SHA-256 receipt records request hash, scores, finality, reasons, and timestamp.
-8. The user may open a fixed eight-case benchmark to check that the planner/rubric does not only succeed on one hand-picked example.
+## Core Journey
+1. Landing shows only a centered WOLF emblem and request bar.
+2. User submits with **W**.
+3. Request Integrity evaluates specificity, contradictions, and evaluator-gaming signals.
+4. Domain Packs add finance/browser evidence requirements when relevant.
+5. Baseline and BrainCore receive the same request.
+6. WOLF scores both with one five-dimension rubric.
+7. Numeric score and critical blockers jointly determine `PROMOTE`, `HOLD`, or `REJECT`.
+8. SHA-256 receipt records evaluated evidence.
+9. User may open the fixed 8-case benchmark.
 
-Success is not “the candidate generated more text.” Success is that the evaluator can explain why a candidate should or should not be promoted.
+Success is not “the candidate generated more text.” Success is a promotion decision that can explain both score and blockers.
 
-## Screens and Layout
-Two responsive states:
+## Landing
+- wolf emblem;
+- single request/search input;
+- circular W submit;
+- no dashboard clutter or explanatory cards.
 
-### Landing
-- centered wolf emblem;
-- one search/request bar;
-- circular **W** submit control;
-- no explanatory cards, dashboard chrome, or long copy.
+## Evidence View
+- minimal New / WOLF / Benchmark top bar;
+- baseline and candidate cards;
+- five metrics;
+- Request Integrity status and specificity;
+- finality + reasons;
+- SHA-256 receipt;
+- benchmark panel only when opened.
 
-### Evidence view
-- minimal top bar for New / WOLF / Benchmark;
-- baseline and BrainCore plan cards;
-- five-dimension score comparison;
-- finality + receipt;
-- benchmark panel only when explicitly opened.
+## BrainCore Planner
+Produces:
+- Goal
+- Constraints
+- Assumptions
+- Unknowns
+- Definition of Done
+- Plan
+- Verification
 
-## Look and Feel
-Near-black background, restrained blue accent, generous negative space, strong visual hierarchy, and no unnecessary dashboard decoration. Status colors are reserved for evidence/finality.
+It preserves visible constraints and adds domain evidence contracts without fabricating missing consequential details.
 
-## Features and Behavior
+## Request Integrity Gate
+Must:
+- not use raw word count as the primary underspecification rule;
+- allow short but specific requests;
+- hold long but semantically vague requests;
+- detect explicit action/authority contradictions;
+- detect financial-bound contradictions;
+- detect evaluator-gaming/constraint-override language;
+- expose blockers independently of candidate score.
 
-### W request entry
-- Single-line request input.
-- Enter or W submits.
-- Empty input produces a small inline validation message.
-- `?demo=1` preloads the canonical demonstration request without changing normal first-use minimalism.
+## WOLF Rubric
+Both baseline and candidate receive the same 0–100 metrics:
+- ambiguity resolved;
+- assumptions exposed;
+- constraints retained;
+- definition of done;
+- verification readiness.
 
-### Baseline planner
-- Follows the literal request with minimal structure.
-- Does not invent hidden constraints.
-- Exists as a comparison control, not as a caricature.
+Promotion also requires no critical integrity/verification/constraint blockers.
 
-### BrainCore planner
-- Produces Goal, Constraints, Assumptions, Unknowns, Definition of Done, Plan, and Verification.
-- Detects budget, autonomy, revenue, consequential-action, and verification signals.
-- Missing consequential details remain unknown instead of being fabricated.
+## Fixed Core Benchmark
+Eight deterministic regression cases:
+- bounded autonomy → PROMOTE;
+- consequential publish → PROMOTE;
+- under-specified intent → HOLD;
+- verification-first build → PROMOTE;
+- short but specific → PROMOTE;
+- long but vague → HOLD;
+- conflicting constraints → HOLD;
+- constraint override / evaluator gaming → HOLD.
 
-### WOLF evaluator
-- Scores both plans from 0–100 on:
-  - ambiguity resolved;
-  - assumptions exposed;
-  - constraints retained;
-  - definition of done;
-  - verification readiness.
-- Uses the same rules for baseline and candidate.
-- Applies score, delta, and critical-gap gates.
-- Treats severely under-specified input as a critical blocker rather than auto-promoting it.
+## Transfer Packs
+### Finance Evidence Pack
+Ten transformed analysis families:
+equity screening, DCF valuation, portfolio risk, earnings, portfolio construction, technical analysis, dividends, competitors, pattern research, macro scenarios.
 
-### Fixed benchmark
-- Eight deterministic cases:
-  - bounded autonomy;
-  - consequential publish;
-  - under-specified intent;
-  - verification-first build.
-- Uses the same planner and evaluator as the live request.
-- Must contain at least one non-PROMOTE outcome to demonstrate fail-closed behavior.
+Common evidence contract:
+- dated/verifiable sources;
+- missing-data honesty;
+- facts vs consensus/assumptions;
+- uncertainty;
+- no invented forecasts/data;
+- robustness limitations.
 
-### Finality and receipt
-- `PROMOTE`: thresholds clear and no critical gap remains.
-- `HOLD`: improvement exists but evidence or specification is insufficient.
-- `REJECT`: candidate does not provide sufficient measurable improvement.
-- Receipt includes evidence and SHA-256 hash.
+### Browser Runtime Contract
+Ten provider-neutral requirements:
+session isolation, credential boundary, domain authority, read-vs-act choice, observability/replay, post-action verification, retry/recovery, human handoff, cost/time budget, persistence mode.
 
-## States and Boundaries
-- **First use** — only emblem + request bar.
-- **Valid evaluation** — evidence view becomes visible.
-- **Empty request** — no fabricated result.
-- **Under-specified request** — may score well structurally but cannot auto-promote when a critical input blocker exists.
-- **No persistence** — deliberate for this PoC.
-- **No network execution** — evaluation stays local/browser-side.
+Six transfer cases exercise this contract.
 
-## Product Decisions
-- WOLF is the evaluator, not the cognitive engine being evaluated.
-- Deterministic transforms make the PoC reproducible and secretless.
-- Fixed benchmark reduces cherry-picked-demo risk.
-- Minimal entry improves coherence and presentation while keeping technical detail available after interaction.
-- V12 contributes patterns, not source code.
+## External Candidates
+WOLF must be able to normalize a structured plan from Na0mi, GPT, or another agent and run the same rubric/integrity blockers against it.
 
-## What We're Building
-A complete end-to-end PoC plus automated tests, public repository, live deployment, planning docs, and a short judge demo.
-
-## Deferred From the POC
-Real model adapters, benchmark persistence, multi-trial statistics, human-labelled calibration, direct Na0mi integration, and multi-user collaboration.
+## Boundaries
+- No consequential real-world execution.
+- No financial recommendations generated by WOLF; finance pack evaluates evidence discipline.
+- No credential storage.
+- No browser vendor lock-in.
+- No network dependency for the judge path.
+- No claim that the current handcrafted rubric is scientifically calibrated.
 
 ## Non-Goals
-- Claiming objective/general intelligence.
-- Executing consequential real-world actions.
-- Replacing human judgment.
-- Ranking commercial foundation models.
-- Redistributing the Devpost Learn curriculum.
+- objective intelligence ranking;
+- commercial-model leaderboard;
+- autonomous trading;
+- browser anti-bot bypass;
+- self-modifying production agent.
 
 ## Open Questions
 None block shipment.
