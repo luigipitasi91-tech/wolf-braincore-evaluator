@@ -2,7 +2,10 @@ const ENDPOINT='https://na0mi-v12-mobile.onrender.com/wolf/market/lens';
 const clean=v=>String(v||'').replace(/\s+/g,' ').trim();
 
 export function isMarketIntent(text=''){
-  return /\b(stock|stocks|equity|equities|market|markets|ticker|portfolio|dcf|valuation|dividend|earnings|nasdaq|s&p|ftse|nikkei|hang seng|mercato|mercati|azionario|azionari|azioni|titolo|titoli|portafoglio|dividendi|trimestrali|valutazione|borsa)\b/i.test(clean(text));
+  const q=clean(text);
+  const semantic=/\b(stock|stocks|equity|equities|market|markets|ticker|portfolio|dcf|valuation|dividend|earnings|nasdaq|s&p|ftse|nikkei|hang seng|mercato|mercati|azionario|azionari|azioni|titolo|titoli|portafoglio|dividendi|trimestrali|valutazione|borsa)\b/i.test(q);
+  const ticker=(q.match(/\b[A-Z]{1,5}\b/g)||[]).some(x=>!['WOLF','HOLD','LIVE'].includes(x));
+  return semantic||ticker;
 }
 
 export async function runMarketLens(request,{locale='en',fetchImpl=globalThis.fetch}={}){
