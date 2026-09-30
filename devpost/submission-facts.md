@@ -13,8 +13,9 @@ This file is intentionally factual and not a drafted Devpost submission.
 - Automated verification: `npm test`, currently 8 passing tests.
 - Required planning docs present: `scope.md`, `prd.md`, `spec.md`.
 - Open-source license: MIT.
-- Demo video still needs to be recorded/uploaded publicly to YouTube or Vimeo and kept under 3 minutes.
-- Public repository still needs to be created/published.
+- Public repository: https://github.com/luigipitasi91-tech/wolf-braincore-evaluator
+- Optional live demo: https://wolf-braincore-evaluator.onrender.com
+- Demo video still needs to be recorded/uploaded publicly to YouTube or Vimeo and kept between 1 and 3 minutes.
 
 ## What the learner must personally write on Devpost
 Per the Devpost Learn shipping skill, the learner writes their own project name/short description/other submission answers and exit-survey responses. The agent may identify missing facts and later correct spelling/grammar, but should not draft or rewrite those answers.
