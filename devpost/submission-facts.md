@@ -10,8 +10,12 @@ This file is intentionally factual and not drafted Devpost prose.
 - Final public landing: centered wolf emblem + one request bar + W submit action.
 - Core flow: request → baseline + BrainCore candidate → five fixed metrics → critical-gap gates → PROMOTE/HOLD/REJECT → SHA-256 receipt.
 - Fixed eight-case balanced/adversarial benchmark added to reduce cherry-picked-demo risk.
-- Severely under-specified input receives `CRITICAL_INPUT_UNDERSPECIFIED` and cannot auto-promote.
-- Automated verification: `npm test`, **15 passing tests**.
+- Request Integrity Gate blocks semantic underspecification, explicit request conflicts, and evaluator-gaming language from auto-promotion.
+- Short but specific requests are allowed; raw word count is no longer used as the deciding signal.
+- Finance Evidence Pack: 10 transformed financial-analysis families derived from user-provided screenshots, without copying their prompt text.
+- Browser Runtime Contract: 10 provider-neutral requirements informed by global browser-agent research across Canada, Australia, Europe, and Asia.
+- External Candidate Contract allows structured Na0mi/GPT/other-agent outputs to be evaluated under the same WOLF rubric.
+- Automated verification: `npm test`, **25 passing tests**.
 - GitHub pull-request CI for the final code upgrade: PASS.
 - Public live verification:
   - canonical request: 49/100 baseline → 94/100 BrainCore → PROMOTE;
@@ -43,6 +47,10 @@ This file is intentionally factual and not drafted Devpost prose.
 ## External research applied
 - OpenAI evaluation best practices: task-specific evals, automated scoring where possible, pass/fail thresholds, avoid vibe-based evaluation.
 - Anthropic agent eval guidance: evaluation suites, deterministic graders when possible, regression protection, outcome/evidence emphasis.
+- Canada: Browse AI — monitoring, task/run records, API/webhook patterns.
+- Australia: Relevance AI — composable typed browser tools and provider separation.
+- Europe: Browser Use / Notte — secret boundaries, domain controls, persistence, replay/observability.
+- Asia: Tencent BrowserSkill / NEC cotomi Agent / ego — logged-in browser state, human demonstration/handoff, semantic snapshots, isolated workspaces.
 - Devpost demo guidance: set the problem quickly, show the product working, keep the demo concise.
 
 ## Learner-authored Devpost fields
