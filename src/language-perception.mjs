@@ -58,7 +58,7 @@ const CATALOG={
       liveUnavailable:'Live research is unavailable right now. WOLF does not fabricate results; only the request audit is shown below.',
       broadResearch:'The request is broad. WOLF will not choose automatically without the missing criteria; here is a live research starter.',
       liveOk:'Live results retrieved by Na0mi V12. They are provisional evidence; open the sources before treating a conclusion as verified.',
-      noResults:'No live results found.',empty:'Write a request first.'
+      noResults:'No live results found.',empty:'Write a request first.',marketLens:'Market Lens',readOnly:'READ ONLY',sources:'Live sources',audit:'WOLF audit',openAudit:'Open technical audit',sourceFidelity:'Source titles and excerpts remain in their original language.',metrics:{ambiguityResolution:'Ambiguity resolved',assumptionExposure:'Assumptions exposed',constraintRetention:'Constraints retained',definitionOfDone:'Definition of done',verificationReadiness:'Verification readiness'},statuses:{CLEAR:'CLEAR',NEEDS_CLARIFICATION:'NEEDS CLARIFICATION',CONFLICTING:'CONFLICTING',ADVERSARIAL:'ADVERSARIAL'}
     }
   },
   it:{
@@ -109,7 +109,7 @@ const CATALOG={
       liveUnavailable:'La ricerca live non è disponibile in questo momento. WOLF non inventa risultati: sotto trovi solo l’audit della richiesta.',
       broadResearch:'La richiesta è ampia. WOLF non sceglie automaticamente senza i criteri mancanti; intanto mostra una ricerca live iniziale.',
       liveOk:'Risultati live recuperati da Na0mi V12. Sono evidenza provvisoria: apri le fonti prima di trattare una conclusione come verificata.',
-      noResults:'Nessun risultato live trovato.',empty:'Scrivi prima una richiesta.'
+      noResults:'Nessun risultato live trovato.',empty:'Scrivi prima una richiesta.',marketLens:'Market Lens',readOnly:'SOLA LETTURA',sources:'Fonti live',audit:'Audit WOLF',openAudit:'Apri audit tecnico',sourceFidelity:'Titoli ed estratti delle fonti restano nella lingua originale.',metrics:{ambiguityResolution:'Ambiguità risolta',assumptionExposure:'Assunzioni esplicitate',constraintRetention:'Vincoli mantenuti',definitionOfDone:'Definizione di completamento',verificationReadiness:'Prontezza alla verifica'},statuses:{CLEAR:'CHIARA',NEEDS_CLARIFICATION:'RICHIEDE CHIARIMENTO',CONFLICTING:'CONTRADDITTORIA',ADVERSARIAL:'AVVERSARIALE'}
     }
   }
 };
@@ -185,7 +185,31 @@ export function localizePlan(plan,locale='en'){
     ['Compare observed output with every definition-of-done item.',c.verification[0]],
     ['Fail closed on missing evidence for consequential actions.',c.verification[1]],
     ['Record a final state: VERIFIED_SUCCESS, PROVISIONAL/UNKNOWN, or FAILED.',c.verification[2]],
-    ['Reconcile claimed revenue with an independently recorded sale/payout event.',c.revenueVerify]
+    ['Reconcile claimed revenue with an independently recorded sale/payout event.',c.revenueVerify],
+    ['Use dated, verifiable sources for market, fundamental, macro, and company data; do not invent missing values.','Usa fonti verificabili e datate per dati di mercato, fondamentali, macro e aziendali; non inventare valori mancanti.'],
+    ['Separate observed facts, external consensus/estimates, and model assumptions; label uncertainty explicitly.','Separa fatti osservati, consenso o stime esterne e assunzioni del modello; indica esplicitamente l’incertezza.'],
+    ['Historical performance, correlations, chart patterns, and backtests do not prove a future edge or guarantee returns.','Performance storiche, correlazioni, pattern grafici e backtest non dimostrano un vantaggio futuro né garantiscono rendimenti.'],
+    ['Check every quoted market/fundamental value against a source and date before treating it as evidence.','Verifica ogni dato di mercato o fondamentale rispetto a una fonte e a una data prima di trattarlo come evidenza.'],
+    ['For pattern or backtest claims, report sample size, method, out-of-sample limitations, and conditions that would invalidate the signal.','Per pattern o backtest indica dimensione del campione, metodo, limiti fuori campione e condizioni che invaliderebbero il segnale.'],
+    ['Keep scenario outputs conditional; distinguish historical measurements from forward-looking hypotheses.','Mantieni gli scenari condizionali e distingui misure storiche da ipotesi previsionali.'],
+    ['Which company/ticker, valuation date, forecast horizon, discount-rate assumptions, and terminal-value method should be used?','Quale società o ticker, data di valutazione, orizzonte previsionale, ipotesi sul tasso di sconto e metodo per il valore terminale devono essere usati?'],
+    ['What are the holdings/weights or capital, horizon, risk tolerance, country, and relevant tax regime?','Quali sono posizioni o pesi, capitale, orizzonte, tolleranza al rischio, Paese e regime fiscale rilevante?'],
+    ['Do not present an allocation as personally suitable until risk, horizon, jurisdiction, and constraints are known.','Non presentare un’allocazione come personalmente adatta finché rischio, orizzonte, giurisdizione e vincoli non sono noti.'],
+    ['Which company/ticker and earnings date are in scope, and which consensus source should be used?','Quale società o ticker e quale data dei risultati sono in esame, e quale fonte di consenso deve essere usata?'],
+    ['Treat dividends as variable and potentially reducible or suspendable; do not imply guaranteed income.','Tratta i dividendi come variabili e potenzialmente riducibili o sospendibili; non implicare redditi garantiti.'],
+    ['Treat technical signals as conditional indicators, not certainties; include invalidation levels and data period.','Tratta i segnali tecnici come indicatori condizionali, non certezze; includi livelli di invalidazione e periodo dei dati.'],
+    ['Do not infer a durable edge from a historical correlation alone; test robustness and alternative explanations.','Non dedurre un vantaggio durevole da una sola correlazione storica; verifica robustezza e spiegazioni alternative.'],
+    ['Separate current macro facts, market consensus, and scenario assumptions; do not invent forecasts.','Separa fatti macro correnti, consenso di mercato e assunzioni di scenario; non inventare previsioni.'],
+    ['Keep credentials, OTPs, and secrets outside model-visible text; inject them only at the execution boundary.','Mantieni credenziali, OTP e segreti fuori dal testo visibile al modello; inseriscili solo al confine di esecuzione.'],
+    ['Restrict web actions to explicit target domains and authority; consequential writes require a clear approval boundary.','Limita le azioni web a domini e autorizzazioni espliciti; le scritture rilevanti richiedono un chiaro confine di approvazione.'],
+    ['Prefer read-only fetch/search/extraction before a full interactive browser when the task does not require browser state.','Preferisci ricerca o estrazione in sola lettura prima di un browser interattivo completo quando il task non richiede stato del browser.'],
+    ['Define whether the run is stateless or uses a persistent authenticated profile; never assume persistence silently.','Definisci se l’esecuzione è senza stato o usa un profilo autenticato persistente; non presumere mai la persistenza senza dichiararla.'],
+    ['Track browser/runtime cost and time budget so retries cannot grow without a bound.','Traccia costo del browser/runtime e budget di tempo, così i tentativi non possono crescere senza limite.'],
+    ['Which domains are allowed, and is the task read-only or permitted to create external side effects?','Quali domini sono consentiti e il task è in sola lettura oppure può produrre effetti esterni?'],
+    ['Is an authenticated persistent profile required, and what human handoff is required for identity, consent, payment, or blocked access?','Serve un profilo autenticato persistente e quale passaggio umano è richiesto per identità, consenso, pagamento o accesso bloccato?'],
+    ['Verify the final page/DOM or returned structured state after each consequential action; click success alone is not completion.','Verifica la pagina o lo stato strutturato finale dopo ogni azione rilevante; un click riuscito da solo non significa completamento.'],
+    ['Keep an auditable action trace with timestamps and enough evidence to replay or diagnose the run.','Mantieni una traccia auditabile delle azioni con timestamp ed evidenza sufficiente per riprodurre o diagnosticare l’esecuzione.'],
+    ['Define retry limits, recovery/rollback behavior, and a human handoff when the browser cannot safely complete the task.','Definisci limiti di tentativo, recovery o rollback e un passaggio umano quando il browser non può completare il task in sicurezza.']
   ]);
   const arr=x=>(Array.isArray(x)?x:[]).map(s=>{
     if(map.has(s))return map.get(s);
@@ -193,6 +217,19 @@ export function localizePlan(plan,locale='en'){
     return s;
   });
   return {...plan,label:map.get(plan.label)||plan.label,constraints:arr(plan.constraints),assumptions:arr(plan.assumptions),unknowns:arr(plan.unknowns),definitionOfDone:arr(plan.definitionOfDone),steps:arr(plan.steps),verification:arr(plan.verification)};
+}
+
+export function localizeFinality(finality,locale='en'){
+  if(locale!=='it')return finality;
+  return finality==='PROMOTE'?'PROMUOVI':finality==='HOLD'?'ATTENDI':finality==='REJECT'?'RESPINGI':finality;
+}
+
+export function localizeMetricLabel(key,locale='en'){
+  return catalogFor(locale).ui.metrics?.[key]||key;
+}
+
+export function localizeIntegrityStatus(status,locale='en'){
+  return catalogFor(locale).ui.statuses?.[status]||status;
 }
 
 export function perception(raw,options={}){
