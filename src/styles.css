@@ -159,7 +159,41 @@ main{min-height:100vh}
 .plan-card ul{padding-left:1.05rem}
 .plan-card li+li{margin-top:4px}
 .empty{color:var(--muted);font-style:italic}
-.research-panel,.metrics-panel,.decision,.receipt,.benchmark-panel{padding:18px}
+.answer-panel,.market-panel,.research-panel,.metrics-panel,.decision,.receipt,.benchmark-panel{padding:18px}
+.answer-panel{
+  border-color:#355f8d;
+  background:radial-gradient(circle at 90% 0%,rgba(87,158,240,.10),transparent 36%),#0d1117;
+}
+.answer-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.answer-panel h1{font-size:clamp(1.55rem,4vw,2.7rem);line-height:1.12;letter-spacing:-.035em;margin:10px 0 0;max-width:980px}
+.language-badge,.read-only-badge{
+  font-size:.63rem;font-weight:850;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);
+  border-radius:999px;padding:5px 8px;color:var(--muted);white-space:nowrap
+}
+.answer-questions,.market-questions{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+.question-chip{border:1px solid var(--line);background:#080c11;color:var(--muted);border-radius:999px;padding:7px 10px;font-size:.76rem}
+.market-panel{border-color:#294d6e;background:linear-gradient(180deg,rgba(11,25,38,.98),rgba(9,14,20,.98))}
+.market-summary{color:var(--muted);margin:4px 0 14px}
+.market-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.market-card{border:1px solid var(--line);border-radius:13px;background:#080c11;padding:13px;min-width:0}
+.market-card-head{display:flex;align-items:start;justify-content:space-between;gap:8px}
+.market-card h3{margin:0;font-size:1rem}
+.market-symbol{font-size:.68rem;color:var(--accent);font-weight:800;letter-spacing:.08em}
+.market-price{font-size:1.65rem;font-weight:850;letter-spacing:-.03em;margin-top:9px}
+.market-change{font-size:.8rem;font-weight:800;margin-top:2px}
+.market-change.up{color:var(--good)}.market-change.down{color:var(--bad)}.market-change.flat{color:var(--muted)}
+.market-card small{display:block;color:var(--muted);margin-top:7px;line-height:1.35}
+.market-focus{margin-top:12px;padding:12px;border-radius:12px;border:1px solid #30445a;background:#09111a}
+.market-focus-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.market-focus-grid div{border:1px solid var(--line);border-radius:9px;padding:8px}
+.market-focus-grid span{display:block;color:var(--muted);font-size:.64rem;text-transform:uppercase;letter-spacing:.07em}
+.market-meta,.source-fidelity{color:#657181;font-size:.72rem;margin-top:10px}
+.audit-details{border:1px solid var(--line);border-radius:16px;background:#080b10;overflow:hidden}
+.audit-details>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;cursor:pointer;font-weight:800}
+.audit-details>summary::-webkit-details-marker{display:none}
+.audit-chevron{transition:transform .2s ease;color:var(--muted)}
+.audit-details[open] .audit-chevron{transform:rotate(180deg)}
+.audit-content{display:grid;gap:22px;padding:0 18px 18px;border-top:1px solid var(--line)}
 .research-panel{border-color:#284765;background:linear-gradient(180deg,rgba(16,29,43,.92),rgba(13,17,23,.98))}
 .research-intro{margin:4px 0 14px;color:var(--muted);max-width:860px}
 .research-items{display:grid;gap:9px}
@@ -260,6 +294,8 @@ main{min-height:100vh}
   .result-bar{grid-template-columns:auto 1fr auto;gap:10px}
   .result-bar strong{text-align:center;font-size:.78rem}
   .plans,.final-grid{grid-template-columns:1fr}
+  .market-cards{grid-template-columns:1fr 1fr}
+  .market-focus-grid{grid-template-columns:1fr 1fr}
   .section-head{align-items:flex-start;flex-direction:column;gap:6px}
   .section-head p{text-align:left}
   .metric-row{grid-template-columns:1fr 48px;gap:7px}
@@ -277,7 +313,9 @@ main{min-height:100vh}
   .wolf-search button{width:46px;height:46px}
   .wolf-search input{padding-left:14px}
   .section-head h1{font-size:2rem}
-  .plan-card,.research-panel,.metrics-panel,.decision,.receipt,.benchmark-panel{padding:14px}
+  .plan-card,.answer-panel,.market-panel,.research-panel,.metrics-panel,.decision,.receipt,.benchmark-panel{padding:14px}
+  .market-cards{grid-template-columns:1fr}
+  .answer-panel h1{font-size:1.6rem}
   .result-bar strong{font-size:.7rem}
   .text-button{font-size:.78rem}
 }
