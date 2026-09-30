@@ -94,6 +94,8 @@ export function evaluatePlan(plan, request) {
   if (metrics.constraintRetention < 65) gaps.push('CRITICAL_CONSTRAINT_RETENTION');
   if (metrics.verificationReadiness < 60) gaps.push('CRITICAL_VERIFICATION_GAP');
   if (metrics.definitionOfDone < 55) gaps.push('WEAK_DEFINITION_OF_DONE');
+  const requestWordCount = String(request || '').trim().split(/\s+/).filter(Boolean).length;
+  if (requestWordCount < 6) gaps.push('CRITICAL_INPUT_UNDERSPECIFIED');
   return { metrics, total, gaps };
 }
 
