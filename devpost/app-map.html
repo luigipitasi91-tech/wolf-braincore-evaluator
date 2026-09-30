@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WOLF BrainCore Evaluator — App Map</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:960px;margin:40px auto;padding:0 20px;line-height:1.55;color:#17191d}code{background:#f1f3f5;padding:2px 5px;border-radius:4px}.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:24px 0}.box{border:1px solid #ccd1d7;border-radius:10px;padding:10px 12px;background:#fafbfc}.arrow{color:#68707a}section{margin:30px 0}h1{letter-spacing:-.035em}h2{margin-bottom:8px}.note{border-left:4px solid #6b7cff;padding:10px 14px;background:#f6f7ff}.practice{border:1px solid #ccd1d7;border-radius:12px;padding:16px}
+</style>
+</head><body>
+<h1>WOLF BrainCore Evaluator — App Map</h1>
+<p>This map follows one request from input to evidence receipt. It is a code-navigation aid, not submission prose.</p>
+<div class="flow"><span class="box">Request</span><span class="arrow">→</span><span class="box">BrainCore planner</span><span class="arrow">→</span><span class="box">WOLF rubric</span><span class="arrow">→</span><span class="box">Finality</span><span class="arrow">→</span><span class="box">SHA-256 receipt</span></div>
+<section><h2>1. Request → two plans</h2><p><code>src/braincore.mjs</code> contains <code>buildBaselinePlan()</code> and <code>buildBrainCorePlan()</code>. Both receive the same request. The candidate explicitly separates constraints, assumptions, unknowns, definition of done, plan, and verification.</p></section>
+<section><h2>2. Same rubric → comparable evidence</h2><p><code>src/evaluator.mjs</code> contains <code>evaluatePlan()</code>. It scores both plans on the same five dimensions. <code>comparePlans()</code> then applies score, delta, and critical-gap gates.</p></section>
+<section><h2>3. Evidence → finality</h2><p><code>comparePlans()</code> returns <code>PROMOTE</code>, <code>HOLD</code>, or <code>REJECT</code>. A candidate cannot promote solely because its text is longer.</p></section>
+<section><h2>4. Finality → receipt</h2><p><code>src/app.js</code> serializes the evaluated request and decision, hashes it with browser Web Crypto SHA-256, and renders the receipt. Changing the request changes the evidence payload and hash.</p></section>
+<section><h2>5. What proves it works</h2><p><code>tests/planner.test.mjs</code> and <code>tests/evaluator.test.mjs</code> cover constraint extraction, unknowns, scoring, promotion, rejection, hold behavior, and score bounds. Run <code>npm test</code>.</p></section>
+<div class="note"><strong>Project-grounded practice to reuse:</strong> when changing an agent prompt, skill, or planning architecture, keep the test input and rubric fixed. Compare the old and new behavior before promoting the change.</div>
+<section class="practice"><h2>Try one safe experiment</h2><p>In <code>src/evaluator.mjs</code>, inspect the promotion thresholds inside <code>comparePlans()</code>. Predict how changing only the delta threshold would affect promotion, then use the tests before accepting any change. The practice is: <strong>change one evaluation rule, predict the effect, verify, then decide.</strong></p></section>
+</body></html>
