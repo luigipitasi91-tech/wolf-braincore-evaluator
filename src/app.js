@@ -136,7 +136,8 @@ function renderResearch(request,research,integrity,p,marketReady){
   let chosen=sorted;
   if(marketReady){
     const nonAcademic=sorted.filter(x=>researchPriority(x)<5);
-    chosen=(nonAcademic.length?nonAcademic:sorted).slice(0,4);
+    if(!nonAcademic.length){researchResultsEl.hidden=true;return}
+    chosen=nonAcademic.slice(0,4);
   }else chosen=sorted.slice(0,5);
 
   $('#researchMeta').textContent=`${research.provider||'Na0mi V12'} · ${research.resultCount} ${ui.results}`;
