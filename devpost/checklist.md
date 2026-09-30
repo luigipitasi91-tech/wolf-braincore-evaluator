@@ -40,20 +40,21 @@ Build mode: fast
 
 ## Hands-on Checkpoints
 - [x] Early usable behavior explored — concept and core loop were explicitly approved before build.
-- [ ] Final kick-the-tires exploration and feedback completed
+- [x] Final kick-the-tires exploration completed mechanically on the public Render deployment; learner confirmation of readiness is still pending.
 
 ## Final Review
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship
+- [ ] Final review complete — learner must explicitly confirm the current mobile experience is ready to ship.
 
 ## Code Tour and App Map
 - [ ] Learning activity complete — focused alternative: inspect how the same request becomes an evidence receipt
 - [ ] Optional edit and transfer reflection addressed — not applicable until final user review
 - [x] `devpost/app-map.html` generated from finished code and mechanically checked; learner walkthrough still pending
 
-Activity and evidence: implementation complete; `npm test` passes 8/8. Final learner review remains pending.
+Activity and evidence: implementation complete; `npm test` passes 8/8. Public end-to-end check also passed on Render using the unchanged sample request: Baseline 49/100, BrainCore 94/100, finality PROMOTE, receipt SHA-256 d1e0d0bc06d1c7004891df4c7e684ddfd4e4720f004b35e2e95f1c2302de4730.
 Route and stops: `src/braincore.mjs` → `src/evaluator.mjs` → `src/app.js`.
-Edit outcome: not applicable.
+Edit outcome: mobile visibility/layout bug fixed before final review; results now remain hidden until evaluation runs.
 Reflection: not yet requested.
 Activity mode: focused alternative.
 
 ## Revisions
+- Mobile results visibility fixed — CSS `.results { display:grid }` overrode the HTML `hidden` state; added `[hidden]{display:none!important}` and tightened responsive layout for phone widths.
