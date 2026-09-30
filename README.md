@@ -65,6 +65,10 @@ The planning workflow follows the official Devpost Learn Skill Pack: <https://gi
 
 `devpost/learner-profile.md` is intentionally ignored because it contains personal learning context.
 
+## Competition video
+
+Public YouTube demo: <https://www.youtube.com/watch?v=PMyaJutqnRE>
+
 ## Judge demo path
 
 Use the preloaded request and click **Run evaluation**. In under a minute you can show:
