@@ -5,88 +5,81 @@ status: approved
 # WOLF BrainCore Evaluator — Technical Spec
 
 ## How This Works, In Plain Language
-The project is a static browser application plus a tiny local Node server. A planner module creates two structured interpretations from the same request. An evaluator module measures both plans with fixed rules. A finality function compares the scores and guards against critical gaps. The browser renders the comparison and uses the Web Crypto API to create a SHA-256 receipt.
+The project is a zero-dependency browser application plus a tiny Node static server. A planner creates baseline and BrainCore interpretations from the same request. A deterministic evaluator scores both with fixed rules, applies critical blockers, and produces finality. The browser hashes the evidence payload into a SHA-256 receipt.
 
-This shape is deliberately small: the competition needs a reliable proof of concept, not a production AI platform.
+A fixed benchmark invokes exactly the same planner and evaluator across four cases.
 
 ## The Core Journey Through the System
-PRD ref: `prd.md > The Core Journey`.
+User request → `app.js` validation → `braincore.mjs` baseline + candidate → `evaluator.mjs` five metrics + critical-gap guards → `PROMOTE/HOLD/REJECT` → receipt hash.
 
-The user enters a request → `app.js` validates it → `braincore.mjs` creates the baseline and candidate plans → `evaluator.mjs` scores both → finality logic returns `PROMOTE`, `HOLD`, or `REJECT` → `app.js` renders plans, metric deltas, reasons, and a SHA-256 receipt → the user can change the request and run again.
+Optional benchmark:
+`benchmark.mjs` fixed cases → same planner/evaluator → aggregate finalities.
 
 ## Stack
-- **Node.js 20+** — local static server and automated tests. https://nodejs.org/
-- **Modern browser JavaScript (ES modules)** — no framework or build step; simplest reliable path for a small PoC.
-- **Web Crypto API** — browser-native SHA-256 receipt hashing. https://developer.mozilla.org/docs/Web/API/SubtleCrypto/digest
-- **Node test runner** — zero-dependency automated tests. https://nodejs.org/api/test.html
+- **Node.js 20+** — static server and tests.
+- **Modern browser JavaScript / ES modules** — no framework or build step.
+- **Web Crypto API** — SHA-256 receipt hashing.
+- **Node test runner** — deterministic regression tests.
+- **Render static hosting** — public judge-accessible demo.
 
-Tradeoff accepted: deterministic heuristics are less flexible than an LLM, but they make the core evaluator reproducible, free, secretless, and judge-friendly.
+No API key is required.
 
-## Where It Runs and How Someone Tries It
-Runtime: desktop/mobile browser with Node.js used only to serve local files.
+## Where It Runs
+Public demo: https://wolf-braincore-evaluator.onrender.com
 
+Canonical preloaded demo:
+https://wolf-braincore-evaluator.onrender.com/?demo=1
+
+Local:
 ```bash
 npm start
-```
-
-Then open `http://localhost:4173`.
-
-Tests:
-
-```bash
 npm test
 ```
 
-No API keys are required. A public repository and a <3 minute public YouTube/Vimeo demo are still required by the hackathon; deployment is optional.
-
 ## Look and Feel
-PRD ref: `prd.md > Look and Feel`.
-
-Dark neutral background, bordered panels, crisp monospace accents for hashes/finality, compact sans-serif body text, moderate information density. Status colors are restricted to positive/hold/reject indicators. Motion is minimal and functional.
+The landing state is deliberately extreme-minimal: wolf emblem + request bar + W submit control. Results use compact evidence panels and restrained status color.
 
 ## Components
 
-### Request Workbench
-Textarea, sample reset, Run Evaluation action, and validation message.
-PRD ref: `prd.md > Request workbench`.
+### Minimal Landing
+`index.html` contains the WOLF emblem, request form and W submit button. The emblem is embedded as an optimized WebP data URI to keep the PoC self-contained.
 
 ### BrainCore Planner
-`src/braincore.mjs` extracts visible constraints and produces baseline/candidate structured plans. Unknown values remain explicit unknowns.
-PRD ref: `prd.md > Baseline planner`, `prd.md > BrainCore planner`.
+`src/braincore.mjs` extracts visible constraints and creates baseline/candidate plan objects.
 
 ### WOLF Evaluator
-`src/evaluator.mjs` scores both plans using the same rubric and returns metric evidence plus finality.
-PRD ref: `prd.md > WOLF evaluator`.
+`src/evaluator.mjs` calculates five deterministic metrics, total score, critical blockers, and finality.
 
-### Receipt Renderer
-`src/app.js` serializes the evaluated request + evidence, hashes it using SHA-256, and displays the receipt.
-PRD ref: `prd.md > Finality and receipt`.
+A request under six words receives `CRITICAL_INPUT_UNDERSPECIFIED`, preventing automatic promotion even if structural scores look strong.
+
+### Fixed Benchmark
+`src/benchmark.mjs` defines four cases and runs all of them through the exact same planner/evaluator.
+
+### UI / Receipt
+`src/app.js` controls landing-to-results transition, renders evidence, invokes benchmark, and generates SHA-256 receipts.
 
 ## Data Model
-All state lives in browser memory.
-
 ```text
 EvaluationRun
-  request: string
+  request
   baseline: Plan
   candidate: Plan
-  baselineEvaluation: Evaluation
-  candidateEvaluation: Evaluation
+  baselineEvaluation
+  candidateEvaluation
   finality: PROMOTE | HOLD | REJECT
-  reasons: string[]
-  receiptHash: string
+  reasons[]
+  receiptHash
 
-Plan
-  goal: string
-  constraints: string[]
-  assumptions: string[]
-  unknowns: string[]
-  definitionOfDone: string[]
-  steps: string[]
-  verification: string[]
+BenchmarkCase
+  id
+  title
+  request
+  baselineScore
+  candidateScore
+  delta
+  finality
+  blockers[]
 ```
-
-Reloading intentionally clears the run.
 
 ## File Structure
 ```text
@@ -96,40 +89,53 @@ wolf-braincore-evaluator/
 ├── server.mjs
 ├── src/
 │   ├── app.js
+│   ├── benchmark.mjs
 │   ├── braincore.mjs
 │   ├── evaluator.mjs
 │   └── styles.css
 ├── tests/
-│   └── evaluator.test.mjs
+│   ├── benchmark.test.mjs
+│   ├── evaluator.test.mjs
+│   └── planner.test.mjs
 ├── devpost/
 │   ├── scope.md
 │   ├── prd.md
 │   ├── spec.md
 │   ├── checklist.md
+│   ├── demo-plan.md
 │   └── app-map.html
 ├── README.md
-├── LICENSE
-└── .gitignore
+└── LICENSE
 ```
 
-## External Services and Dependencies
-None at runtime. No API calls, no database, no third-party SDK, no credentials, and no usage cost.
+## External Evaluation Principles Applied
+The architecture intentionally follows public eval guidance:
+- task-specific evaluation instead of generic “vibe” scoring;
+- fixed tasks/success criteria;
+- automated deterministic scoring where possible;
+- pass/fail gates alongside numeric scores;
+- multiple cases to expose regressions.
 
-Devpost Learn Skill Pack is the planning workflow source: https://github.com/challengepost/learn-ai-basics . Its files are not redistributed in this repository.
+References:
+- https://developers.openai.com/api/docs/guides/evaluation-best-practices
+- https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
+
+These references informed design choices; they do not imply endorsement.
 
 ## Important Failure Modes
-- **Empty request** → evaluation is blocked with an inline message rather than fabricating a plan.
-- **Overly generic request** → BrainCore records unknowns; WOLF may return `HOLD` instead of pretending the plan is promotion-ready.
-- **A candidate gets longer without becoming safer/testable** → rubric scores explicit fields/evidence, not word count.
+- Empty input → no evaluation.
+- Severely under-specified input → critical blocker / no auto-promotion.
+- Longer text without better evidence → no automatic score advantage.
+- Missing constraint/verification evidence → critical gaps.
+- Benchmark regression → automated test failure.
 
-## What Was Simplified and Why
-- **Deterministic planning heuristics** instead of real LLM calls — proves the evaluation loop without keys or non-reproducible responses.
-- **Single run in memory** instead of a benchmark database — enough to demonstrate the kernel.
-- **Three finality states** instead of a large taxonomy — immediately understandable in a short demo.
+## Simplifications
+- Deterministic heuristics instead of real LLM calls.
+- Four fixed benchmark cases rather than a large dataset.
+- Single in-memory run rather than persistence.
+- Three finality states rather than a broad taxonomy.
 
-## Decisions and Open Issues
-The key uncertainty was whether WOLF should be the BrainCore itself or the evaluator. It is the evaluator, because an independent scorer makes regressions visible and avoids the system grading its own cognitive change.
+## Decision
+WOLF remains independent from BrainCore so the component being changed does not grade itself.
 
-The exact rubric is intentionally transparent and inspectable; a future version should calibrate weights against human-labelled examples rather than treating current weights as scientifically validated.
-
-No unresolved issue blocks the build.
+No unresolved issue blocks shipment.
