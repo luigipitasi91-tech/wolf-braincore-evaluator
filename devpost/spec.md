@@ -4,138 +4,191 @@ status: approved
 ---
 # WOLF BrainCore Evaluator — Technical Spec
 
-## How This Works, In Plain Language
-The project is a zero-dependency browser application plus a tiny Node static server. A planner creates baseline and BrainCore interpretations from the same request. A deterministic evaluator scores both with fixed rules, applies critical blockers, and produces finality. The browser hashes the evidence payload into a SHA-256 receipt.
+## Architecture
+The project is a zero-dependency browser application plus a tiny Node static server.
 
-A fixed benchmark invokes exactly the same planner and evaluator across eight balanced/adversarial cases.
-
-## The Core Journey Through the System
-User request → `app.js` validation → `braincore.mjs` baseline + candidate → `evaluator.mjs` five metrics + critical-gap guards → `PROMOTE/HOLD/REJECT` → receipt hash.
-
-Optional benchmark:
-`benchmark.mjs` fixed cases → same planner/evaluator → aggregate finalities.
-
-## Stack
-- **Node.js 20+** — static server and tests.
-- **Modern browser JavaScript / ES modules** — no framework or build step.
-- **Web Crypto API** — SHA-256 receipt hashing.
-- **Node test runner** — deterministic regression tests.
-- **Render static hosting** — public judge-accessible demo.
-
-No API key is required.
-
-## Where It Runs
-Public demo: https://wolf-braincore-evaluator.onrender.com
-
-Canonical preloaded demo:
-https://wolf-braincore-evaluator.onrender.com/?demo=1
-
-Local:
-```bash
-npm start
-npm test
+```text
+Request
+  → Request Integrity Gate
+  → Domain Pack detection
+  → Baseline + BrainCore candidate
+  → Same deterministic WOLF rubric
+  → Critical blockers
+  → PROMOTE / HOLD / REJECT
+  → SHA-256 receipt
 ```
 
-## Look and Feel
-The landing state is deliberately extreme-minimal: wolf emblem + request bar + W submit control. Results use compact evidence panels and restrained status color.
+Optional paths:
+- fixed 8-case core benchmark;
+- 10-case finance transfer benchmark;
+- 6-case browser-agent transfer benchmark;
+- external structured candidate normalization.
+
+## Stack
+- Node.js 20+ for local serving/tests.
+- Browser ES modules.
+- Web Crypto SHA-256.
+- Node test runner.
+- Render static hosting.
+- No runtime API key.
+
+Public demo:
+https://wolf-braincore-evaluator.onrender.com
+
+Judge-ready:
+https://wolf-braincore-evaluator.onrender.com/?demo=1
 
 ## Components
 
-### Minimal Landing
-`index.html` contains the WOLF emblem, request form and W submit button. The emblem is embedded as an optimized WebP data URI to keep the PoC self-contained.
+### `src/request-integrity.mjs`
+Independent semantic gate. Detects:
+- underspecification using action/artifact/condition signals rather than raw length;
+- action contradiction;
+- interaction contradiction;
+- budget contradiction;
+- explicit constraint override;
+- evaluator-gaming language.
 
-### BrainCore Planner
-`src/braincore.mjs` extracts visible constraints and creates baseline/candidate plan objects.
+Produces status, specificity score, contradictions, blockers and promotability.
 
-### WOLF Evaluator
-`src/evaluator.mjs` calculates five deterministic metrics, total score, critical blockers, and finality.
+### `src/domain-packs.mjs`
+Provider-neutral domain contracts:
+- Finance Evidence Pack;
+- Browser Runtime Contract.
 
-A request under six words receives `CRITICAL_INPUT_UNDERSPECIFIED`, preventing automatic promotion even if structural scores look strong.
+It adds constraints, unknowns and verification requirements to the candidate plan when the request matches a domain.
 
-### Fixed Benchmark
-`src/benchmark.mjs` defines four cases and runs all of them through the exact same planner/evaluator.
+### `src/braincore.mjs`
+Creates baseline and BrainCore candidate. BrainCore combines:
+- literal request signals;
+- Request Integrity evidence;
+- relevant Domain Packs;
+- definition of done;
+- execution/verification steps.
 
-### UI / Receipt
-`src/app.js` controls landing-to-results transition, renders evidence, invokes benchmark, and generates SHA-256 receipts.
+### `src/evaluator.mjs`
+Calculates the five common metrics and merges independent Request Integrity blockers into finality.
 
-## Data Model
+A candidate can score above the promotion threshold and still be held when a critical blocker remains.
+
+### `src/benchmark.mjs`
+Runs 8 balanced/adversarial fixed cases with explicit expected finalities.
+
+### `src/domain-benchmarks.mjs`
+Runs:
+- 10 finance transfer cases;
+- 6 browser-agent transfer cases.
+
+The transfer benchmarks check evidence-contract coverage rather than financial performance or browser task success.
+
+### `src/external-candidate.mjs`
+Normalizes structured external candidate plans into the WOLF schema and evaluates them against the same baseline/rubric/blockers.
+
+### `src/app.js`
+Controls minimal landing, results rendering, Request Integrity evidence, benchmark view and SHA-256 receipt.
+
+## Data Objects
 ```text
-EvaluationRun
-  request
-  baseline: Plan
-  candidate: Plan
-  baselineEvaluation
-  candidateEvaluation
-  finality: PROMOTE | HOLD | REJECT
-  reasons[]
-  receiptHash
+Plan
+  label
+  goal
+  constraints[]
+  assumptions[]
+  unknowns[]
+  definitionOfDone[]
+  steps[]
+  verification[]
+  requestIntegrity?
+  domainPacks?
 
-BenchmarkCase
-  id
-  title
-  request
-  baselineScore
-  candidateScore
-  delta
-  finality
+RequestIntegrity
+  status
+  specificity
+  features
+  contradictions[]
+  gamingSignals[]
   blockers[]
+  promotable
+
+Evaluation
+  metrics
+  total
+  gaps[]
+  requestIntegrity
+
+ExternalCandidateEvaluation
+  source
+  request
+  candidate: Plan
+  comparison
+  contractVersion
 ```
 
 ## File Structure
 ```text
-wolf-braincore-evaluator/
-├── index.html
-├── package.json
-├── server.mjs
-├── src/
-│   ├── app.js
-│   ├── benchmark.mjs\n│   ├── request-integrity.mjs
-│   ├── braincore.mjs
-│   ├── evaluator.mjs
-│   └── styles.css
-├── tests/
-│   ├── benchmark.test.mjs
-│   ├── evaluator.test.mjs
-│   └── planner.test.mjs
-├── devpost/
-│   ├── scope.md
-│   ├── prd.md
-│   ├── spec.md
-│   ├── checklist.md
-│   ├── demo-plan.md
-│   └── app-map.html
-├── README.md
-└── LICENSE
+src/
+  app.js
+  benchmark.mjs
+  braincore.mjs
+  domain-benchmarks.mjs
+  domain-packs.mjs
+  evaluator.mjs
+  external-candidate.mjs
+  request-integrity.mjs
+  styles.css
+
+tests/
+  benchmark.test.mjs
+  domain-packs.test.mjs
+  evaluator.test.mjs
+  external-candidate.test.mjs
+  planner.test.mjs
+  request-integrity.test.mjs
+
+research/
+  global-browser-agent-research.md
+  cross-system-audit.md
 ```
 
-## External Evaluation Principles Applied
-The architecture intentionally follows public eval guidance:
-- task-specific evaluation instead of generic “vibe” scoring;
-- fixed tasks/success criteria;
-- automated deterministic scoring where possible;
-- pass/fail gates alongside numeric scores;
-- multiple cases to expose regressions.
+## Regression Evidence
+Current suite target: **25 passing tests**.
 
-References:
-- https://developers.openai.com/api/docs/guides/evaluation-best-practices
-- https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
+Important known failures converted into tests:
+- short specific request falsely held;
+- long vague request falsely promoted;
+- contradictory action request falsely promoted;
+- budget override / evaluator-gaming request falsely promoted.
 
-These references informed design choices; they do not imply endorsement.
+## Research Basis
+Public evaluation guidance:
+- OpenAI evaluation best practices;
+- Anthropic agent eval guidance.
+
+Global browser-agent scan:
+- Canada: Browse AI;
+- Australia: Relevance AI;
+- Europe: Browser Use / Notte;
+- Asia: Tencent BrowserSkill / NEC cotomi Agent / ego;
+- infrastructure cross-check: TinyFish / Browserbase / Steel.
+
+These sources inform architecture only; WOLF has no runtime dependency on them.
 
 ## Important Failure Modes
-- Empty input → no evaluation.
-- Severely under-specified input → critical blocker / no auto-promotion.
-- Longer text without better evidence → no automatic score advantage.
-- Missing constraint/verification evidence → critical gaps.
-- Benchmark regression → automated test failure.
+- empty input → no evaluation;
+- semantic vagueness → HOLD;
+- explicit contradiction → HOLD;
+- evaluator gaming → HOLD;
+- missing verification/constraint evidence → critical gap;
+- benchmark expectation regression → test failure;
+- external plan missing required goal → fail closed.
 
 ## Simplifications
-- Deterministic heuristics instead of real LLM calls.
-- Eight fixed benchmark cases rather than a large dataset.
-- Single in-memory run rather than persistence.
-- Three finality states rather than a broad taxonomy.
+- deterministic heuristics instead of live LLM calls;
+- fixed small benchmark suites rather than large datasets;
+- no persistence;
+- no calibrated scientific claim for metric weights.
 
 ## Decision
-WOLF remains independent from BrainCore so the component being changed does not grade itself.
+WOLF remains independent from the candidate generator. The external-candidate contract makes that separation explicit.
 
 No unresolved issue blocks shipment.

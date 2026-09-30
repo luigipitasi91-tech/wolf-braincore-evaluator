@@ -5,38 +5,33 @@
 <title>WOLF BrainCore Evaluator — App Map</title>
 <style>
 body{font-family:system-ui,sans-serif;max-width:960px;margin:40px auto;padding:0 20px;line-height:1.55;color:#17191d}
-code{background:#f1f3f5;padding:2px 5px;border-radius:4px}
-.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:24px 0}
-.box{border:1px solid #ccd1d7;border-radius:10px;padding:10px 12px;background:#fafbfc}
-.arrow{color:#68707a}section{margin:30px 0}h1{letter-spacing:-.035em}
-.note{border-left:4px solid #6b7cff;padding:10px 14px;background:#f6f7ff}
+code{background:#f1f3f5;padding:2px 5px;border-radius:4px}.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:24px 0}
+.box{border:1px solid #ccd1d7;border-radius:10px;padding:10px 12px;background:#fafbfc}.arrow{color:#68707a}
+section{margin:30px 0}h1{letter-spacing:-.035em}.note{border-left:4px solid #6b7cff;padding:10px 14px;background:#f6f7ff}
 </style>
 </head><body>
 <h1>WOLF BrainCore Evaluator — App Map</h1>
-<p>Final competition build: minimal W entry point, deterministic evaluation, fixed benchmark, and evidence receipt.</p>
+<p>Final hardened competition build: minimal entry, independent request integrity, domain evidence packs, deterministic evaluation and verifiable finality.</p>
 
 <div class="flow">
 <span class="box">Wolf + W request</span><span class="arrow">→</span>
-<span class="box">BrainCore planner</span><span class="arrow">→</span>
+<span class="box">Request Integrity</span><span class="arrow">→</span>
+<span class="box">Domain Packs</span><span class="arrow">→</span>
+<span class="box">Baseline + Candidate</span><span class="arrow">→</span>
 <span class="box">WOLF rubric</span><span class="arrow">→</span>
-<span class="box">Critical-gap gate</span><span class="arrow">→</span>
+<span class="box">Critical blockers</span><span class="arrow">→</span>
 <span class="box">Finality</span><span class="arrow">→</span>
 <span class="box">SHA-256 receipt</span>
 </div>
 
-<section><h2>1. Minimal landing</h2><p><code>index.html</code> exposes only the WOLF emblem, request bar, and W submit action. <code>src/app.js</code> transitions from landing to evidence view only after a valid request.</p></section>
+<section><h2>1. Minimal landing</h2><p><code>index.html</code> exposes only the WOLF emblem, request bar and W submit action.</p></section>
+<section><h2>2. Independent Request Integrity</h2><p><code>src/request-integrity.mjs</code> detects semantic vagueness, contradictions, constraint override and evaluator-gaming before candidate scoring can promote a result.</p></section>
+<section><h2>3. Domain evidence</h2><p><code>src/domain-packs.mjs</code> adds finance and browser-agent evidence contracts only when relevant.</p></section>
+<section><h2>4. Same request → two plans</h2><p><code>src/braincore.mjs</code> creates baseline and BrainCore candidate from the same request. External structured candidates can instead enter through <code>src/external-candidate.mjs</code>.</p></section>
+<section><h2>5. Same rubric → comparable evidence</h2><p><code>src/evaluator.mjs</code> scores ambiguity resolution, assumption exposure, constraint retention, definition of done and verification readiness, then applies integrity blockers.</p></section>
+<section><h2>6. Balanced regression evidence</h2><p><code>src/benchmark.mjs</code> runs 8 fixed core cases. <code>src/domain-benchmarks.mjs</code> adds 10 finance and 6 browser-agent transfer cases.</p></section>
+<section><h2>7. Receipt</h2><p><code>src/app.js</code> hashes the evaluated evidence payload with Web Crypto SHA-256.</p></section>
+<section><h2>8. What proves it works</h2><p>The Node test suite covers request integrity, core finality, domain transfer, external candidates and planner invariants. Current target: 25 passing tests.</p></section>
 
-<section><h2>2. Same request → two plans</h2><p><code>src/braincore.mjs</code> creates <code>buildBaselinePlan()</code> and <code>buildBrainCorePlan()</code> from the exact same input.</p></section>
-
-<section><h2>3. Same rubric → comparable evidence</h2><p><code>src/evaluator.mjs</code> scores both plans on ambiguity resolution, assumption exposure, constraint retention, definition of done, and verification readiness.</p></section>
-
-<section><h2>4. Fail-closed guard</h2><p>Severely under-specified requests receive <code>CRITICAL_INPUT_UNDERSPECIFIED</code>. A high structural score cannot override that critical blocker.</p></section>
-
-<section><h2>5. Fixed benchmark</h2><p><code>src/benchmark.mjs</code> runs four fixed cases through the exact same planner and evaluator. The under-specified case is expected to produce a non-PROMOTE finality.</p></section>
-
-<section><h2>6. Receipt</h2><p><code>src/app.js</code> hashes the evaluated request and decision evidence with browser Web Crypto SHA-256.</p></section>
-
-<section><h2>7. What proves it works</h2><p><code>tests/planner.test.mjs</code>, <code>tests/evaluator.test.mjs</code>, and <code>tests/benchmark.test.mjs</code> protect planner behavior, score/finality rules, and fail-closed benchmark behavior.</p></section>
-
-<div class="note"><strong>Reusable practice:</strong> hold the request set and rubric fixed while changing one cognitive component at a time. Promote only when measured evidence improves without critical regressions.</div>
+<div class="note"><strong>Reusable practice:</strong> hold the request set and rubric fixed, keep request integrity independent from candidate scoring, and promote only when measured evidence improves without critical regressions.</div>
 </body></html>

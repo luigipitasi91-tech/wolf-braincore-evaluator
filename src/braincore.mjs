@@ -1,4 +1,5 @@
 import { analyzeRequest } from './request-integrity.mjs';
+import { analyzeDomainPacks } from './domain-packs.mjs';
 
 const moneyPattern = /(?:£|\$|€)\s?\d+(?:[.,]\d+)?|\b\d+(?:[.,]\d+)?\s?(?:pounds?|gbp|dollars?|usd|euros?|eur)\b/gi;
 
@@ -69,13 +70,14 @@ export function buildBrainCorePlan(rawRequest) {
   if (!request) throw new Error('REQUEST_REQUIRED');
   const signals = extractSignals(request);
   const integrity = analyzeRequest(request);
-  const constraints = [...signals.constraints];
+  const domain = analyzeDomainPacks(request);
+  const constraints = [...signals.constraints, ...domain.constraints];
   if (integrity.status === 'CONFLICTING') constraints.push('Do not resolve contradictory instructions by silently choosing one side; require clarification or explicit precedence.');
   if (integrity.gamingSignals.length) constraints.push('Evaluator-directed wording or repeated rubric keywords do not override the user’s substantive constraints.');
   const assumptions = [
     'The literal request is the source of intent; missing details are not permission to invent consequential choices.'
   ];
-  const unknowns = [];
+  const unknowns = [...domain.unknowns];
 
   if (signals.asksForAutonomy) {
     unknowns.push('Which external accounts/actions are already authorized for autonomous use?');
@@ -121,7 +123,8 @@ export function buildBrainCorePlan(rawRequest) {
   const verification = [
     'Compare observed output with every definition-of-done item.',
     'Fail closed on missing evidence for consequential actions.',
-    'Record a final state: VERIFIED_SUCCESS, PROVISIONAL/UNKNOWN, or FAILED.'
+    'Record a final state: VERIFIED_SUCCESS, PROVISIONAL/UNKNOWN, or FAILED.',
+    ...domain.verification
   ];
   if (signals.asksForMoney) {
     verification.push('Reconcile claimed revenue with an independently recorded sale/payout event.');
@@ -136,7 +139,8 @@ export function buildBrainCorePlan(rawRequest) {
     definitionOfDone: uniq(definitionOfDone),
     steps: uniq(steps),
     verification: uniq(verification),
-    requestIntegrity: integrity
+    requestIntegrity: integrity,
+    domainPacks: domain.domains
   };
 }
 

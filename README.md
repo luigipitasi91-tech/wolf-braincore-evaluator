@@ -30,7 +30,10 @@ No login or API key required.
 4. `PROMOTE`, `HOLD`, or `REJECT`.
 5. SHA-256 evidence receipt.
 6. Fixed eight-case benchmark to reduce cherry-picked-demo risk.
-7. Fail-closed behavior: severely under-specified input cannot auto-promote.
+7. Semantic request-integrity gate: vague, contradictory, and evaluator-gaming requests cannot auto-promote.
+8. Provider-neutral external-candidate contract for Na0mi, GPT, or other agents.
+9. Finance Evidence Pack with 10 derived analysis families.
+10. Browser Runtime Contract with 10 provider-neutral execution requirements.
 
 Canonical demo result:
 **Baseline 49/100 → BrainCore 94/100 → PROMOTE**
@@ -44,6 +47,17 @@ Benchmark now includes eight balanced/adversarial cases:
 - Long but vague → HOLD
 - Conflicting constraints → HOLD
 - Constraint override / evaluator gaming → HOLD
+
+## Transfer packs
+
+WOLF now stress-tests whether the same planning discipline transfers beyond the canonical demo:
+
+- **Core adversarial benchmark:** 8 cases / 4 expected PROMOTE / 4 expected HOLD.
+- **Finance Evidence Pack:** 10 analysis families distilled from user-supplied financial prompt themes. The pack requires dated/verifiable data, missing-input honesty, fact-vs-assumption separation, uncertainty, and robustness limits.
+- **Browser Agent Pack:** 6 transfer cases exercising session isolation, credential boundaries, domain authority, read-vs-act selection, observability/replay, recovery/handoff, cost bounds, and persistence mode.
+- **External Candidate Contract:** structured outputs from Na0mi, GPT, or another agent can be normalized into the same WOLF Plan schema and evaluated with the same rubric.
+
+Global browser-agent research and the Na0mi V12 / GPT-5.6 Sol cross-system audit live under `research/`.
 
 ## Why deterministic?
 
@@ -68,6 +82,8 @@ npm start
 npm test
 ```
 
+Current regression suite: **25/25 tests passing**.
+
 ## Hackathon planning artifacts
 
 - `devpost/scope.md`
@@ -76,6 +92,8 @@ npm test
 - `devpost/checklist.md`
 - `devpost/demo-plan.md`
 - `devpost/app-map.html`
+- `research/global-browser-agent-research.md`
+- `research/cross-system-audit.md`
 
 Planning follows the official Devpost Learn Skill Pack:
 <https://github.com/challengepost/learn-ai-basics>
