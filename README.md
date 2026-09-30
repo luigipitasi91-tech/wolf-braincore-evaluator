@@ -21,6 +21,12 @@ It was built as a new project during the **Build With AI: Basics** submission pe
 
 The app deliberately uses deterministic heuristics instead of an external LLM. That keeps the proof of concept reproducible, free to run, and independent of API keys. A later version could swap in real model/skill outputs while preserving the WOLF evaluation contract.
 
+## Live demo
+
+Open the public demo: <https://wolf-braincore-evaluator.onrender.com>
+
+The demo is served from the public `main` branch. No login or API key is required.
+
 ## Run
 
 Requirements: Node.js 20+
