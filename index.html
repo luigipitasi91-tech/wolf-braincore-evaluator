@@ -18,9 +18,10 @@
       <p>WOLF gives the baseline and candidate the same request, the same rubric, and the same hard blockers — then returns <strong>PROMOTE</strong>, <strong>HOLD</strong>, or <strong>REJECT</strong>.</p>
     </div>
     <form id="wolfForm" class="wolf-search" autocomplete="off">
-      <input id="request" type="search" aria-label="Request to evaluate" placeholder="Describe the request both planners should solve…" spellcheck="true">
+      <input id="request" type="search" aria-label="Request to evaluate" placeholder="Enter a request to evaluate…" spellcheck="true">
       <button id="run" type="submit" aria-label="Run WOLF evaluation">W</button>
     </form>
+    <p class="input-helper">WOLF evaluates whether the AI change should be promoted. It does not perform the requested task.</p>
     <div class="scenario-row" aria-label="Demo scenarios">
       <button class="scenario-chip" type="button" data-scenario="clear">Clear request</button>
       <button class="scenario-chip" type="button" data-scenario="vague">Vague request</button>
