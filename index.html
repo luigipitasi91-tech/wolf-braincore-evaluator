@@ -52,23 +52,32 @@
       </div>
     </section>
 
-    <section class="integrity-strip panel">
+    <section id="quickResult" class="quick-result panel" aria-live="polite">
+      <div>
+        <div class="eyebrow">RESULT</div>
+        <h2 id="quickTitle">Decision summary</h2>
+      </div>
+      <div id="quickReasons" class="quick-reasons"></div>
+      <button id="evidenceToggle" class="evidence-toggle" type="button" aria-expanded="false">View evidence ↓</button>
+    </section>
+
+    <section class="integrity-strip panel evidence-detail">
       <div><span>Request integrity</span><strong id="integrityStatus">—</strong></div>
       <div><span>Specificity</span><strong id="specificityScore">—</strong></div>
       <div class="integrity-blockers"><span>Hard blockers</span><strong id="blockers">—</strong></div>
     </section>
 
-    <section class="panel metrics-panel">
+    <section class="panel metrics-panel evidence-detail">
       <div class="panel-title"><div><div class="eyebrow">SAME RUBRIC</div><h2>Five planning-quality metrics</h2></div><small>0–100 · identical rules</small></div>
       <div id="metrics"></div>
     </section>
 
-    <section>
+    <section class="evidence-plans evidence-detail">
       <div class="section-head"><div><div class="eyebrow">EVIDENCE</div><h2>Same request. Two plans.</h2></div><p>Baseline is the control. BrainCore is the candidate.</p></div>
       <div id="plans" class="plans"></div>
     </section>
 
-    <section id="receipt" class="panel receipt"></section>
+    <section id="receipt" class="panel receipt evidence-detail"></section>
 
     <section id="benchmarkResults" class="panel benchmark-panel" hidden>
       <div class="panel-title"><div><div class="eyebrow">REGRESSION EVIDENCE</div><h2>Fixed eight-case benchmark</h2></div><small>Same planner · same rubric</small></div>
@@ -76,7 +85,7 @@
       <div id="benchmarkRows" class="benchmark-rows"></div>
     </section>
 
-    <footer class="result-footer">
+    <footer class="result-footer evidence-detail">
       <span>Candidate output ≠ cognitive improvement ≠ verified promotion.</span>
       <span>WOLF judges the change, not the brand of model that produced it.</span>
     </footer>
