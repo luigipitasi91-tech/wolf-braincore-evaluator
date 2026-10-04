@@ -43,8 +43,17 @@ WOLF turns that subjective promotion decision into an inspectable gate.
 7. Produces a SHA-256 evidence receipt.
 8. Runs a fixed eight-case benchmark covering both promotion and fail-closed behavior.
 
+## Potential impact
+AI-agent builders routinely change prompts, skills, planners, routing logic, and cognitive workflows. A change can improve one visible answer while silently dropping a constraint, hiding an assumption, or weakening verification.
+
+WOLF gives that audience a lightweight pre-release gate they can run before promoting a change. The immediate value is practical: make regressions visible before they ship, require explicit evidence for promotion, and do it without paid evaluation infrastructure or a runtime model API.
+
+The proof of concept demonstrates that impact directly: it approves a strong change, refuses vague or contradictory requests, and shows the evidence behind each decision.
+
 ## Why it is different
 WOLF is not another chatbot and it is not a model leaderboard.
+
+It is a focused **promotion decision layer** for AI changes.
 
 It evaluates the **change itself**.
 
@@ -56,6 +65,8 @@ from
 - **candidate quality** — did the new planning workflow actually improve?
 
 That means a numerically strong candidate still cannot auto-promote through a critical semantic failure.
+
+General evaluation platforms already exist and can run large datasets, traces, or red-team suites. WOLF deliberately solves a narrower product question: **should this specific AI change be promoted?** It packages same-request comparison, Request Integrity, hard blockers, deterministic finality, a fixed fail-closed benchmark, and a verifiable receipt into one small judgeable flow.
 
 ## Built with
 - Devpost Learn Skill Pack
@@ -105,12 +116,13 @@ https://github.com/luigipitasi91-tech/wolf-braincore-evaluator
 https://wolf-braincore-evaluator.onrender.com/?demo=1
 
 ### Demo video
-Replace this line with the final 1–3 minute public or unlisted video URL after recording.
+Replace this line with the final 1–3 minute publicly visible YouTube or Vimeo URL after recording.
 
 ## Recommended Devpost field mapping
 - **Project name:** WOLF — AI Change Gate
 - **Tagline / one line:** Don't promote an AI change because it looks smarter. Make it prove it.
 - **What it does:** use “Short description” + “What it does”
+- **Potential impact / why it matters:** use “Potential impact”
 - **Who it's for:** use “Who it is for”
 - **What I learned:** use “What I learned”
 - **Try it out link:** public GitHub repository URL
