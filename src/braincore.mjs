@@ -15,6 +15,27 @@ function contains(text, pattern) {
   return pattern.test(text.toLowerCase());
 }
 
+export function extractExplicitConstraints(rawRequest) {
+  const request = clean(rawRequest);
+  const constraints = [];
+  const money = request.match(moneyPattern) || [];
+  if (money.length) constraints.push(\`Financial bound explicitly stated: \${money.join(', ')}.\`);
+
+  const location = request.match(/\\b(?:in|near|within)\\s+([A-Z][A-Za-z'’-]+(?:\\s+[A-Z][A-Za-z'’-]+){0,2})(?=\\s+(?:under|with|and|that|which|for)\\b|[,.;!?]|$)/);
+  if (location) constraints.push(\`Location explicitly stated: \${location[1]}.\`);
+
+  const outputMatch = request.match(/\\b(?:show|shows|include|includes|display|return|provide|provides)\\s+([^.!?]{1,140})/i);
+  if (outputMatch) {
+    const output = clean(outputMatch[1].split(/,?\\s+and\\s+(?=never|do not|don't|must not)/i)[0]);
+    if (output) constraints.push(\`Required output explicitly stated: \${output}.\`);
+  }
+
+  const prohibitions = [...request.matchAll(/\\b(never|do not|don't|must not)\\s+([^.!?]{1,120})/gi)];
+  for (const match of prohibitions) constraints.push(\`Explicit prohibition: \${clean(match[1] + ' ' + match[2])}.\`);
+
+  return uniq(constraints);
+}
+
 function extractSignals(request) {
   const lower = request.toLowerCase();
   const money = request.match(moneyPattern) || [];
@@ -53,10 +74,11 @@ function sentenceGoal(request) {
 export function buildBaselinePlan(rawRequest) {
   const request = clean(rawRequest);
   if (!request) throw new Error('REQUEST_REQUIRED');
+  const explicitConstraints = extractExplicitConstraints(request);
   return {
     label: 'Baseline',
     goal: sentenceGoal(request),
-    constraints: [],
+    constraints: explicitConstraints,
     assumptions: ['The request is sufficiently specified to start implementation.'],
     unknowns: [],
     definitionOfDone: ['Produce a working result that appears to satisfy the request.'],
@@ -71,7 +93,8 @@ export function buildBrainCorePlan(rawRequest) {
   const signals = extractSignals(request);
   const integrity = analyzeRequest(request);
   const domain = analyzeDomainPacks(request);
-  const constraints = [...signals.constraints, ...domain.constraints];
+  const explicitConstraints = extractExplicitConstraints(request);
+  const constraints = [...explicitConstraints, ...signals.constraints, ...domain.constraints];
   if (integrity.status === 'CONFLICTING') constraints.push('Do not resolve contradictory instructions by silently choosing one side; require clarification or explicit precedence.');
   if (integrity.gamingSignals.length) constraints.push('Evaluator-directed wording or repeated rubric keywords do not override the user’s substantive constraints.');
   const assumptions = [
