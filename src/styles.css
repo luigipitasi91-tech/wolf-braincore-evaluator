@@ -69,3 +69,16 @@ main{min-height:100vh}
   .wolf-logo{width:145px}.wolf-search{min-height:60px;grid-template-columns:1fr 48px}.wolf-search button{width:46px;height:46px}.home-copy h1{font-size:2.35rem}
   .verdict,.metrics-panel,.plan-card,.receipt,.benchmark-panel{padding:14px}.score-board{grid-template-columns:1fr 1fr 1fr}.integrity-strip{grid-template-columns:1fr}.integrity-blockers{grid-column:auto}.receipt{grid-template-columns:1fr}.receipt-hash{grid-column:auto}
 }
+
+.quick-result{padding:20px;display:grid;gap:14px;border-color:#2b4058;background:linear-gradient(180deg,rgba(22,34,48,.72),rgba(13,17,23,.96))}
+.quick-result h2{margin:.2rem 0 0;font-size:clamp(1.5rem,4vw,2.15rem);letter-spacing:-.035em}
+.quick-reasons{display:grid;gap:8px}
+.quick-reason{display:grid;grid-template-columns:22px 1fr;gap:9px;align-items:start;padding:9px 0;border-top:1px solid var(--line)}
+.quick-reason:first-child{border-top:0}.quick-reason span{color:var(--good);font-weight:900}.quick-reason p{margin:0;color:#c7d0db}
+.evidence-toggle{justify-self:start;border:1px solid #355273;background:#0a1017;color:var(--accent);padding:9px 13px;border-radius:10px;font-weight:800}
+.evidence-toggle:hover,.evidence-toggle:focus-visible{background:#101b27;outline:none}
+.results[data-evidence="closed"] .evidence-detail{display:none!important}
+@media(max-width:480px){
+  .quick-result{padding:14px}.quick-reason{font-size:.92rem}
+  .verdict h1{font-size:2rem}.verdict{gap:18px}
+}
