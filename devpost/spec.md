@@ -2,15 +2,14 @@
 doc: spec
 status: approved
 ---
-# WOLF BrainCore Evaluator — Technical Spec
+# WOLF — AI Change Gate — Technical Spec
 
 ## Architecture
-The project is a zero-dependency browser application plus a tiny Node static server.
+The competition judge path is a zero-dependency browser application plus a tiny Node static server.
 
 ```text
 Request
   → Request Integrity Gate
-  → Domain Pack detection
   → Baseline + BrainCore candidate
   → Same deterministic WOLF rubric
   → Critical blockers
@@ -18,11 +17,8 @@ Request
   → SHA-256 receipt
 ```
 
-Optional paths:
-- fixed 8-case core benchmark;
-- 10-case finance transfer benchmark;
-- 6-case browser-agent transfer benchmark;
-- external structured candidate normalization.
+Optional competition path:
+- fixed eight-case core benchmark.
 
 ## Stack
 - Node.js 20+ for local serving/tests.
@@ -38,7 +34,7 @@ https://wolf-braincore-evaluator.onrender.com
 Judge-ready:
 https://wolf-braincore-evaluator.onrender.com/?demo=1
 
-## Components
+## Judge-Path Components
 
 ### `src/request-integrity.mjs`
 Independent semantic gate. Detects:
@@ -51,20 +47,16 @@ Independent semantic gate. Detects:
 
 Produces status, specificity score, contradictions, blockers and promotability.
 
-### `src/domain-packs.mjs`
-Provider-neutral domain contracts:
-- Finance Evidence Pack;
-- Browser Runtime Contract.
-
-It adds constraints, unknowns and verification requirements to the candidate plan when the request matches a domain.
-
 ### `src/braincore.mjs`
-Creates baseline and BrainCore candidate. BrainCore combines:
+Creates baseline and BrainCore candidate.
+
+The candidate combines:
 - literal request signals;
 - Request Integrity evidence;
-- relevant Domain Packs;
+- preserved constraints;
+- explicit unknowns;
 - definition of done;
-- execution/verification steps.
+- execution and verification steps.
 
 ### `src/evaluator.mjs`
 Calculates the five common metrics and merges independent Request Integrity blockers into finality.
@@ -72,20 +64,15 @@ Calculates the five common metrics and merges independent Request Integrity bloc
 A candidate can score above the promotion threshold and still be held when a critical blocker remains.
 
 ### `src/benchmark.mjs`
-Runs 8 balanced/adversarial fixed cases with explicit expected finalities.
-
-### `src/domain-benchmarks.mjs`
-Runs:
-- 10 finance transfer cases;
-- 6 browser-agent transfer cases.
-
-The transfer benchmarks check evidence-contract coverage rather than financial performance or browser task success.
-
-### `src/external-candidate.mjs`
-Normalizes structured external candidate plans into the WOLF schema and evaluates them against the same baseline/rubric/blockers.
+Runs eight balanced/adversarial fixed cases with explicit expected finalities.
 
 ### `src/app.js`
-Controls minimal landing, results rendering, Request Integrity evidence, benchmark view and SHA-256 receipt.
+Controls the minimal landing, results rendering, Request Integrity evidence, benchmark view and SHA-256 receipt.
+
+## Non-Judge Extensions
+The repository may also contain domain research, transfer-pack code or external-candidate experiments.
+
+Those modules are deliberately excluded from the competition UI and are not part of the competition acceptance criteria.
 
 ## Data Objects
 ```text
@@ -99,7 +86,6 @@ Plan
   steps[]
   verification[]
   requestIntegrity?
-  domainPacks?
 
 RequestIntegrity
   status
@@ -115,40 +101,27 @@ Evaluation
   total
   gaps[]
   requestIntegrity
-
-ExternalCandidateEvaluation
-  source
-  request
-  candidate: Plan
-  comparison
-  contractVersion
+  finality
 ```
 
-## File Structure
+## Core File Structure
 ```text
 src/
   app.js
   benchmark.mjs
   braincore.mjs
-  domain-benchmarks.mjs
-  domain-packs.mjs
   evaluator.mjs
-  external-candidate.mjs
   request-integrity.mjs
   styles.css
 
 tests/
   benchmark.test.mjs
-  domain-packs.test.mjs
   evaluator.test.mjs
-  external-candidate.test.mjs
   planner.test.mjs
   request-integrity.test.mjs
-
-research/
-  global-browser-agent-research.md
-  cross-system-audit.md
 ```
+
+Additional non-judge files may exist outside this core list.
 
 ## Regression Evidence
 Current suite target: **52 passing tests**.
@@ -157,21 +130,8 @@ Important known failures converted into tests:
 - short specific request falsely held;
 - long vague request falsely promoted;
 - contradictory action request falsely promoted;
-- budget override / evaluator-gaming request falsely promoted.
-
-## Research Basis
-Public evaluation guidance:
-- OpenAI evaluation best practices;
-- Anthropic agent eval guidance.
-
-Global browser-agent scan:
-- Canada: Browse AI;
-- Australia: Relevance AI;
-- Europe: Browser Use / Notte;
-- Asia: Tencent BrowserSkill / NEC cotomi Agent / ego;
-- infrastructure cross-check: TinyFish / Browserbase / Steel.
-
-These sources inform architecture only; WOLF has no runtime dependency on them.
+- budget override / evaluator-gaming request falsely promoted;
+- competition judge path accidentally reintroducing unrelated WOLF experiences.
 
 ## Important Failure Modes
 - empty input → no evaluation;
@@ -179,16 +139,18 @@ These sources inform architecture only; WOLF has no runtime dependency on them.
 - explicit contradiction → HOLD;
 - evaluator gaming → HOLD;
 - missing verification/constraint evidence → critical gap;
-- benchmark expectation regression → test failure;
-- external plan missing required goal → fail closed.
+- benchmark expectation regression → test failure.
 
 ## Simplifications
 - deterministic heuristics instead of live LLM calls;
-- fixed small benchmark suites rather than large datasets;
-- no persistence;\n- extra WOLF research/market experiments are intentionally excluded from the competition judge path;
+- fixed small benchmark rather than a large dataset;
+- no persistence;
+- no external model dependency in the judge path;
 - no calibrated scientific claim for metric weights.
 
 ## Decision
-WOLF remains independent from the candidate generator. The external-candidate contract makes that separation explicit.
+WOLF remains a standalone competition project.
+
+Na0mi is not a runtime dependency, judge-path dependency, or required component of this submission.
 
 No unresolved issue blocks shipment.
