@@ -1,67 +1,79 @@
-# Competition demo plan — final minimal UI
+# Competition demo plan — WOLF AI Change Gate
 
 Target: **90–120 seconds**, never over 3 minutes.
 
-## 0:00–0:12 — visual hook
+## 0:00–0:12 — problem in one sentence
 Open:
 https://wolf-braincore-evaluator.onrender.com/?demo=1
 
-Show only the centered wolf emblem and the single W request bar.
+Show the WOLF emblem and headline:
+**Should this AI change be promoted?**
 
-Narrative goal: “AI teams change prompts and agent logic constantly, but often judge improvement by vibe.”
+Narration:
+“AI builders change prompts, skills and planning logic constantly. Too often, the new version gets promoted because one output simply looks smarter.”
 
 ## 0:12–0:25 — one action
-The canonical request is already loaded with `?demo=1`.
+The canonical request is preloaded.
 
 Press **W**.
 
-Narrative goal: “WOLF gives the old and new planning paths the exact same request and exact same rubric.”
+Narration:
+“WOLF gives the baseline and candidate the exact same request, the same rubric and the same hard blockers.”
 
-## 0:25–0:55 — baseline vs BrainCore
+## 0:25–0:48 — verdict first
 Show:
-- Baseline 49/100
-- BrainCore 94/100
-- constraints / unknowns / definition of done / verification differences.
+- **PROMOTE**
+- Baseline **49/100**
+- Candidate **94/100**
+- Delta **+45**
+- Request Integrity **CLEAR**
 
-Keep this section visual; do not read every bullet.
+Narration:
+“WOLF does not reward verbosity. Promotion requires measurable improvement and no critical integrity or verification gap.”
 
-## 0:55–1:15 — five fixed metrics
-Show:
+## 0:48–1:08 — five shared metrics
+Show the five bars:
 - ambiguity resolved;
 - assumptions exposed;
 - constraints retained;
 - definition of done;
 - verification readiness.
 
-Narrative goal: “This is not longer-text-wins scoring.”
+Narration:
+“Both plans are scored by identical rules.”
 
-## 1:15–1:30 — finality + receipt
-Show **PROMOTE** and the SHA-256 receipt.
+## 1:08–1:25 — evidence, not vibes
+Briefly show the two plans, especially:
+- candidate unknowns;
+- definition of done;
+- verification.
 
-Narrative goal: “A candidate is not promoted because it sounds smarter; it must clear score, delta and critical-gap gates.”
+Then show the SHA-256 receipt.
 
-## 1:30–1:50 — benchmark proof
-Click **Benchmark**.
+Narration:
+“The decision is inspectable and the evaluated evidence gets a deterministic receipt.”
 
-Show the eight-case suite and pause on:
+## 1:25–1:50 — fail closed
+Click **Run benchmark**.
+
+Pause on:
 - **Under-specified intent → HOLD**
 - **Conflicting constraints → HOLD**
 - **Short but specific → PROMOTE**
 
-Narrative goal: “The demo is not cherry-picked. WOLF distinguishes short-but-specific requests from vague or contradictory ones, and can hold a high-scoring candidate when request integrity fails.”
+Narration:
+“The demo is not cherry-picked. WOLF can hold a high-scoring candidate when the request itself is vague, contradictory or tries to game the evaluator.”
 
 ## 1:50–2:00 — close
 End on:
 **Candidate output ≠ cognitive improvement ≠ verified promotion.**
 
-## Presentation rules
-- Show the real deployed app.
-- Explain problem → audience → working solution → evidence.
-- No unrelated tabs, notifications or private data.
-- No copyrighted music.
-- Keep every visual readable at normal playback speed.
+Narration:
+“WOLF is a model-neutral change gate for AI-agent builders.”
 
-Devpost presentation guidance applied:
-- set the problem quickly;
-- show the project working rather than only describing it;
-- keep the demo tightly scripted.
+## Recording rules
+- Show the real deployed app.
+- No unrelated tabs, notifications or private data.
+- Keep normal playback speed.
+- No copyrighted music.
+- Do not demonstrate Na0mi, trading, market tools, or unrelated WOLF experiments in the competition video.

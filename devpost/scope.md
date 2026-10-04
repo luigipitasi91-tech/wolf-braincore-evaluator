@@ -32,12 +32,12 @@ The PoC also contains two non-UI transfer packs:
 Structured outputs from an external agent can also be normalized into the same WOLF Plan schema, so WOLF is not limited to grading its own candidate generator.
 
 ## Inspiration & Identity
-The product is intentionally minimal: a centered wolf emblem and one W action on entry, with technical evidence revealed only after evaluation.
+The product is intentionally focused: a centered WOLF identity, one plain-English question — **Should this AI change be promoted?** — one request field, and three fixed demo scenarios. Technical evidence appears after evaluation.
 
 Earlier Na0mi/Xi0/WOLF work influenced the **idea** of authority, verification and finality, but this hackathon implementation is new code built from an empty project. No Na0mi V12 source code is reused.
 
 ## What "Working" Looks Like
-A judge opens the app, sees only WOLF + one request bar, submits with **W**, then sees:
+A judge opens the app, immediately understands the change-gate problem, submits one request with **W**, then sees:
 - baseline vs BrainCore plans;
 - request-integrity status;
 - five planning-quality metrics;
@@ -49,7 +49,7 @@ A judge opens the app, sees only WOLF + one request bar, submits with **W**, the
 The key moment is that WOLF can say **HOLD** to a candidate that scores highly if the request itself is contradictory or insufficiently specified.
 
 ## The POC Boundary
-In scope: responsive browser app, deterministic plan generation, independent request-integrity gate, five-metric evaluation, three finality states, eight core regression cases, finance/browser transfer packs, external-candidate normalization, and verifiable receipts.
+In scope: responsive browser app, judge-focused product shell, deterministic plan generation, independent request-integrity gate, five-metric evaluation, three finality states, eight core regression cases, finance/browser transfer packs, external-candidate normalization, and verifiable receipts.
 
 ## Later
 Real live model adapters, repeated trials for nondeterministic models, human-labelled calibration, persistent benchmark history, CI promotion gates, and direct Na0mi integration.

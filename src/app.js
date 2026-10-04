@@ -1,369 +1,165 @@
 import { buildPlans } from './braincore.mjs';
-import { comparePlans } from './evaluator.mjs';
+import { comparePlans, METRIC_LABELS } from './evaluator.mjs';
 import { runBenchmark } from './benchmark.mjs';
-import { runLiveResearch } from './live-research.mjs';
-import { runMarketLens, marketAnswer } from './market-lens.mjs';
-import { runAdamoLab } from './adamo-lab.mjs';
-import {
-  perception, localizePlan, localizeFinality, localizeMetricLabel, localizeIntegrityStatus
-} from './language-perception.mjs';
 
 const SAMPLE='Create an autonomous app that makes money for me with a £100 budget. It should work as independently as possible, never pretend revenue is real without proof, and ask me only when a human decision is genuinely required.';
+const SCENARIOS={
+  clear:SAMPLE,
+  vague:'Build me something useful.',
+  conflict:'Publish the pricing page automatically today, but do not take any external action and do not ask me anything.'
+};
 
-const $=sel=>document.querySelector(sel);
-const homeEl=$('#home'),formEl=$('#wolfForm'),requestEl=$('#request'),runBtn=$('#run'),backBtn=$('#back'),benchmarkBtn=$('#benchmark');
-const errorEl=$('#error'),benchmarkResultsEl=$('#benchmarkResults'),researchResultsEl=$('#researchResults'),marketLensEl=$('#marketLens'),adamoPanelEl=$('#adamoPanel'),resultsEl=$('#results'),auditDetails=$('#auditDetails');
+const $=selector=>document.querySelector(selector);
+const homeEl=$('#home');
+const resultsEl=$('#results');
+const formEl=$('#wolfForm');
+const requestEl=$('#request');
+const runBtn=$('#run');
+const errorEl=$('#error');
+const benchmarkEl=$('#benchmarkResults');
 
-let currentLocale='en';
+if(new URLSearchParams(location.search).get('demo')==='1') requestEl.value=SAMPLE;
 
-if(new URLSearchParams(location.search).get('demo')==='1')requestEl.value=SAMPLE;
-
-function escapeHtml(value=''){
+function esc(value=''){
   return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 }
-function decodeEntities(value=''){
-  const el=document.createElement('textarea');
-  el.innerHTML=String(value);
-  return el.value;
-}
-function list(items,ui){
+function list(items){
   const xs=Array.isArray(items)?items:[];
-  return xs.length?`<ul>${xs.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>`:`<p class="empty">${escapeHtml(ui.none)}</p>`;
+  return xs.length?'<ul>'+xs.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'<p class="empty">None</p>';
 }
-function fmt(v,d=2){
-  const n=Number(v);
-  if(!Number.isFinite(n))return '—';
-  return new Intl.NumberFormat(currentLocale==='it'?'it-IT':'en-GB',{maximumFractionDigits:d}).format(n);
+function planSection(title,items,open=false){
+  return '<details'+(open?' open':'')+'><summary>'+esc(title)+'</summary>'+list(items)+'</details>';
 }
-function blockerText(code,locale){
-  if(locale!=='it')return code;
-  const m={
-    CRITICAL_INPUT_UNDERSPECIFIED:'richiesta troppo poco specifica',
-    CRITICAL_REQUEST_CONFLICT:'istruzioni in conflitto',
-    CRITICAL_EVAL_GAMING:'tentativo di influenzare il valutatore',
-    CRITICAL_CONSTRAINT_RETENTION:'vincoli non mantenuti',
-    CRITICAL_VERIFICATION_GAP:'verifica insufficiente',
-    WEAK_DEFINITION_OF_DONE:'criteri di completamento deboli'
-  };
-  return m[code]||code;
+function planCard(plan,evaluation,kind){
+  return '<article class="plan-card '+kind+'">'+
+    '<div class="plan-head"><div><span class="eyebrow">'+esc(plan.label)+'</span><h3>'+evaluation.total+'/100</h3></div><span class="score-pill">WOLF SCORE</span></div>'+
+    '<details open><summary>Goal</summary><p>'+esc(plan.goal)+'</p></details>'+
+    planSection('Constraints',plan.constraints,true)+
+    planSection('Assumptions',plan.assumptions)+
+    planSection('Unknowns',plan.unknowns,true)+
+    planSection('Definition of done',plan.definitionOfDone,true)+
+    planSection('Plan',plan.steps)+
+    planSection('Verification',plan.verification,true)+
+  '</article>';
 }
-function integrityNotes(integrity,locale){
-  const it=locale==='it',out=[];
-  for(const x of integrity?.contradictions||[]){
-    const type=x.type;
-    if(!it){out.push(x.detail);continue}
-    if(type==='ACTION_CONTRADICTION')out.push('La richiesta chiede un’azione esterna e contemporaneamente la vieta.');
-    else if(type==='BUDGET_CONTRADICTION')out.push('La richiesta contiene limiti finanziari incompatibili.');
-    else if(type==='INTERACTION_CONTRADICTION')out.push('La richiesta richiede e vieta contemporaneamente l’interazione con l’utente.');
-    else if(type==='CONSTRAINT_OVERRIDE')out.push('La richiesta tenta di ignorare un vincolo che aveva appena stabilito.');
-    else out.push(x.detail);
-  }
-  if((integrity?.gamingSignals||[]).length)out.push(it?'Rilevato linguaggio diretto a influenzare il valutatore.':'Evaluator-gaming language detected.');
-  if(integrity?.status==='NEEDS_CLARIFICATION')out.push(it?'La richiesta è troppo ampia per essere promossa senza chiarimento.':'The request is too vague to promote without clarification.');
-  return out;
-}
-function reasonLines(comparison,locale){
-  const it=locale==='it',c=comparison.candidate.total,d=comparison.delta,critical=comparison.candidate.gaps.filter(x=>x.startsWith('CRITICAL_'));
-  if(!it)return comparison.reasons;
-  const lines=[];
-  if(comparison.finality==='PROMOTE'){
-    lines.push(`Il candidato supera la soglia di qualità (${c}/100).`);
-    lines.push(`Migliora il riferimento di ${d} punti.`);
-    lines.push('Non restano blocchi critici.');
-  }else if(comparison.finality==='HOLD'){
-    lines.push(`Il candidato migliora il riferimento di ${d} punti, ma non supera tutti i gate.`);
-    if(c<78)lines.push(`Il punteggio ${c}/100 è sotto la soglia di promozione di 78.`);
-    if(d<15)lines.push(`Il miglioramento di ${d} punti è sotto il delta minimo di 15.`);
-    if(critical.length)lines.push('Blocchi critici: '+critical.map(x=>blockerText(x,locale)).join(', ')+'.');
-  }else{
-    lines.push(`Il candidato non mostra un miglioramento misurabile sufficiente (delta ${d}).`);
-    if(c<60)lines.push(`La qualità ${c}/100 è sotto la soglia minima di attesa.`);
-    if(critical.length)lines.push('Blocchi critici: '+critical.map(x=>blockerText(x,locale)).join(', ')+'.');
-  }
-  return lines;
-}
-function planCard(plan,evalResult,kind,ui){
-  return `<article class="plan-card ${kind}">
-    <div class="plan-head"><div><span class="eyebrow">${escapeHtml(plan.label)}</span><h3>${evalResult.total}/100</h3></div><span class="score-pill">${escapeHtml(ui.wolfScore)}</span></div>
-    <section><h4>${escapeHtml(ui.goal)}</h4><p>${escapeHtml(plan.goal)}</p></section>
-    <section><h4>${escapeHtml(ui.constraints)}</h4>${list(plan.constraints,ui)}</section>
-    <section><h4>${escapeHtml(ui.assumptions)}</h4>${list(plan.assumptions,ui)}</section>
-    <section><h4>${escapeHtml(ui.unknowns)}</h4>${list(plan.unknowns,ui)}</section>
-    <section><h4>${escapeHtml(ui.definition)}</h4>${list(plan.definitionOfDone,ui)}</section>
-    <section><h4>${escapeHtml(ui.plan)}</h4>${list(plan.steps,ui)}</section>
-    <section><h4>${escapeHtml(ui.verification)}</h4>${list(plan.verification,ui)}</section>
-  </article>`;
-}
-function metricRows(comparison,locale){
+function metricRows(comparison){
   return Object.keys(comparison.baseline.metrics).map(key=>{
-    const b=comparison.baseline.metrics[key],c=comparison.candidate.metrics[key],delta=c-b,cls=delta>0?'positive':delta<0?'negative':'';
-    return `<div class="metric-row">
-      <div><strong>${escapeHtml(localizeMetricLabel(key,locale))}</strong><small>${b} baseline → ${c} BrainCore</small></div>
-      <div class="bar"><i style="width:${b}%"></i><b style="width:${c}%"></b></div>
-      <span class="delta ${cls}">${delta>=0?'+':''}${delta}</span>
-    </div>`;
+    const b=comparison.baseline.metrics[key];
+    const c=comparison.candidate.metrics[key];
+    const delta=c-b;
+    const cls=delta>0?'positive':delta<0?'negative':'';
+    return '<div class="metric-row">'+
+      '<div><strong>'+esc(METRIC_LABELS[key]||key)+'</strong><small>'+b+' baseline → '+c+' candidate</small></div>'+
+      '<div class="bar"><i style="width:'+b+'%"></i><b style="width:'+c+'%"></b></div>'+
+      '<span class="delta '+cls+'">'+(delta>=0?'+':'')+delta+'</span>'+
+    '</div>';
   }).join('');
+}
+function verdictCopy(comparison){
+  const critical=comparison.candidate.gaps.filter(x=>x.startsWith('CRITICAL_'));
+  if(comparison.finality==='PROMOTE'){
+    return 'The candidate clears the quality threshold, improves materially on baseline, and leaves no critical integrity or verification gap.';
+  }
+  if(comparison.finality==='HOLD'){
+    return critical.length
+      ? 'The candidate scores better, but WOLF refuses promotion because a hard blocker remains: '+critical.join(', ')+'.'
+      : 'The candidate improves on baseline, but it does not clear every promotion threshold yet.';
+  }
+  return 'The candidate does not provide enough measurable improvement to justify promotion.';
 }
 async function sha256(value){
   const bytes=new TextEncoder().encode(value);
   const digest=await crypto.subtle.digest('SHA-256',bytes);
   return [...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('');
 }
-function researchPriority(item){
-  const s=String(item.source||'').toLowerCase();
-  if(s.includes('duck'))return 0;
-  if(s.includes('wikipedia'))return 1;
-  if(s.includes('wikidata'))return 2;
-  if(s.includes('crossref'))return 5;
-  if(s.includes('openlibrary'))return 6;
-  return 3;
-}
-function renderResearch(request,research,integrity,p,marketReady){
-  const ui=p.catalog.ui,locale=p.responseLocale;
-  if(research.status==='NOT_RESEARCH_INTENT'){researchResultsEl.hidden=true;return}
-  $('#researchEyebrow').textContent=ui.live;
-  $('#researchTitle').textContent=ui.sources||ui.evidence;
-  $('#sourceFidelity').textContent=ui.sourceFidelity||'';
-
-  if(research.status==='LIVE_RESEARCH_UNAVAILABLE'){
-    $('#researchMeta').textContent='Na0mi V12 · '+ui.unavailable;
-    $('#researchIntro').textContent=ui.liveUnavailable;
-    $('#researchItems').innerHTML='';
-    researchResultsEl.hidden=false;return;
-  }
-
-  const clarification=integrity?.status==='NEEDS_CLARIFICATION';
-  const sorted=[...(research.results||[])].sort((a,b)=>researchPriority(a)-researchPriority(b));
-  let chosen=sorted;
-  if(marketReady){
-    const nonAcademic=sorted.filter(x=>researchPriority(x)<5);
-    if(!nonAcademic.length){researchResultsEl.hidden=true;return}
-    chosen=nonAcademic.slice(0,4);
-  }else chosen=sorted.slice(0,5);
-
-  $('#researchMeta').textContent=`${research.provider||'Na0mi V12'} · ${research.resultCount} ${ui.results}`;
-  $('#researchIntro').textContent=clarification?ui.broadResearch:ui.liveOk;
-  $('#researchItems').innerHTML=chosen.length?chosen.map(item=>`
-    <article class="research-item">
-      <div class="research-source">${escapeHtml(item.source)}</div>
-      <a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">${escapeHtml(decodeEntities(item.title))}</a>
-      ${item.snippet?`<p>${escapeHtml(decodeEntities(item.snippet))}</p>`:''}
-    </article>`).join(''):`<p class="empty">${escapeHtml(ui.noResults)}</p>`;
-  researchResultsEl.hidden=false;
-}
-function renderMarketLens(lens,p){
-  const ui=p.catalog.ui,it=p.responseLocale==='it';
-  if(!lens||lens.status==='NOT_MARKET_INTENT'){marketLensEl.hidden=true;return}
-  $('#marketTitle').textContent=ui.marketLens||'Market Lens';
-  $('#marketReadOnly').textContent=ui.readOnly||'READ ONLY';
-  $('#marketSummary').textContent=lens.summary||'';
-  const cards=lens.cards||[];
-  $('#marketCards').innerHTML=cards.map(x=>{
-    const cp=Number(x.changePercent),cls=!Number.isFinite(cp)?'flat':cp>0?'up':cp<0?'down':'flat';
-    const change=Number.isFinite(cp)?`${cp>=0?'+':''}${fmt(cp,2)}%`:(it?'dato non disponibile':'data unavailable');
-    const meta=[x.proxy,x.exchange,x.latestTradingDay].filter(Boolean).join(' · ');
-    return `<article class="market-card">
-      <div class="market-card-head"><div><h3>${escapeHtml(x.label||x.symbol)}</h3><div class="market-symbol">${escapeHtml(x.symbol||'')}</div></div><span class="market-change ${cls}">${escapeHtml(change)}</span></div>
-      <div class="market-price">${x.price==null?'—':escapeHtml(fmt(x.price,4))} <small>${escapeHtml(x.currency||'')}</small></div>
-      <small>${escapeHtml(meta||x.status||'')}</small>
-    </article>`;
-  }).join('');
-
-  const f=lens.focus;
-  if(f&&f.observations){
-    const o=f.observations;
-    $('#marketFocus').innerHTML=`<strong>${it?'Analisi descrittiva':'Descriptive analysis'} · ${escapeHtml(f.symbol)}</strong>
-      <div class="market-focus-grid">
-        <div><span>${it?'Tendenza':'Trend'}</span><strong>${escapeHtml(o.trend||'—')}</strong></div>
-        <div><span>RSI 14</span><strong>${escapeHtml(fmt(o.rsi14,2))}</strong></div>
-        <div><span>${it?'Supporto 20':'Support 20'}</span><strong>${escapeHtml(fmt(o.support20,4))}</strong></div>
-        <div><span>${it?'Resistenza 20':'Resistance 20'}</span><strong>${escapeHtml(fmt(o.resistance20,4))}</strong></div>
-      </div>
-      <div class="market-meta">${it?'Analisi descrittiva, non segnale di trading.':'Descriptive analysis, not a trading signal.'}</div>`;
-    $('#marketFocus').hidden=false;
-  }else{$('#marketFocus').hidden=true;$('#marketFocus').innerHTML=''}
-
-  $('#marketQuestions').innerHTML=(lens.questions||[]).map(q=>`<span class="question-chip">${escapeHtml(q)}</span>`).join('');
-  const provider=lens.providerStatus?.provider||lens.source||'Na0mi V12';
-  const freshness=lens.providerStatus?.freshness?.quoteDefault||'';
-  $('#marketMeta').textContent=[provider,freshness,it?'Nessun ordine preparato o eseguito.':'No order prepared or executed.'].filter(Boolean).join(' · ');
-  marketLensEl.hidden=false;
-}
-function renderAdamo(adamo,p){
-  if(!adamo||adamo.status==='NOT_ADAMO_INTENT'){adamoPanelEl.hidden=true;return}
-  const it=p.responseLocale==='it';
-  $('#adamoTitle').textContent=it?'Risultato di Adamo':'Adamo Result';
-  $('#adamoMode').textContent=it?'SOLO PAPER':'PAPER ONLY';
-
-  if(adamo.status==='ADAMO_UNAVAILABLE'){
-    $('#adamoAnalysis').textContent=it
-      ? 'Adamo non è disponibile in questo momento. WOLF non inventa un risultato e non usa denaro reale.'
-      : 'Adamo is unavailable right now. WOLF does not fabricate a result and does not use real money.';
-    $('#adamoStats').innerHTML='';
-    $('#adamoCandidate').innerHTML='';
-    $('#adamoStress').innerHTML='';
-    $('#adamoV8').innerHTML='';
-    $('#adamoCaveat').textContent='';
-    adamoPanelEl.hidden=false;return;
-  }
-
-  $('#adamoAnalysis').textContent=adamo.analysis||'';
-  const a=adamo.attempts||{},o=adamo.objective||{},stress=adamo.stress||{},top=adamo.topCandidate||null;
-  const pct=v=>Number.isFinite(Number(v))?`${(Number(v)*100).toFixed(1)}%`:'—';
-  const money=v=>Number.isFinite(Number(v))?`£${Number(v).toFixed(2)}`:'—';
-
-  $('#adamoStats').innerHTML=`
-    <div><span>${it?'Obiettivo':'Objective'}</span><strong>${money(o.startCapital)} → ${money(o.targetCapital)}</strong></div>
-    <div><span>${it?'Tentativi':'Attempts'}</span><strong>${a.completed??a.requested??1001}</strong></div>
-    <div><span>${it?'Sopravvissuti':'Survivors'}</span><strong>${a.survived??0}</strong></div>
-    <div><span>${it?'Stress path':'Stress paths'}</span><strong>${stress.count??1001}</strong></div>`;
-
-  $('#adamoCandidate').innerHTML=top?`
-    <div class="adamo-section-title">${it?'Miglior candidato storico paper':'Best historical paper candidate'}</div>
-    <div class="adamo-candidate-grid">
-      <div><span>Asset</span><strong>${escapeHtml(top.symbol||'—')}</strong></div>
-      <div><span>Fast / Slow</span><strong>${top.fast??'—'} / ${top.slow??'—'}</strong></div>
-      <div><span>${it?'Saldo test':'Test balance'}</span><strong>${money(top.finalBalance)}</strong></div>
-      <div><span>Drawdown</span><strong>${pct(top.test?.drawdown)}</strong></div>
-      <div><span>Sharpe</span><strong>${fmt(top.test?.sharpe,2)}</strong></div>
-      <div><span>${it?'Robusto':'Robust'}</span><strong>${top.robust?(it?'SÌ':'YES'):(it?'NO':'NO')}</strong></div>
-    </div>`
-    :`<p class="empty">${it?'Nessun candidato disponibile.':'No candidate available.'}</p>`;
-
-  $('#adamoStress').innerHTML=`
-    <div class="adamo-section-title">${it?'1001 stress path':'1001 stress paths'}</div>
-    <div class="adamo-candidate-grid">
-      <div><span>${it?'Target raggiunto':'Target hit'}</span><strong>${pct(stress.probabilityTarget)}</strong></div>
-      <div><span>${it?'Mediana finale':'Median final'}</span><strong>${money(stress.medianFinal)}</strong></div>
-      <div><span>P05</span><strong>${money(stress.p05Final)}</strong></div>
-      <div><span>P95</span><strong>${money(stress.p95Final)}</strong></div>
-      <div><span>${it?'Prob. dimezzamento':'Half-loss risk'}</span><strong>${pct(stress.ruinProbability)}</strong></div>
-      <div><span>${it?'Finalità':'Finality'}</span><strong>${escapeHtml(adamo.finality||'—')}</strong></div>
-    </div>`;
-
-  const v8=adamo.v8?.evaluation||{},plan=adamo.v8?.plan||{};
-  $('#adamoV8').innerHTML=`
-    <div class="adamo-section-title">Na0mi V8</div>
-    <p>${escapeHtml(it
-      ? `Modalità ${plan.mode||'—'} · cilindri ${(plan.selectedCylinders||[]).join(', ')||'—'} · ${v8.eligibleForXi0Review?'idoneo alla revisione Xi0':'non promosso alla revisione Xi0'}.`
-      : `Mode ${plan.mode||'—'} · cylinders ${(plan.selectedCylinders||[]).join(', ')||'—'} · ${v8.eligibleForXi0Review?'eligible for Xi0 review':'not promoted to Xi0 review'}.`)}</p>`;
-
-  $('#adamoCaveat').textContent=it
-    ? 'Esperimento storico e bootstrap: non è una previsione, una raccomandazione o un ordine. £100→£500 resta un obiettivo di ricerca.'
-    : 'Historical and bootstrap experiment: not a forecast, recommendation, or order. £100→£500 remains a research objective.';
-  adamoPanelEl.hidden=false;
-}
-
-function renderAnswer(request,p,lens,research,localizedCandidate,adamo){
-  const locale=p.responseLocale,it=locale==='it';
-  const market=marketAnswer(request,lens,locale);
-  let answer=adamo?.status==='ADAMO_1001_COMPLETE'&&adamo.analysis?adamo.analysis:market;
-  if(!answer){
-    if(research?.status==='LIVE_RESEARCH_COMPLETE')answer=it
-      ? `Ho trovato ${research.resultCount} risultati live. Ti mostro prima le fonti più utili e tengo l’audit tecnico separato.`
-      : `I found ${research.resultCount} live results. The most useful sources come first and the technical audit stays separate.`;
-    else if(p.catalogSupported===false)answer='WOLF detected your language, but this build does not yet have a complete response catalog for it.';
-    else answer=it
-      ? 'Ho trasformato la richiesta in un piano verificabile. Se manca un dettaglio decisivo te lo segnalo invece di inventarlo.'
-      : 'I turned the request into a verifiable plan. If a consequential detail is missing, WOLF surfaces it instead of inventing it.';
-  }
-  $('#answerText').textContent=answer;
-  $('#languageBadge').textContent=`${String(p.detected).toUpperCase()} · ${Math.round((p.confidence||0)*100)}%`;
-  $('#answerQuestions').innerHTML=(localizedCandidate.unknowns||[]).slice(0,3).map(x=>`<span class="question-chip">${escapeHtml(x)}</span>`).join('');
-}
-function applyLocale(p){
-  const ui=p.catalog.ui;
-  currentLocale=p.responseLocale;
-  document.documentElement.lang=currentLocale;
-  backBtn.textContent=ui.new;benchmarkBtn.textContent=ui.benchmark;
-  $('#planningEyebrow').textContent=ui.planning;
-  $('#planningTitle').textContent=ui.sameIntent;
-  $('#planningNote').textContent=ui.baselineControl;
-  $('#rubricTitle').textContent=ui.rubric;
-  $('#rubricNote').textContent=ui.identical;
-  $('#finalityEyebrow').textContent=ui.finality;
-  $('#promotionTitle').textContent=ui.promotion;
-  $('#promotionNote').textContent=ui.promotionNote;
-  $('#auditLabel').textContent=ui.openAudit||ui.audit;
-}
 function renderBenchmark(){
-  const rows=runBenchmark(),it=currentLocale==='it';
+  const rows=runBenchmark();
   const counts=rows.reduce((acc,row)=>{acc[row.finality]=(acc[row.finality]||0)+1;return acc},{});
-  $('#benchmarkSummary').innerHTML=`
-    <div><span>${it?'Casi':'Cases'}</span><strong>${rows.length}</strong></div>
-    <div><span>Promote</span><strong>${counts.PROMOTE||0}</strong></div>
-    <div><span>Hold</span><strong>${counts.HOLD||0}</strong></div>
-    <div><span>Reject</span><strong>${counts.REJECT||0}</strong></div>`;
-  $('#benchmarkRows').innerHTML=rows.map(row=>`
-    <div class="benchmark-row">
-      <div><strong>${escapeHtml(row.title)}</strong><small>${escapeHtml(row.request)}</small></div>
-      <span>${row.baseline} → ${row.candidate}</span>
-      <b class="benchmark-finality ${row.finality.toLowerCase()}">${escapeHtml(localizeFinality(row.finality,currentLocale))}</b>
-    </div>`).join('');
-  benchmarkResultsEl.hidden=false;auditDetails.open=true;
-  benchmarkResultsEl.scrollIntoView({behavior:'smooth',block:'start'});
+  $('#benchmarkSummary').innerHTML=
+    '<div><span>Cases</span><strong>'+rows.length+'</strong></div>'+
+    '<div><span>PROMOTE</span><strong>'+(counts.PROMOTE||0)+'</strong></div>'+
+    '<div><span>HOLD</span><strong>'+(counts.HOLD||0)+'</strong></div>'+
+    '<div><span>Expectation met</span><strong>'+rows.filter(x=>x.expectationMet).length+'/'+rows.length+'</strong></div>';
+  $('#benchmarkRows').innerHTML=rows.map(row=>
+    '<div class="benchmark-row">'+
+      '<div><strong>'+esc(row.title)+'</strong><small>'+esc(row.request)+'</small></div>'+
+      '<span>'+row.baseline+' → '+row.candidate+'</span>'+
+      '<b class="benchmark-finality '+row.finality.toLowerCase()+'">'+esc(row.finality)+'</b>'+
+    '</div>'
+  ).join('');
+  benchmarkEl.hidden=false;
+  benchmarkEl.scrollIntoView({behavior:'smooth',block:'start'});
 }
 async function runEvaluation(){
   const request=requestEl.value.trim();
   errorEl.textContent='';
-  const p=perception(request,{browserLanguages:Array.from(navigator.languages||[])});
-  if(!request){errorEl.textContent=p.catalog.ui.empty;requestEl.focus();return}
-  applyLocale(p);
-  runBtn.disabled=true;const previousLabel=runBtn.textContent;runBtn.textContent='…';
+  if(!request){errorEl.textContent='Enter a request first.';requestEl.focus();return;}
+  runBtn.disabled=true;
+  const previous=runBtn.textContent;
+  runBtn.textContent='…';
   try{
-    const [research,lens,adamo]=await Promise.all([
-      runLiveResearch(request,{depth:'DEEP'}),
-      runMarketLens(request,{locale:p.responseLocale}),
-      runAdamoLab(request,{locale:p.responseLocale})
-    ]);
     const plans=buildPlans(request);
     const comparison=comparePlans(plans.baseline,plans.candidate,request);
-    const displayBaseline=localizePlan(plans.baseline,p.responseLocale);
-    const displayCandidate=localizePlan(plans.candidate,p.responseLocale);
-    const ui=p.catalog.ui;
+    const statusClass=comparison.finality.toLowerCase();
+    const integrity=comparison.requestIntegrity;
+    const blockers=comparison.candidate.gaps.length?comparison.candidate.gaps.join(' · '):'None';
+
+    $('#decisionBadge').className='verdict-badge '+statusClass;
+    $('#decisionBadge').textContent=comparison.finality;
+    $('#decisionTitle').textContent=comparison.finality==='PROMOTE'?'Promote the change':comparison.finality==='HOLD'?'Hold the change':'Reject the change';
+    $('#decisionCopy').textContent=verdictCopy(comparison);
+    $('#scoreBaseline').textContent=comparison.baseline.total+'/100';
+    $('#scoreCandidate').textContent=comparison.candidate.total+'/100';
+    $('#scoreDelta').textContent=(comparison.delta>=0?'+':'')+comparison.delta;
+    $('#integrityStatus').textContent=integrity.status;
+    $('#specificityScore').textContent=integrity.specificity+'/100';
+    $('#blockers').textContent=blockers;
+    $('#metrics').innerHTML=metricRows(comparison);
+    $('#plans').innerHTML=planCard(plans.baseline,comparison.baseline,'baseline')+planCard(plans.candidate,comparison.candidate,'candidate');
+
     const receiptCore={
-      receiptVersion:'wolf-braincore-receipt/1.1',request,language:p.detected,
-      baselineScore:comparison.baseline.total,candidateScore:comparison.candidate.total,delta:comparison.delta,
-      finality:comparison.finality,candidateGaps:comparison.candidate.gaps,
-      researchStatus:research.status,marketLensStatus:lens.status,adamoStatus:adamo.status,adamoFinality:adamo.finality||null
+      receiptVersion:'wolf-braincore-receipt/2.0',
+      evaluator:'WOLF BrainCore Evaluator',
+      request,
+      requestIntegrity:integrity.status,
+      baselineScore:comparison.baseline.total,
+      candidateScore:comparison.candidate.total,
+      delta:comparison.delta,
+      finality:comparison.finality,
+      candidateGaps:comparison.candidate.gaps
     };
-    const receiptHash=await sha256(JSON.stringify(receiptCore)),issuedAt=new Date().toISOString(),statusClass=comparison.finality.toLowerCase();
+    const receiptHash=await sha256(JSON.stringify(receiptCore));
+    const requestHash=await sha256(request);
+    $('#receipt').innerHTML=
+      '<div><span>Request hash</span><code>'+requestHash.slice(0,24)+'…</code></div>'+
+      '<div><span>Baseline</span><strong>'+comparison.baseline.total+'/100</strong></div>'+
+      '<div><span>Candidate</span><strong>'+comparison.candidate.total+'/100</strong></div>'+
+      '<div><span>Finality</span><strong>'+comparison.finality+'</strong></div>'+
+      '<div class="receipt-hash"><span>Evidence receipt · SHA-256</span><code>'+receiptHash+'</code></div>';
 
-    renderAnswer(request,p,lens,research,displayCandidate,adamo);
-    renderAdamo(adamo,p);
-    renderMarketLens(lens,p);
-    renderResearch(request,research,comparison.requestIntegrity,p,lens.status==='MARKET_LENS_READY');
-
-    $('#plans').innerHTML=planCard(displayBaseline,comparison.baseline,'baseline',ui)+planCard(displayCandidate,comparison.candidate,'candidate',ui);
-    $('#metrics').innerHTML=metricRows(comparison,p.responseLocale);
-    const integrity=comparison.requestIntegrity,notes=integrityNotes(integrity,p.responseLocale);
-    $('#decision').innerHTML=`
-      <div class="decision-badge ${statusClass}">${escapeHtml(localizeFinality(comparison.finality,p.responseLocale))}</div>
-      <div><h3>${escapeHtml(comparison.finality==='PROMOTE'?ui.clears:comparison.finality==='HOLD'?ui.hold:ui.reject)}</h3>
-      <p class="integrity-line"><strong>${escapeHtml(ui.integrity)}:</strong> ${escapeHtml(localizeIntegrityStatus(integrity.status,p.responseLocale))} · ${escapeHtml(ui.specificity)} ${integrity.specificity}/100</p>
-      ${notes.length?list(notes,ui):''}
-      ${list(reasonLines(comparison,p.responseLocale),ui)}</div>`;
-    const labels=p.responseLocale==='it'
-      ? {hash:'Hash richiesta',base:'Riferimento',brain:'BrainCore',delta:'Delta',final:'Finalità',issued:'Emesso',receipt:'SHA-256 ricevuta'}
-      : {hash:'Request hash',base:'Baseline',brain:'BrainCore',delta:'Delta',final:'Finality',issued:'Issued',receipt:'Receipt SHA-256'};
-    $('#receipt').innerHTML=`
-      <div><span>${labels.hash}</span><code>${(await sha256(request)).slice(0,24)}…</code></div>
-      <div><span>${labels.base}</span><strong>${comparison.baseline.total}/100</strong></div>
-      <div><span>${labels.brain}</span><strong>${comparison.candidate.total}/100</strong></div>
-      <div><span>${labels.delta}</span><strong>${comparison.delta>=0?'+':''}${comparison.delta}</strong></div>
-      <div><span>${labels.final}</span><strong>${escapeHtml(localizeFinality(comparison.finality,p.responseLocale))}</strong></div>
-      <div><span>${labels.issued}</span><code>${issuedAt}</code></div>
-      <div class="receipt-hash"><span>${labels.receipt}</span><code>${receiptHash}</code></div>`;
-
-    benchmarkResultsEl.hidden=true;auditDetails.open=false;
-    homeEl.hidden=true;resultsEl.hidden=false;scrollTo({top:0,behavior:'smooth'});
-  }finally{runBtn.disabled=false;runBtn.textContent=previousLabel}
+    benchmarkEl.hidden=true;
+    homeEl.hidden=true;
+    resultsEl.hidden=false;
+    scrollTo({top:0,behavior:'smooth'});
+  }finally{
+    runBtn.disabled=false;
+    runBtn.textContent=previous;
+  }
 }
 function newEvaluation(){
-  resultsEl.hidden=true;benchmarkResultsEl.hidden=true;researchResultsEl.hidden=true;marketLensEl.hidden=true;adamoPanelEl.hidden=true;auditDetails.open=false;
-  homeEl.hidden=false;errorEl.textContent='';requestEl.focus();
+  resultsEl.hidden=true;
+  benchmarkEl.hidden=true;
+  homeEl.hidden=false;
+  errorEl.textContent='';
+  requestEl.focus();
 }
 
-formEl.addEventListener('submit',e=>{e.preventDefault();runEvaluation()});
-benchmarkBtn.addEventListener('click',renderBenchmark);
-backBtn.addEventListener('click',newEvaluation);
+formEl.addEventListener('submit',event=>{event.preventDefault();runEvaluation();});
+$('#back').addEventListener('click',newEvaluation);
+$('#benchmark').addEventListener('click',renderBenchmark);
+document.querySelectorAll('[data-scenario]').forEach(button=>{
+  button.addEventListener('click',()=>{
+    requestEl.value=SCENARIOS[button.dataset.scenario]||SAMPLE;
+    requestEl.focus();
+  });
+});

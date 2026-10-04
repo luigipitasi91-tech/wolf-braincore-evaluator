@@ -12,7 +12,7 @@ Build mode: fast
 - [x] Finality is deterministic: PROMOTE / HOLD / REJECT.
 - [x] SHA-256 receipt records evaluated evidence.
 - [x] Responsive public demo is live.
-- [x] Minimal landing: wolf emblem + request bar + W only.
+- [x] Judge-focused landing: WOLF identity + plain-English product question + request bar + W.
 - [x] Fixed eight-case balanced/adversarial benchmark added.
 - [x] Severely under-specified input fails closed and cannot auto-promote.
 - [x] Automated benchmark regression tests added.
@@ -28,15 +28,15 @@ Build mode: fast
 - [x] Early usable behavior explored.
 - [x] Original mobile layout tested by learner.
 - [x] Competition redesign explicitly requested by learner.
-- [x] Final redesigned live flow mechanically verified end-to-end.
+- [x] Final judge-focused change-gate flow mechanically verified end-to-end.
 
 ## Final verification
 GitHub CI: PASS.
 
-Automated tests: **25/25 PASS**.
+Automated tests target: **52/52 PASS**.
 
 Public live verification:
-- Landing contains only centered wolf emblem + request bar + W.
+- Landing explains the change-gate problem, offers one request bar, W action and three deterministic demo scenarios.
 - Canonical request: Baseline **49/100** → BrainCore **94/100** → **PROMOTE**.
 - Five metrics present.
 - SHA-256 receipt present.
@@ -64,7 +64,7 @@ Regression path:
 
 ## Revisions
 - Fixed early mobile `hidden` CSS bug.
-- Replaced information-heavy landing page with ultra-minimal WOLF entry point.
+- Replaced the ambiguous ultra-minimal entry point with a judge-focused WOLF change-gate product shell.
 - Added fixed eight-case benchmark to reduce cherry-picked-demo risk.
 - Replaced raw word-count underspecification with semantic Request Integrity.
 - Added `CRITICAL_REQUEST_CONFLICT` and `CRITICAL_EVAL_GAMING`.
