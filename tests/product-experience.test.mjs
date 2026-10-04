@@ -2,38 +2,38 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 
-test('result hierarchy is answer first, evidence second, audit last',async()=>{
+test('result hierarchy is verdict first, shared metrics second, inspectable plans third',async()=>{
   const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
-  const answer=html.indexOf('id="answerPanel"');
-  const market=html.indexOf('id="marketLens"');
-  const research=html.indexOf('id="researchResults"');
-  const audit=html.indexOf('id="auditDetails"');
-  assert.ok(answer>0&&market>answer&&research>market&&audit>research);
-  assert.match(html,/<details id="auditDetails"/);
-  assert.doesNotMatch(html,/<details id="auditDetails"[^>]*open/);
+  const verdict=html.indexOf('class="verdict panel"');
+  const integrity=html.indexOf('class="integrity-strip panel"');
+  const metrics=html.indexOf('class="panel metrics-panel"');
+  const plans=html.indexOf('id="plans"');
+  const receipt=html.indexOf('id="receipt"');
+  const benchmark=html.indexOf('id="benchmarkResults"');
+  assert.ok(verdict>0&&integrity>verdict&&metrics>integrity&&plans>metrics&&receipt>plans&&benchmark>receipt);
 });
 
-test('minimal landing remains wolf + one request form',async()=>{
+test('judge can understand value before pressing W',async()=>{
   const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
   const home=html.slice(html.indexOf('<section id="home"'),html.indexOf('<section id="results"'));
-  assert.match(home,/class="wolf-logo"/);
-  assert.match(home,/id="wolfForm"/);
-  assert.match(home,/id="request"/);
-  assert.match(home,/id="run"/);
-  assert.doesNotMatch(home,/planning comparison|market intelligence|promotion decision/i);
+  assert.match(home,/Should this AI change be promoted\?/);
+  assert.match(home,/same request/i);
+  assert.match(home,/same rubric/i);
+  assert.match(home,/hard blockers/i);
+  assert.match(home,/8 fixed regression cases/);
 });
 
-test('browser client has no trading execution route or broker credentials',async()=>{
+test('browser client is deterministic and provider-neutral',async()=>{
   const app=await readFile(new URL('../src/app.js',import.meta.url),'utf8');
-  const market=await readFile(new URL('../src/market-lens.mjs',import.meta.url),'utf8');
-  const combined=app+'\n'+market;
-  assert.doesNotMatch(combined,/trading212.*order|order\.place|api[_-]?secret|api[_-]?key/i);
-  assert.match(market,/wolf\/market\/lens/);
+  assert.match(app,/comparePlans/);
+  assert.match(app,/wolf-braincore-receipt\/2\.0/);
+  assert.match(app,/crypto\.subtle\.digest/);
+  assert.doesNotMatch(app,/fetch\(|XMLHttpRequest|WebSocket|EventSource/);
 });
 
-test('language perception runs before user-facing rendering',async()=>{
+test('fail-closed scenarios are directly demoable from the landing',async()=>{
   const app=await readFile(new URL('../src/app.js',import.meta.url),'utf8');
-  assert.match(app,/perception\(request/);
-  assert.match(app,/localizePlan/);
-  assert.match(app,/document\.documentElement\.lang/);
+  assert.match(app,/vague:'Build me something useful\.'/);
+  assert.match(app,/conflict:'Publish the pricing page automatically today/);
+  assert.match(app,/data-scenario/);
 });
