@@ -22,7 +22,7 @@ main{min-height:100vh}
 .wolf-search input::placeholder{color:#667181}.wolf-search input::-webkit-search-cancel-button{display:none}
 .wolf-search button{width:50px;height:50px;border-radius:14px;border:1px solid #5e9fe9;color:white;background:#101923;font-weight:900;font-size:1.08rem}
 .wolf-search button:hover,.wolf-search button:focus-visible{background:#16283b;outline:none}
-.scenario-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.input-helper{margin:-8px 0 0;color:#7f8a98;font-size:.75rem;text-align:center;max-width:680px}\n.scenario-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
 .scenario-chip{border:1px solid var(--line);background:#080c11;color:var(--muted);border-radius:999px;padding:7px 11px;font-size:.76rem}
 .scenario-chip:hover{color:var(--text);border-color:#3a516b}
 .home-error{height:20px;margin:0;color:var(--bad);font-size:.82rem}
