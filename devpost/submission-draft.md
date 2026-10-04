@@ -48,10 +48,10 @@ WOLF is not another chatbot and it is not a model leaderboard.
 
 It evaluates the **change itself**.
 
-The evaluator is deliberately provider-neutral and deterministic in the judge path. It does not need a model API, secret, paid token, or network call to decide whether a candidate clears the gate.
+The evaluator is deliberately deterministic in the judge path. It does not need a model API, secret, paid token, or network call to decide whether a candidate clears the gate.
 
 The important design choice is separating:
-- **request integrity** — is the request itself safe and specific enough to evaluate?
+- **request integrity** — is the request specific and internally consistent enough to evaluate?
 from
 - **candidate quality** — did the new planning workflow actually improve?
 
@@ -68,7 +68,7 @@ That means a numerically strong candidate still cannot auto-promote through a cr
 ## What I learned
 The biggest lesson was that planning before adding features matters more than adding more features.
 
-During development, WOLF briefly grew into a broader research experience. Returning to the scope, PRD, and spec made the product stronger: the competition version now does one thing end to end and makes that purpose obvious before the user presses a button.
+During development, WOLF briefly grew beyond the core evaluation problem. Returning to the scope, PRD, and spec made the product stronger: the competition version now does one thing end to end and makes that purpose obvious before the user presses a button.
 
 I also learned that a useful evaluator needs negative evidence, not only successful demos. A short but specific request should not fail just because it is short, while a long vague request should not pass because it contains more words. Contradictions and evaluator-gaming language also need to remain independent hard blockers.
 
@@ -77,7 +77,7 @@ The final workflow is therefore smaller, more explainable, and more testable.
 ## Challenges
 The hardest part was preventing the rubric from rewarding superficial signals.
 
-Early versions risked treating length as specificity. The Request Integrity layer was redesigned around semantic features such as action, artifact, conditions, explicit contradictions, and constraint override signals.
+Early versions risked treating length as specificity. The Request Integrity layer was redesigned around semantic features such as action, artifact, conditions, explicit contradictions, and constraint-override signals.
 
 Another challenge was keeping scoring and finality separate. WOLF now requires both measurable score improvement and the absence of critical blockers.
 
@@ -88,16 +88,14 @@ Another challenge was keeping scoring and finality separate. WOLF now requires b
 - Independent Request Integrity gate.
 - Five shared planning-quality metrics.
 - SHA-256 evidence receipts.
-- Eight fixed core regression cases.
-- Finance and browser-agent transfer packs in the repository.
-- External-candidate normalization contract.
+- Eight fixed regression cases with both pass and fail-closed outcomes.
 - **52/52 automated tests passing.**
 - No runtime API key required for the judge path.
 
 ## New-project disclosure
 This hackathon implementation was started from an empty folder during the submission period and built with the Devpost Learn Skill Pack.
 
-Earlier Na0mi/Xi0/WOLF work influenced the idea of independent verification and finality, but no earlier source code was copied into this project.
+Earlier Na0mi/Xi0/WOLF work influenced the ideas of independent verification and finality, but no earlier source code was copied into this project.
 
 ## Links
 ### Public repository — required
@@ -107,7 +105,7 @@ https://github.com/luigipitasi91-tech/wolf-braincore-evaluator
 https://wolf-braincore-evaluator.onrender.com/?demo=1
 
 ### Demo video
-Replace this line with the final 1–3 minute public video URL after recording.
+Replace this line with the final 1–3 minute public or unlisted video URL after recording.
 
 ## Recommended Devpost field mapping
 - **Project name:** WOLF — AI Change Gate
@@ -115,5 +113,5 @@ Replace this line with the final 1–3 minute public video URL after recording.
 - **What it does:** use “Short description” + “What it does”
 - **Who it's for:** use “Who it is for”
 - **What I learned:** use “What I learned”
-- **Try it out link:** public GitHub repository URL, because the hackathon specifically requires the public repo in the submission
+- **Try it out link:** public GitHub repository URL
 - **Additional project link:** live Render demo, if the form provides another URL field
