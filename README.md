@@ -24,16 +24,16 @@ No login or API key required.
 
 ## What it demonstrates
 
-1. Same request → baseline + BrainCore candidate.
-2. Same five-dimension rubric for both.
-3. Score + delta + critical-gap promotion gates.
-4. `PROMOTE`, `HOLD`, or `REJECT`.
-5. SHA-256 evidence receipt.
-6. Fixed eight-case benchmark to reduce cherry-picked-demo risk.
-7. Semantic request-integrity gate: vague, contradictory, and evaluator-gaming requests cannot auto-promote.
-8. Provider-neutral external-candidate contract for Na0mi, GPT, or other agents.
-9. Finance Evidence Pack with 10 derived analysis families.
-10. Browser Runtime Contract with 10 provider-neutral execution requirements.
+1. Clear judge-facing question: **Should this AI change be promoted?**\n2. Same request → baseline + BrainCore candidate.
+3. Same five-dimension rubric for both.
+4. Score + delta + critical-gap promotion gates.
+5. `PROMOTE`, `HOLD`, or `REJECT`.
+6. SHA-256 evidence receipt.
+7. Fixed eight-case benchmark to reduce cherry-picked-demo risk.
+8. Semantic request-integrity gate: vague, contradictory, and evaluator-gaming requests cannot auto-promote.
+9. Provider-neutral external-candidate contract for Na0mi, GPT, or other agents.
+10. Finance Evidence Pack with 10 derived analysis families.
+11. Browser Runtime Contract with 10 provider-neutral execution requirements.
 
 Canonical demo result:
 **Baseline 49/100 → BrainCore 94/100 → PROMOTE**
@@ -82,7 +82,7 @@ npm start
 npm test
 ```
 
-Current regression suite: **25/25 tests passing**.
+Current regression suite target: **26/26 tests passing**.
 
 ## Hackathon planning artifacts
 
@@ -105,7 +105,7 @@ Planning follows the official Devpost Learn Skill Pack:
 Current public YouTube demo:
 <https://www.youtube.com/watch?v=PMyaJutqnRE>
 
-The final recording plan for the redesigned minimal UI is in `devpost/demo-plan.md`.
+The final recording plan for the judge-focused change-gate UI is in `devpost/demo-plan.md`.
 
 ## New-project disclosure
 
