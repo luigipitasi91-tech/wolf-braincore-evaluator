@@ -151,7 +151,7 @@ research/
 ```
 
 ## Regression Evidence
-Current suite target: **26 passing tests**.
+Current suite target: **52 passing tests**.
 
 Important known failures converted into tests:
 - short specific request falsely held;
