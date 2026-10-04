@@ -151,7 +151,7 @@ research/
 ```
 
 ## Regression Evidence
-Current suite target: **25 passing tests**.
+Current suite target: **26 passing tests**.
 
 Important known failures converted into tests:
 - short specific request falsely held;
@@ -185,7 +185,7 @@ These sources inform architecture only; WOLF has no runtime dependency on them.
 ## Simplifications
 - deterministic heuristics instead of live LLM calls;
 - fixed small benchmark suites rather than large datasets;
-- no persistence;
+- no persistence;\n- extra WOLF research/market experiments are intentionally excluded from the competition judge path;
 - no calibrated scientific claim for metric weights.
 
 ## Decision
