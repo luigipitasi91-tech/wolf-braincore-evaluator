@@ -9,7 +9,7 @@ Open:
 https://wolf-braincore-evaluator.onrender.com/?demo=1
 
 ### Voice
-“AI builders change prompts, skills and planning logic constantly. But too often, a new version gets promoted because one answer simply looks smarter.”
+“AI builders change prompts, skills and planning logic constantly. A change can improve one answer while silently losing a constraint or weakening verification. Too often, it still gets promoted because it looks smarter.”
 
 ## 0:12–0:24
 ### Screen
@@ -19,7 +19,7 @@ Point briefly at:
 The canonical request is already loaded. Press **W**.
 
 ### Voice
-“WOLF is an independent change gate. It gives the baseline and candidate the exact same request, the same rubric, and the same hard blockers.”
+“WOLF is a pre-release change gate for AI builders. It gives the baseline and candidate the exact same request, the same rubric, and the same hard blockers.”
 
 ## 0:24–0:43
 ### Screen
@@ -82,4 +82,4 @@ Return visually to the WOLF identity or leave the benchmark visible.
 - Speak slowly enough that the scores remain readable.
 - Do not show Na0mi, trading, Market Lens, Adamo, or unrelated WOLF experiments.
 - Export in 1080p if available.
-- Upload as a public or unlisted link accessible without login.
+- Upload to YouTube or Vimeo as a publicly visible video, in line with the official submission rules.
