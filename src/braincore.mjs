@@ -19,19 +19,19 @@ export function extractExplicitConstraints(rawRequest) {
   const request = clean(rawRequest);
   const constraints = [];
   const money = request.match(moneyPattern) || [];
-  if (money.length) constraints.push(\`Financial bound explicitly stated: \${money.join(', ')}.\`);
+  if (money.length) constraints.push(`Financial bound explicitly stated: ${money.join(', ')}.`);
 
-  const location = request.match(/\\b(?:in|near|within)\\s+([A-Z][A-Za-z'’-]+(?:\\s+[A-Z][A-Za-z'’-]+){0,2})(?=\\s+(?:under|with|and|that|which|for)\\b|[,.;!?]|$)/);
-  if (location) constraints.push(\`Location explicitly stated: \${location[1]}.\`);
+  const location = request.match(/\b(?:in|near|within)\s+([A-Z][A-Za-z'’-]+(?:\s+[A-Z][A-Za-z'’-]+){0,2})(?=\s+(?:under|with|and|that|which|for)\b|[,.;!?]|$)/);
+  if (location) constraints.push(`Location explicitly stated: ${location[1]}.`);
 
-  const outputMatch = request.match(/\\b(?:show|shows|include|includes|display|return|provide|provides)\\s+([^.!?]{1,140})/i);
+  const outputMatch = request.match(/\b(?:show|shows|include|includes|display|return|provide|provides)\s+([^.!?]{1,140})/i);
   if (outputMatch) {
-    const output = clean(outputMatch[1].split(/,?\\s+and\\s+(?=never|do not|don't|must not)/i)[0]);
-    if (output) constraints.push(\`Required output explicitly stated: \${output}.\`);
+    const output = clean(outputMatch[1].split(/,?\s+and\s+(?=never|do not|don't|must not)/i)[0]);
+    if (output) constraints.push(`Required output explicitly stated: ${output}.`);
   }
 
-  const prohibitions = [...request.matchAll(/\\b(never|do not|don't|must not)\\s+([^.!?]{1,120})/gi)];
-  for (const match of prohibitions) constraints.push(\`Explicit prohibition: \${clean(match[1] + ' ' + match[2])}.\`);
+  const prohibitions = [...request.matchAll(/\b(never|do not|don't|must not)\s+([^.!?]{1,120})/gi)];
+  for (const match of prohibitions) constraints.push(`Explicit prohibition: ${clean(match[1] + ' ' + match[2])}.`);
 
   return uniq(constraints);
 }
