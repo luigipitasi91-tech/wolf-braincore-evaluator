@@ -55,6 +55,40 @@ function metricRows(comparison){
     '</div>';
   }).join('');
 }
+function renderQuickResult(plans,comparison){
+  const integrity=comparison.requestIntegrity;
+  const explicit=Array.isArray(plans.baseline.constraints)?plans.baseline.constraints:[];
+  let title='Do not promote';
+  const rows=[];
+
+  if(comparison.finality==='PROMOTE'){
+    title='Ready to promote';
+    rows.push('Request integrity is CLEAR.');
+    for(const item of explicit.slice(0,4)) rows.push('Retained: '+item);
+    if(!explicit.length) rows.push('Candidate clears the shared quality threshold with no critical blocker.');
+  } else if(integrity.status==='NEEDS_CLARIFICATION'){
+    title='Request needs clarification';
+    rows.push('Specificity is '+integrity.specificity+'/100.');
+    rows.push('WOLF will not promote an underspecified request.');
+  } else if(integrity.status==='CONFLICTING'){
+    title='Resolve the conflict first';
+    rows.push('The request contains conflicting instructions.');
+    for(const item of integrity.contradictions.slice(0,2)) rows.push(item.detail);
+  } else if(comparison.finality==='HOLD'){
+    title='Not ready to promote';
+    rows.push('The candidate improves, but one or more promotion gates are still unmet.');
+  } else {
+    rows.push('The candidate does not show enough verified improvement over baseline.');
+  }
+
+  $('#quickTitle').textContent=title;
+  $('#quickReasons').innerHTML=rows.map(row=>'<div class="quick-reason"><span>✓</span><p>'+esc(row)+'</p></div>').join('');
+  resultsEl.dataset.evidence='closed';
+  const toggle=$('#evidenceToggle');
+  toggle.textContent='View evidence ↓';
+  toggle.setAttribute('aria-expanded','false');
+}
+
 function verdictCopy(comparison){
   const critical=comparison.candidate.gaps.filter(x=>x.startsWith('CRITICAL_'));
   if(comparison.finality==='PROMOTE'){
@@ -116,6 +150,7 @@ async function runEvaluation(){
     $('#blockers').textContent=blockers;
     $('#metrics').innerHTML=metricRows(comparison);
     $('#plans').innerHTML=planCard(plans.baseline,comparison.baseline,'baseline')+planCard(plans.candidate,comparison.candidate,'candidate');
+    renderQuickResult(plans,comparison);
 
     const receiptCore={
       receiptVersion:'wolf-braincore-receipt/2.0',
@@ -148,6 +183,7 @@ async function runEvaluation(){
 }
 function newEvaluation(){
   resultsEl.hidden=true;
+  resultsEl.dataset.evidence='closed';
   benchmarkEl.hidden=true;
   homeEl.hidden=false;
   errorEl.textContent='';
@@ -156,7 +192,20 @@ function newEvaluation(){
 
 formEl.addEventListener('submit',event=>{event.preventDefault();runEvaluation();});
 $('#back').addEventListener('click',newEvaluation);
-$('#benchmark').addEventListener('click',renderBenchmark);
+$('#benchmark').addEventListener('click',()=>{
+  resultsEl.dataset.evidence='open';
+  const toggle=$('#evidenceToggle');
+  toggle.textContent='Hide evidence ↑';
+  toggle.setAttribute('aria-expanded','true');
+  renderBenchmark();
+});
+$('#evidenceToggle').addEventListener('click',()=>{
+  const open=resultsEl.dataset.evidence==='open';
+  resultsEl.dataset.evidence=open?'closed':'open';
+  const toggle=$('#evidenceToggle');
+  toggle.textContent=open?'View evidence ↓':'Hide evidence ↑';
+  toggle.setAttribute('aria-expanded',String(!open));
+});
 document.querySelectorAll('[data-scenario]').forEach(button=>{
   button.addEventListener('click',()=>{
     requestEl.value=SCENARIOS[button.dataset.scenario]||SAMPLE;

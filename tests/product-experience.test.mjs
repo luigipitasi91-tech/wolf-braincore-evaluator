@@ -2,15 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 
-test('result hierarchy is verdict first, shared metrics second, inspectable plans third',async()=>{
+test('result hierarchy is verdict first, quick summary second, evidence on demand',async()=>{
   const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
   const verdict=html.indexOf('class="verdict panel"');
-  const integrity=html.indexOf('class="integrity-strip panel"');
-  const metrics=html.indexOf('class="panel metrics-panel"');
+  const quick=html.indexOf('id="quickResult"');
+  const integrity=html.indexOf('integrity-strip panel evidence-detail');
+  const metrics=html.indexOf('metrics-panel evidence-detail');
   const plans=html.indexOf('id="plans"');
   const receipt=html.indexOf('id="receipt"');
-  const benchmark=html.indexOf('id="benchmarkResults"');
-  assert.ok(verdict>0&&integrity>verdict&&metrics>integrity&&plans>metrics&&receipt>plans&&benchmark>receipt);
+  assert.ok(verdict>0&&quick>verdict&&integrity>quick&&metrics>integrity&&plans>metrics&&receipt>plans);
 });
 
 test('judge can understand value before pressing W',async()=>{
@@ -36,4 +36,16 @@ test('fail-closed scenarios are directly demoable from the landing',async()=>{
   assert.match(app,/vague:'Build me something useful\.'/);
   assert.match(app,/conflict:'Publish the pricing page automatically today/);
   assert.match(app,/data-scenario/);
+});
+
+
+test('evidence is collapsed behind an explicit user control',async()=>{
+  const [html,app,css]=await Promise.all([
+    readFile(new URL('../index.html',import.meta.url),'utf8'),
+    readFile(new URL('../src/app.js',import.meta.url),'utf8'),
+    readFile(new URL('../src/styles.css',import.meta.url),'utf8')
+  ]);
+  assert.match(html,/View evidence/);
+  assert.match(app,/dataset\.evidence='closed'/);
+  assert.match(css,/data-evidence="closed"/);
 });
