@@ -2,9 +2,9 @@
 doc: scope
 status: approved
 ---
-# WOLF BrainCore Evaluator
+# WOLF — AI Change Gate
 
-One line: an independent evaluation lab that tests whether a proposed AI planning workflow actually improves a request before that workflow is promoted into an agent.
+One line: an independent evaluation gate that tests whether a proposed AI planning change actually improves a request before that change is promoted.
 
 ## The Unique Kernel
 A cognitive change does **not** count as an improvement because it sounds smarter. WOLF separates request integrity from candidate scoring, runs baseline and candidate through the same transparent rubric, and returns `PROMOTE`, `HOLD`, or `REJECT`.
@@ -17,46 +17,62 @@ The failure mode WOLF targets is vibe-based evaluation: one output looks more so
 ## The Core Loop
 1. User enters one request through the minimal WOLF landing screen.
 2. Request Integrity checks semantic specificity, contradictions, and evaluator-gaming language.
-3. Domain Packs add evidence requirements when the request is finance- or browser-agent-related.
-4. Baseline and BrainCore candidate receive the same request.
-5. WOLF scores both on five fixed dimensions.
-6. Critical blockers can stop promotion even when the numeric score is high.
-7. WOLF issues finality and a SHA-256 evidence receipt.
+3. Baseline and BrainCore candidate receive the same request.
+4. WOLF scores both on five fixed dimensions.
+5. Critical blockers can stop promotion even when the numeric score is high.
+6. WOLF issues `PROMOTE`, `HOLD`, or `REJECT`.
+7. WOLF generates a SHA-256 evidence receipt.
 8. An eight-case balanced/adversarial benchmark checks known regression modes.
 
-## Transfer Evidence
-The PoC also contains two non-UI transfer packs:
-- 10 finance-analysis families distilled from user-supplied screenshots into evidence requirements, without copying the original prompt text;
-- 6 browser-agent cases exercising a provider-neutral 10-point Browser Runtime Contract derived from global platform research.
+## Competition Experience
+The product is intentionally focused: a centered WOLF identity, one plain-English question — **Should this AI change be promoted?** — one request field, and three fixed demo scenarios.
 
-Structured outputs from an external agent can also be normalized into the same WOLF Plan schema, so WOLF is not limited to grading its own candidate generator.
-
-## Inspiration & Identity
-The product is intentionally focused: a centered WOLF identity, one plain-English question — **Should this AI change be promoted?** — one request field, and three fixed demo scenarios. Technical evidence appears after evaluation.
-
-Earlier Na0mi/Xi0/WOLF work influenced the **idea** of authority, verification and finality, but this hackathon implementation is new code built from an empty project. No Na0mi V12 source code is reused.
+Technical evidence appears only after evaluation.
 
 ## What "Working" Looks Like
 A judge opens the app, immediately understands the change-gate problem, submits one request with **W**, then sees:
-- baseline vs BrainCore plans;
+- deterministic finality;
+- baseline vs BrainCore scores;
 - request-integrity status;
 - five planning-quality metrics;
 - exact blockers/reasons;
-- deterministic finality;
+- baseline vs candidate plans;
 - SHA-256 receipt;
-- optional 8-case benchmark with both pass and fail-closed outcomes.
+- optional eight-case benchmark with both pass and fail-closed outcomes.
 
 The key moment is that WOLF can say **HOLD** to a candidate that scores highly if the request itself is contradictory or insufficiently specified.
 
+## Promotion Rules
+`PROMOTE` requires:
+- candidate score ≥ 78;
+- improvement ≥ 15 points;
+- no critical blocker.
+
 ## The POC Boundary
-In scope: responsive browser app, judge-focused product shell, deterministic plan generation, independent request-integrity gate, five-metric evaluation, three finality states, eight core regression cases, finance/browser transfer packs, external-candidate normalization, and verifiable receipts.
+In scope:
+- responsive browser app;
+- deterministic baseline and candidate planning;
+- independent request-integrity gate;
+- five-metric evaluation;
+- three finality states;
+- fixed eight-case benchmark;
+- SHA-256 evidence receipt;
+- automated regression tests.
+
+## Explicitly Out of the Competition Judge Path
+- Na0mi integration;
+- Market Lens;
+- Live Research;
+- Adamo / failure-lab experiments;
+- trading or broker workflows;
+- finance/browser transfer packs;
+- external-model adapters;
+- paid browser or LLM dependencies.
+
+These may exist as separate research or experiments, but they are not competition acceptance criteria.
+
+## New-Project Boundary
+Earlier Na0mi/Xi0/WOLF work influenced the **ideas** of authority, verification and finality, but this hackathon implementation is new code built from an empty project during the submission period. No earlier source code is reused.
 
 ## Later
-Real live model adapters, repeated trials for nondeterministic models, human-labelled calibration, persistent benchmark history, CI promotion gates, and direct Na0mi integration.
-
-## Explicitly Cut
-- no Na0mi V12 source-code reuse;
-- no live external LLM dependency in the judge path;
-- no paid browser provider dependency;
-- no automatic self-modification;
-- no login/database requirement.
+Possible future work includes real model adapters, repeated trials for nondeterministic models, human-labelled calibration, persistent benchmark history and CI promotion gates.
