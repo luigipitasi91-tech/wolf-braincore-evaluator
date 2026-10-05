@@ -123,7 +123,7 @@ npm start
 npm test
 ```
 
-Current regression suite target: **59/59 tests passing**.
+Current regression suite target: **82/82 tests passing**.
 
 ## Hackathon planning artifacts
 
