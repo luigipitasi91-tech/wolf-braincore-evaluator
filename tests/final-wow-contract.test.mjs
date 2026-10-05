@@ -25,16 +25,16 @@ test('competition landing remains focused on one request workflow',async()=>{
   assert.doesNotMatch(home,/market intelligence|live research|1001 failure lab/i);
 });
 
-test('verdict is immediate and technical evidence remains one click away',async()=>{
+test('human decision is immediate and technical evidence remains one click away',async()=>{
   const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
-  const verdict=html.indexOf('class="verdict panel"');
   const quick=html.indexOf('id="quickResult"');
   const toggle=html.indexOf('id="evidenceToggle"');
+  const verdict=html.indexOf('class="verdict panel evidence-detail"');
   const integrity=html.indexOf('integrity-strip panel evidence-detail');
   const metrics=html.indexOf('id="metrics"');
   const plans=html.indexOf('id="plans"');
   const receipt=html.indexOf('id="receipt"');
-  assert.ok(verdict>0&&quick>verdict&&toggle>quick&&integrity>toggle&&metrics>integrity&&plans>metrics&&receipt>plans);
+  assert.ok(quick>0&&toggle>quick&&verdict>toggle&&integrity>verdict&&metrics>integrity&&plans>metrics&&receipt>plans);
   assert.doesNotMatch(html,/id="auditDetails"/);
 });
 

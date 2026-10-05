@@ -21,26 +21,35 @@ The canonical request is already loaded. Press **W**.
 ### Voice
 “WOLF is a pre-release change gate for AI builders. It gives the baseline and candidate the exact same request, the same rubric, and the same hard blockers.”
 
-## 0:24–0:43
+## 0:24–0:39
 ### Screen
-Show the verdict panel:
+Show the compact result first:
 - PROMOTE
-- Baseline 49/100
+- Ready to promote
+- retained constraints / zero critical blockers
+
+### Voice
+“WOLF gives the decision first. This change is ready to promote because it clears every promotion gate.”
+
+## 0:39–0:53
+### Screen
+Click **View evidence**. Show:
+- Baseline 50/100
 - Candidate 94/100
-- Delta +45
+- Delta +44
 - Request Integrity CLEAR
 
 ### Voice
-“Here the candidate improves from 49 to 94, clears the required delta, and leaves no critical integrity or verification blocker. WOLF promotes the change.”
+“The evidence stays one click away: the candidate improves from 50 to 94, a 44-point gain, with request integrity clear.”
 
-## 0:43–1:02
+## 0:53–1:08
 ### Screen
 Scroll only enough to show the five bars.
 
 ### Voice
 “Both plans are scored with identical rules: ambiguity resolution, assumption exposure, constraint retention, definition of done, and verification readiness. Longer text does not automatically win.”
 
-## 1:02–1:20
+## 1:08–1:23
 ### Screen
 Briefly show the two plans. Expand or leave visible:
 - Unknowns
@@ -52,7 +61,7 @@ Then show the SHA-256 receipt.
 ### Voice
 “The decision stays inspectable. WOLF exposes what the candidate clarified and how success would be verified, then hashes the evaluated evidence into a SHA-256 receipt.”
 
-## 1:20–1:45
+## 1:23–1:45
 ### Screen
 Click **Run benchmark**.
 
@@ -81,5 +90,6 @@ Return visually to the WOLF identity or leave the benchmark visible.
 - No copyrighted music.
 - Speak slowly enough that the scores remain readable.
 - Do not show Na0mi, trading, Market Lens, Adamo, or unrelated WOLF experiments.
+- Do not show live Discovery results in the competition video; keep third-party web/image content out of the recording.
 - Export in 1080p if available.
 - Upload to YouTube or Vimeo as a publicly visible video, in line with the official submission rules.
