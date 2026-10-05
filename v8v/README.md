@@ -76,6 +76,11 @@ Sessions live in memory and expire by default after 15 minutes. `exportState` re
 ## Environment
 
 - `PORT`
-- `V8V_API_TOKEN` optional bearer token
+- `V8V_API_TOKEN` required for control endpoints; without it V8V stays locked
 - `MAX_SESSIONS` default 2
 - `SESSION_TTL_MS` default 900000
+
+
+Public verification endpoints:
+- `GET /health` — runtime/browser state only;
+- `GET /selftest` — fixed, read-only check against `https://example.com`.
