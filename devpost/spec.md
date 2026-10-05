@@ -5,16 +5,19 @@ status: approved
 # WOLF — AI Change Gate — Technical Spec
 
 ## Architecture
-The competition judge path is a zero-dependency browser application plus a tiny Node static server.
+The competition judge path remains a deterministic browser application. A separate optional discovery service improves clarification UX for vague queries without becoming evaluator evidence.
 
 ```text
 Request
   → Request Integrity Gate
-  → Baseline + BrainCore candidate
-  → Same deterministic WOLF rubric
-  → Critical blockers
-  → PROMOTE / HOLD / REJECT
-  → SHA-256 receipt
+      ├─ NEEDS_CLARIFICATION → optional Discovery UI → user rewrites request
+      └─ evaluable
+          → shared explicit constraints
+          → Baseline + BrainCore candidate
+          → Same deterministic WOLF rubric
+          → Critical blockers
+          → PROMOTE / HOLD / REJECT
+          → SHA-256 receipt
 ```
 
 Optional competition path:
@@ -25,8 +28,10 @@ Optional competition path:
 - Browser ES modules.
 - Web Crypto SHA-256.
 - Node test runner.
-- Render static hosting.
-- No runtime API key.
+- Render static hosting for the public judge UI.
+- Optional Render Node service for discovery.
+- No runtime API key required by the evaluator.
+- Optional `BRAVE_API_KEY` exists server-side only for Brave web discovery.
 
 Public demo:
 https://wolf-braincore-evaluator.onrender.com
@@ -67,7 +72,15 @@ A candidate can score above the promotion threshold and still be held when a cri
 Runs eight balanced/adversarial fixed cases with explicit expected finalities.
 
 ### `src/app.js`
-Controls the minimal landing, results rendering, Request Integrity evidence, benchmark view and SHA-256 receipt.
+Controls the minimal landing, human-first results, Request Integrity routing, evidence disclosure, benchmark view and SHA-256 receipt.
+
+### `src/discovery.mjs`
+Optional browser client for vague-input clarification. It talks only to the WOLF discovery service and contains no provider secret.
+
+### `server.mjs`
+Serves the app locally and provides the optional `/api/discover` boundary when deployed as the discovery service. Brave credentials are read only from `process.env.BRAVE_API_KEY`. Openverse results include source and license metadata.
+
+Discovery outputs are not passed into `src/evaluator.mjs`.
 
 ## Non-Judge Extensions
 The repository may also contain domain research, transfer-pack code or external-candidate experiments.
@@ -108,14 +121,18 @@ Evaluation
 ```text
 src/
   app.js
+  discovery.mjs
   benchmark.mjs
   braincore.mjs
   evaluator.mjs
   request-integrity.mjs
   styles.css
 
+server.mjs
+
 tests/
   benchmark.test.mjs
+  discovery.test.mjs
   evaluator.test.mjs
   planner.test.mjs
   request-integrity.test.mjs
@@ -124,7 +141,7 @@ tests/
 Additional non-judge files may exist outside this core list.
 
 ## Regression Evidence
-Current suite target: **52 passing tests**.
+Current suite target: **59 passing tests**.
 
 Important known failures converted into tests:
 - short specific request falsely held;
@@ -135,7 +152,7 @@ Important known failures converted into tests:
 
 ## Important Failure Modes
 - empty input → no evaluation;
-- semantic vagueness → HOLD;
+- semantic vagueness → deterministic HOLD internally, presented to the user as a clarification/discovery state before technical evidence;
 - explicit contradiction → HOLD;
 - evaluator gaming → HOLD;
 - missing verification/constraint evidence → critical gap;
@@ -145,6 +162,7 @@ Important known failures converted into tests:
 - deterministic heuristics instead of live LLM calls;
 - fixed small benchmark rather than a large dataset;
 - no persistence;
+- optional discovery network calls are isolated from evaluation;
 - no external model dependency in the judge path;
 - no calibrated scientific claim for metric weights.
 
