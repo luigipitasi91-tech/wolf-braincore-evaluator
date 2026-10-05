@@ -18,6 +18,10 @@ Build mode: fast
 - [x] Automated benchmark regression tests added.
 - [x] Request Integrity Gate detects long-vague input, explicit contradictions, and evaluator-gaming language.
 - [x] Short but specific requests are no longer blocked by word count alone.
+- [x] Human-first result shown before raw evaluator scores.
+- [x] Under-specified input routes to clarification/discovery instead of foregrounding misleading scores.
+- [x] Brave discovery secret boundary is server-side only; evaluator has no Brave dependency.
+- [x] Openverse visuals retain source + license links and are not evaluator evidence.
 - [x] Finance Evidence Pack: 10 transformed analysis families from user-provided screenshots.
 - [x] Browser Runtime Contract: 10 provider-neutral requirements informed by Canada / Australia / Europe / Asia research.
 - [x] Six browser-agent transfer cases pass the runtime contract.
@@ -33,11 +37,11 @@ Build mode: fast
 ## Final verification
 GitHub CI: PASS.
 
-Automated tests target: **52/52 PASS**.
+Automated tests target: **59/59 PASS**.
 
 Public live verification:
 - Landing explains the change-gate problem, offers one request bar, W action and three deterministic demo scenarios.
-- Canonical request: Baseline **49/100** → BrainCore **94/100** → **PROMOTE**.
+- Canonical request: Baseline **50/100** → BrainCore **94/100** → **PROMOTE**.
 - Five metrics present.
 - SHA-256 receipt present.
 - Fixed benchmark present.
@@ -58,9 +62,11 @@ Regression path:
 - [x] Public live demo.
 - [x] Existing public YouTube demo: https://www.youtube.com/watch?v=PMyaJutqnRE
 - [x] Final redesigned demo recording plan.
+- [ ] Record and upload the final judge-focused video publicly to YouTube or Vimeo.
+- [ ] Configure optional Brave Search API key on the discovery service (not required for core judging).
 - [x] Official judging criteria reviewed and build aligned to Design / Impact / Innovation / Presentation.
 - [x] Public agent-eval guidance reviewed and applied through fixed criteria, multi-case regression evidence and fail-closed behavior.
-- [ ] Devpost final submission — requires the learner's authenticated account and learner-authored submission answers.
+- [ ] Devpost final submission — requires the learner's authenticated account, learner-authored submission answers, and final public video URL.
 
 ## Revisions
 - Fixed early mobile `hidden` CSS bug.
