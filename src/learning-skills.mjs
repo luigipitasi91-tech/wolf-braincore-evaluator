@@ -264,6 +264,7 @@ export function buildLearningRequest(id,{topic='',goal='',time='',level='',local
     [c.level,clean(level)||'—']
   ];
   return [
+    'WOLF task: Create a learning plan and guided session for the topic below.',
     `WOLF Learning Skill: ${learningSkillLabel(id,lang)}`,
     ...fields.map(([k,v])=>`${k}: ${v}`),
     '',
