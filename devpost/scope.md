@@ -74,7 +74,8 @@ The deterministic evaluator remains functional without Brave, Openverse, a model
 - trading or broker workflows;
 - finance/browser transfer packs;
 - external-model adapters;
-- paid browser or LLM dependencies.
+- paid browser or LLM dependencies;
+- multilingual Learning Skills Pack and tutor-mode experiments.
 
 These may exist as separate research or experiments, but they are not competition acceptance criteria.
 
