@@ -26,17 +26,15 @@ Success is not “the candidate generated more text.” Success is a promotion d
 - one proof line;
 - no dashboard clutter.
 
-## Evidence View
-- verdict visible first;
-- baseline score;
-- candidate score;
-- delta;
-- Request Integrity status;
-- specificity;
-- hard blockers;
-- five shared metrics;
-- baseline vs candidate plans;
-- SHA-256 receipt;
+## Result and Evidence View
+- human-readable decision visible first;
+- short explanation of why the change is ready, held, or rejected;
+- vague requests receive concrete refinement guidance instead of a technical error wall;
+- **View evidence** reveals baseline score, candidate score and delta;
+- Request Integrity status, specificity and hard blockers live in evidence;
+- five shared metrics live in evidence;
+- baseline vs candidate plans live in evidence;
+- SHA-256 receipt lives in evidence;
 - benchmark panel only when opened.
 
 ## BrainCore Planner
@@ -93,7 +91,7 @@ Eight deterministic regression cases:
 - constraint override / evaluator gaming → HOLD.
 
 ## Competition Acceptance Criteria
-A judge should be able to understand the problem and run the canonical demo in under 20 seconds.
+A judge should be able to understand the problem, run the canonical demo and understand the first decision without reading internal evaluator terminology in under 20 seconds.
 
 The app must:
 - work without login;
