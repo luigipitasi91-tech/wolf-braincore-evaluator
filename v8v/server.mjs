@@ -10,7 +10,7 @@ app.use(express.json({limit:'1mb'}));
 
 const API_TOKEN=process.env.V8V_API_TOKEN||'';
 function auth(req,res,next){
-  if(!API_TOKEN)return next();
+  if(!API_TOKEN)return res.status(503).json({ok:false,error:'V8V_API_TOKEN_NOT_CONFIGURED'});
   const token=req.get('authorization')?.replace(/^Bearer\s+/i,'')||req.get('x-v8v-token')||'';
   if(token!==API_TOKEN)return res.status(401).json({ok:false,error:'UNAUTHORIZED'});
   next();
@@ -22,7 +22,20 @@ function fail(res,error,status=400){
   res.status(code).json({ok:false,error:message});
 }
 
-app.get('/health',async(_req,res)=>res.json(await health()));
+app.get('/health',async(_req,res)=>res.json({...await health(),controlApiLocked:!API_TOKEN}));
+app.get('/selftest',async(_req,res)=>{
+  let id='';
+  try{
+    const session=await createSession({startUrl:'https://example.com',allowedDomains:['example.com']});
+    id=session.id;
+    const snapshot=await snapshotSession(id,{textLimit:600});
+    res.json({ok:true,browser:true,url:snapshot.url,title:snapshot.title,text:snapshot.text.slice(0,160),elements:snapshot.elements.length});
+  }catch(e){
+    fail(res,e,500);
+  }finally{
+    if(id)await closeSession(id).catch(()=>{});
+  }
+});
 app.get('/',(_req,res)=>res.json({
   name:'V8V',
   description:'Deterministic browser runtime for AI agents',
