@@ -67,7 +67,7 @@ A candidate can score above the promotion threshold and still be held when a cri
 Runs eight balanced/adversarial fixed cases with explicit expected finalities.
 
 ### `src/app.js`
-Controls the minimal landing, results rendering, Request Integrity evidence, benchmark view and SHA-256 receipt.
+Controls the minimal landing, human-first decision summary, refinement guidance for under-specified requests, evidence disclosure, benchmark view and SHA-256 receipt.
 
 ## Non-Judge Extensions
 The repository may also contain domain research, transfer-pack code or external-candidate experiments.
@@ -124,7 +124,7 @@ tests/
 Additional non-judge files may exist outside this core list.
 
 ## Regression Evidence
-Current suite target: **52 passing tests**.
+Current suite target: **54 passing tests**.
 
 Important known failures converted into tests:
 - short specific request falsely held;
