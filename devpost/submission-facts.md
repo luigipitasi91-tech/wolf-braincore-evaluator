@@ -15,21 +15,23 @@ This file is intentionally factual and not drafted Devpost prose.
 - Finance Evidence Pack: 10 transformed financial-analysis families derived from user-provided screenshots, without copying their prompt text.
 - Browser Runtime Contract: 10 provider-neutral requirements informed by global browser-agent research across Canada, Australia, Europe, and Asia.
 - External Candidate Contract allows structured Na0mi/GPT/other-agent outputs to be evaluated under the same WOLF rubric.
-- Automated verification: `npm test`, **25 passing tests**.
+- Automated verification: `npm test`, **59 passing tests**.
 - GitHub pull-request CI for the final code upgrade: PASS.
 - Public live verification:
-  - canonical request: 49/100 baseline → 94/100 BrainCore → PROMOTE;
+  - canonical request: 50/100 baseline → 94/100 BrainCore → PROMOTE;
   - benchmark: 8 cases / 4 PROMOTE / 4 HOLD;
   - under-specified case: 38 → 88 → HOLD.
-- Runtime: browser + Node.js 20+ local static server.
+- Runtime: browser + Node.js 20+ local server; Render static frontend plus optional Render Node discovery service.
 - External services/API keys required by the evaluator: none.
+- Optional clarification/discovery: Brave Search via server-side `BRAVE_API_KEY` when configured; Openverse visual context with source/license links.
+- Discovery results do not feed evaluator scoring, benchmark decisions, or SHA-256 evaluation receipts.
 - Open-source license: MIT.
 - Required planning docs present and aligned with final build: `scope.md`, `prd.md`, `spec.md`.
 - Public repository: https://github.com/luigipitasi91-tech/wolf-braincore-evaluator
 - Public live demo: https://wolf-braincore-evaluator.onrender.com
 - Judge-ready preloaded demo: https://wolf-braincore-evaluator.onrender.com/?demo=1
 - Existing public YouTube demo: https://www.youtube.com/watch?v=PMyaJutqnRE
-- Final redesigned 62-second competition video has been generated locally for upload/replacement.
+- Final redesigned competition video is still to be recorded and uploaded publicly; the existing public YouTube demo is not treated as proof that the final recording is complete.
 - Official submission deadline recorded from contest rules: October 26, 2026 at 5:00 PM EDT.
 
 ## Stage-one evidence
@@ -39,7 +41,7 @@ This file is intentionally factual and not drafted Devpost prose.
 - Working end-to-end PoC.
 
 ## Stage-two evidence
-- Design: coherent minimal entry + evidence-first results view.
+- Design: coherent minimal entry + human-first decision + evidence on demand + clarification state for vague input.
 - Potential Impact: specific problem and audience — AI-agent builders validating prompt/skill/planner changes.
 - Innovation: independent cognitive promotion gate rather than self-grading.
 - Presentation: one-action demo, deterministic evidence, fixed benchmark, short video path.
