@@ -143,7 +143,7 @@ tests/
 Additional non-judge files may exist outside this core list.
 
 ## Regression Evidence
-Current suite target: **59 passing tests**.
+Current suite target: **82 passing tests**.
 
 Important known failures converted into tests:
 - short specific request falsely held;
