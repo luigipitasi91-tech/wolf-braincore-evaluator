@@ -11,7 +11,7 @@ test('skills page exposes the six-mode multilingual composer',async()=>{
   assert.match(app,/LEARNING_SKILLS/);
   assert.match(app,/LEARNING_LOCALES/);
   assert.match(app,/buildLearningRequest/);
-  assert.match(app,/Open in WOLF/);
+  assert.match(html,/Open in WOLF/);
 });
 
 test('judge demo can hide the optional learning-skills entry',async()=>{
