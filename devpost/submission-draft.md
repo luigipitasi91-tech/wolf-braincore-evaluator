@@ -74,7 +74,7 @@ General evaluation platforms already exist and can run large datasets, traces, o
 - Node.js 20+
 - Node test runner
 - Web Crypto SHA-256
-- Render static hosting
+- Render static frontend + optional Node discovery service
 
 ## What I learned
 The biggest lesson was that planning before adding features matters more than adding more features.
@@ -100,7 +100,7 @@ Another challenge was keeping scoring and finality separate. WOLF now requires b
 - Five shared planning-quality metrics.
 - SHA-256 evidence receipts.
 - Eight fixed regression cases with both pass and fail-closed outcomes.
-- **52/52 automated tests passing.**
+- **59/59 automated tests passing.**
 - No runtime API key required for the judge path.
 
 ## New-project disclosure

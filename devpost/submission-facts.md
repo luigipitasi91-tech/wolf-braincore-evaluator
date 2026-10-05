@@ -3,7 +3,7 @@
 This file is intentionally factual and not drafted Devpost prose.
 
 ## Final project facts
-- Project: `WOLF BrainCore Evaluator`.
+- Project: `WOLF — AI Change Gate`.
 - New implementation began from an empty folder during the Build With AI: Basics submission period.
 - No Na0mi, Xi0, XioARa, or earlier WOLF source code was reused.
 - Earlier work influenced the independent-verification/finality idea only.
@@ -17,6 +17,7 @@ This file is intentionally factual and not drafted Devpost prose.
 - External Candidate Contract allows structured Na0mi/GPT/other-agent outputs to be evaluated under the same WOLF rubric.
 - Automated verification: `npm test`, **59 passing tests**.
 - GitHub pull-request CI for the final code upgrade: PASS.
+- Final live smoke test on 2026-10-05: **9/9 checks PASS** across vague-input discovery, human-first verdict, collapsed evidence, canonical PROMOTE path and benchmark opening.
 - Public live verification:
   - canonical request: 50/100 baseline → 94/100 BrainCore → PROMOTE;
   - benchmark: 8 cases / 4 PROMOTE / 4 HOLD;
