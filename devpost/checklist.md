@@ -37,7 +37,7 @@ Build mode: fast
 ## Final verification
 GitHub CI: PASS.
 
-Automated tests target: **59/59 PASS**.
+Automated tests target: **82/82 PASS**.
 
 Public live verification:
 - Landing explains the change-gate problem, offers one request bar, W action and three deterministic demo scenarios.
