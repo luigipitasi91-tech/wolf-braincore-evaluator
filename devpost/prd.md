@@ -10,11 +10,13 @@ A minimalist evaluation gate for AI-agent builders who want evidence that a plan
 1. Landing shows the WOLF identity and one request bar.
 2. User submits with **W**.
 3. Request Integrity evaluates specificity, contradictions, and evaluator-gaming signals.
-4. Baseline and BrainCore receive the same request.
-5. WOLF scores both with one five-dimension rubric.
-6. Numeric score and critical blockers jointly determine `PROMOTE`, `HOLD`, or `REJECT`.
-7. SHA-256 receipt records evaluated evidence.
-8. User may open the fixed eight-case benchmark.
+4. If the request needs clarification, WOLF pauses the gate and can surface optional live discovery context before the user rewrites the request.
+5. If the request is evaluable, baseline and BrainCore receive the same request and shared explicit constraints.
+6. WOLF scores both with one five-dimension rubric.
+7. Numeric score and critical blockers jointly determine `PROMOTE`, `HOLD`, or `REJECT`.
+8. The human-readable decision is shown first; technical scores/evidence remain inspectable on demand.
+9. SHA-256 receipt records evaluated evidence.
+10. User may open the fixed eight-case benchmark.
 
 Success is not “the candidate generated more text.” Success is a promotion decision that can explain both score and blockers.
 
@@ -26,8 +28,10 @@ Success is not “the candidate generated more text.” Success is a promotion d
 - one proof line;
 - no dashboard clutter.
 
-## Evidence View
-- verdict visible first;
+## Result + Evidence View
+- plain-English decision visible first;
+- promotion state visible without technical jargon;
+- retained constraints/reasons summarized;
 - baseline score;
 - candidate score;
 - delta;
@@ -103,9 +107,16 @@ The app must:
 - show at least one success and multiple fail-closed benchmark cases;
 - remain understandable on desktop and mobile.
 
+## Optional Discovery Boundary
+For `NEEDS_CLARIFICATION` only:
+- Brave Search may provide transient web context when a server-side `BRAVE_API_KEY` is configured;
+- Openverse may provide openly licensed visual context with source and license links;
+- discovery can fail without blocking the deterministic evaluator;
+- discovery results never affect baseline/candidate scores, finality, benchmark expectations, or the SHA-256 evaluation receipt.
+
 ## Boundaries
 - No consequential real-world execution.
-- No network dependency for the judge path.
+- No network dependency for the deterministic judge path.
 - No claim that the handcrafted rubric is scientifically calibrated.
 - No model leaderboard claim.
 - No Na0mi dependency in the judge path.
