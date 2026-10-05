@@ -24,23 +24,26 @@ Minimal landing:
 
 <https://wolf-braincore-evaluator.onrender.com>
 
-No login, model API key, paid token or external model call is required in the judge path.
+No login, model API key, paid token or external model call is required in the deterministic judge path.
+
+For vague input, WOLF can optionally open a clarification/discovery layer. Brave web discovery is enabled only when a server-side key is configured; Openverse visual context includes source and license links. Discovery results never affect WOLF scores or finality.
 
 ## Core loop
 
 1. One request enters WOLF.
 2. Request Integrity checks specificity, contradictions and evaluator-gaming signals.
-3. Baseline and BrainCore candidate receive the same request.
-4. Both are scored with the same five-dimension rubric:
+3. Under-specified input is paused for clarification instead of foregrounding raw technical scores.
+4. Evaluable requests give baseline and BrainCore candidate the same request and shared explicit constraints.
+5. Both are scored with the same five-dimension rubric:
    - ambiguity resolved;
    - assumptions exposed;
    - constraints retained;
    - definition of done;
    - verification readiness.
-5. Independent hard blockers are applied.
-6. WOLF returns `PROMOTE`, `HOLD`, or `REJECT`.
-7. A SHA-256 evidence receipt is generated.
-8. A fixed eight-case benchmark checks both successful promotion and fail-closed behavior.
+6. Independent hard blockers are applied.
+7. WOLF returns `PROMOTE`, `HOLD`, or `REJECT`.
+8. A SHA-256 evidence receipt is generated.
+9. A fixed eight-case benchmark checks both successful promotion and fail-closed behavior.
 
 ## Promotion rules
 
@@ -60,9 +63,9 @@ Request:
 
 Result:
 
-- Baseline: **49/100**
+- Baseline: **50/100**
 - BrainCore candidate: **94/100**
-- Delta: **+45**
+- Delta: **+44**
 - Request Integrity: **CLEAR**
 - Finality: **PROMOTE**
 
@@ -104,7 +107,7 @@ npm start
 npm test
 ```
 
-Current regression suite target: **52/52 tests passing**.
+Current regression suite target: **59/59 tests passing**.
 
 ## Hackathon planning artifacts
 
@@ -135,7 +138,7 @@ The final 1–3 minute script is in:
 
 ## Competition boundary
 
-The competition judge path is intentionally narrow: **AI change evaluation only**.
+The competition judge path is intentionally narrow: **AI change evaluation only**. The optional Discovery layer improves clarification UX but remains outside evaluator scoring and benchmark evidence.
 
 Additional experiments or research that may exist elsewhere in the repository are not part of the competition acceptance criteria and are not surfaced in the judge demo.
 
