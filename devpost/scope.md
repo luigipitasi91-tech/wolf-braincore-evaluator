@@ -17,17 +17,18 @@ The failure mode WOLF targets is vibe-based evaluation: one output looks more so
 ## The Core Loop
 1. User enters one request through the minimal WOLF landing screen.
 2. Request Integrity checks semantic specificity, contradictions, and evaluator-gaming language.
-3. Baseline and BrainCore candidate receive the same request.
+3. If the request is evaluable, baseline and BrainCore candidate receive the same request and the same explicit constraints.
 4. WOLF scores both on five fixed dimensions.
 5. Critical blockers can stop promotion even when the numeric score is high.
 6. WOLF issues `PROMOTE`, `HOLD`, or `REJECT`.
 7. WOLF generates a SHA-256 evidence receipt.
 8. An eight-case balanced/adversarial benchmark checks known regression modes.
+9. If the request is too vague, the UI pauses the gate and offers an optional clarification/discovery layer before re-evaluation.
 
 ## Competition Experience
 The product is intentionally focused: a centered WOLF identity, one plain-English question — **Should this AI change be promoted?** — one request field, and three fixed demo scenarios.
 
-Technical evidence appears only after evaluation.
+The human-readable decision appears first; technical evidence is one click away. For under-specified input, WOLF does not foreground meaningless scores: it pauses the decision and asks for clarification.
 
 ## What "Working" Looks Like
 A judge opens the app, immediately understands the change-gate problem, submits one request with **W**, then sees:
@@ -57,7 +58,13 @@ In scope:
 - three finality states;
 - fixed eight-case benchmark;
 - SHA-256 evidence receipt;
-- automated regression tests.
+- automated regression tests;
+- human-first result hierarchy;
+- optional clarification/discovery for under-specified input;
+- optional Brave web discovery through a server-side secret boundary;
+- attributed, openly licensed Openverse visual context.
+
+The deterministic evaluator remains functional without Brave, Openverse, a model API, or a runtime secret. Discovery results are never used as evaluator evidence or scoring inputs.
 
 ## Explicitly Out of the Competition Judge Path
 - Na0mi integration;
