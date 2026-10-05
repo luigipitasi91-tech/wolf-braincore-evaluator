@@ -27,7 +27,7 @@ The failure mode WOLF targets is vibe-based evaluation: one output looks more so
 ## Competition Experience
 The product is intentionally focused: a centered WOLF identity, one plain-English question — **Should this AI change be promoted?** — one request field, and three fixed demo scenarios.
 
-Technical evidence appears only after evaluation.
+The first result is written for a human: a clear decision, a short explanation, and practical guidance. If the request is vague, WOLF asks for a clearer request instead of leading with internal scores. Technical scores, blockers, plans and the SHA-256 receipt stay behind **View evidence**.
 
 ## What "Working" Looks Like
 A judge opens the app, immediately understands the change-gate problem, submits one request with **W**, then sees:
