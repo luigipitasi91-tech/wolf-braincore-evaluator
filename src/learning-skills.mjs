@@ -246,6 +246,12 @@ export function learningSkillLabel(id,locale='en'){
   return skill?.titles?.[lang]||skill?.titles?.en||id;
 }
 
+export function learningFieldLabels(locale='en'){
+  const lang=normalizeLearningLocale(locale);
+  const c=COPY[lang];
+  return {topic:c.topic,goal:c.goal,time:c.time,level:c.level};
+}
+
 export function buildLearningRequest(id,{topic='',goal='',time='',level='',locale='en'}={}){
   const skill=getLearningSkill(id);
   if(!skill)throw new Error('LEARNING_SKILL_NOT_FOUND');
