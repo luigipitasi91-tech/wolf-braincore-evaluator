@@ -55,33 +55,58 @@ function metricRows(comparison){
     '</div>';
   }).join('');
 }
-function renderQuickResult(plans,comparison){
+function humanConstraint(item){
+  return String(item || '')
+    .replace(/^Financial bound explicitly stated:\s*/i,'Budget / financial limit: ')
+    .replace(/^Location explicitly stated:\s*/i,'Location: ')
+    .replace(/^Required output explicitly stated:\s*/i,'Required output: ')
+    .replace(/^Explicit prohibition:\s*/i,'Must not: ')
+    .replace(/\.$/,'');
+}
+
+function renderQuickResult(plans,comparison,request){
   const integrity=comparison.requestIntegrity;
   const explicit=Array.isArray(plans.baseline.constraints)?plans.baseline.constraints:[];
+  const status=$('#quickStatus');
+  const panel=$('#refinementPanel');
   let title='Do not promote';
-  const rows=[];
+  let copy='';
+  let rows=[];
+
+  status.className='quick-status '+comparison.finality.toLowerCase();
+  status.textContent=comparison.finality;
+  panel.hidden=true;
 
   if(comparison.finality==='PROMOTE'){
     title='Ready to promote';
-    rows.push('Request integrity is CLEAR.');
-    for(const item of explicit.slice(0,4)) rows.push('Retained: '+item);
-    if(!explicit.length) rows.push('Candidate clears the shared quality threshold with no critical blocker.');
+    copy='The candidate shows a meaningful improvement and no critical blocker remains.';
+    rows=explicit.slice(0,4).map(item=>humanConstraint(item));
+    if(!rows.length) rows.push('The request is clear enough to evaluate and the candidate clears every promotion gate.');
   } else if(integrity.status==='NEEDS_CLARIFICATION'){
-    title='Request needs clarification';
-    rows.push('Specificity is '+integrity.specificity+'/100.');
-    rows.push('WOLF will not promote an underspecified request.');
+    title='I need a clearer request';
+    copy='“'+request+'” is too open-ended to judge safely. Tell WOLF what you want done and what a good result should look like.';
+    rows=[
+      'Add the action you want the AI to take.',
+      'Add the outcome or artifact you expect.',
+      'Add important limits, evidence, or must-not rules.'
+    ];
+    panel.hidden=false;
   } else if(integrity.status==='CONFLICTING'){
-    title='Resolve the conflict first';
-    rows.push('The request contains conflicting instructions.');
-    for(const item of integrity.contradictions.slice(0,2)) rows.push(item.detail);
+    title='These instructions conflict';
+    copy='WOLF will not silently choose one instruction over another. Resolve the conflict before promotion.';
+    rows=integrity.contradictions.slice(0,3).map(item=>item.detail);
   } else if(comparison.finality==='HOLD'){
-    title='Not ready to promote';
-    rows.push('The candidate improves, but one or more promotion gates are still unmet.');
+    title='Not ready yet';
+    copy='The candidate improves on baseline, but at least one promotion gate is still open.';
+    rows=['Open the evidence to see the exact gate that remains unresolved.'];
   } else {
-    rows.push('The candidate does not show enough verified improvement over baseline.');
+    title='Not enough improvement';
+    copy='The candidate does not improve enough over baseline to justify promotion.';
+    rows=['Revise the candidate or strengthen the request, then run WOLF again.'];
   }
 
   $('#quickTitle').textContent=title;
+  $('#quickCopy').textContent=copy;
   $('#quickReasons').innerHTML=rows.map(row=>'<div class="quick-reason"><span>✓</span><p>'+esc(row)+'</p></div>').join('');
   resultsEl.dataset.evidence='closed';
   const toggle=$('#evidenceToggle');
@@ -150,7 +175,7 @@ async function runEvaluation(){
     $('#blockers').textContent=blockers;
     $('#metrics').innerHTML=metricRows(comparison);
     $('#plans').innerHTML=planCard(plans.baseline,comparison.baseline,'baseline')+planCard(plans.candidate,comparison.candidate,'candidate');
-    renderQuickResult(plans,comparison);
+    renderQuickResult(plans,comparison,request);
 
     const receiptCore={
       receiptVersion:'wolf-braincore-receipt/2.0',
@@ -198,6 +223,11 @@ $('#benchmark').addEventListener('click',()=>{
   toggle.textContent='Hide evidence ↑';
   toggle.setAttribute('aria-expanded','true');
   renderBenchmark();
+});
+$('#refineRequest').addEventListener('click',()=>{
+  newEvaluation();
+  requestEl.focus();
+  requestEl.setSelectionRange(requestEl.value.length,requestEl.value.length);
 });
 $('#evidenceToggle').addEventListener('click',()=>{
   const open=resultsEl.dataset.evidence==='open';
