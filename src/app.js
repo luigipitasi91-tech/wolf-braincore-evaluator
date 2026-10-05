@@ -17,11 +17,18 @@ const requestEl=$('#request');
 const runBtn=$('#run');
 const errorEl=$('#error');
 const benchmarkEl=$('#benchmarkResults');
+const discoveryEl=$('#discoveryPanel');
 
 if(new URLSearchParams(location.search).get('demo')==='1') requestEl.value=SAMPLE;
 
 function esc(value=''){
   return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+function safeHref(value=''){
+  try{
+    const url=new URL(String(value));
+    return ['http:','https:'].includes(url.protocol)?url.href:'#';
+  }catch{return '#';}
 }
 function list(items){
   const xs=Array.isArray(items)?items:[];
@@ -55,40 +62,6 @@ function metricRows(comparison){
     '</div>';
   }).join('');
 }
-function renderQuickResult(plans,comparison){
-  const integrity=comparison.requestIntegrity;
-  const explicit=Array.isArray(plans.baseline.constraints)?plans.baseline.constraints:[];
-  let title='Do not promote';
-  const rows=[];
-
-  if(comparison.finality==='PROMOTE'){
-    title='Ready to promote';
-    rows.push('Request integrity is CLEAR.');
-    for(const item of explicit.slice(0,4)) rows.push('Retained: '+item);
-    if(!explicit.length) rows.push('Candidate clears the shared quality threshold with no critical blocker.');
-  } else if(integrity.status==='NEEDS_CLARIFICATION'){
-    title='Request needs clarification';
-    rows.push('Specificity is '+integrity.specificity+'/100.');
-    rows.push('WOLF will not promote an underspecified request.');
-  } else if(integrity.status==='CONFLICTING'){
-    title='Resolve the conflict first';
-    rows.push('The request contains conflicting instructions.');
-    for(const item of integrity.contradictions.slice(0,2)) rows.push(item.detail);
-  } else if(comparison.finality==='HOLD'){
-    title='Not ready to promote';
-    rows.push('The candidate improves, but one or more promotion gates are still unmet.');
-  } else {
-    rows.push('The candidate does not show enough verified improvement over baseline.');
-  }
-
-  $('#quickTitle').textContent=title;
-  $('#quickReasons').innerHTML=rows.map(row=>'<div class="quick-reason"><span>✓</span><p>'+esc(row)+'</p></div>').join('');
-  resultsEl.dataset.evidence='closed';
-  const toggle=$('#evidenceToggle');
-  toggle.textContent='View evidence ↓';
-  toggle.setAttribute('aria-expanded','false');
-}
-
 function verdictCopy(comparison){
   const critical=comparison.candidate.gaps.filter(x=>x.startsWith('CRITICAL_'));
   if(comparison.finality==='PROMOTE'){
@@ -100,6 +73,136 @@ function verdictCopy(comparison){
       : 'The candidate improves on baseline, but it does not clear every promotion threshold yet.';
   }
   return 'The candidate does not provide enough measurable improvement to justify promotion.';
+}
+function resetEvidence(){
+  resultsEl.dataset.evidence='closed';
+  const toggle=$('#evidenceToggle');
+  toggle.textContent='View evidence ↓';
+  toggle.setAttribute('aria-expanded','false');
+}
+function renderQuickResult(plans,comparison){
+  const integrity=comparison.requestIntegrity;
+  const explicit=Array.isArray(plans.baseline.constraints)?plans.baseline.constraints:[];
+  const statusClass=comparison.finality.toLowerCase();
+  const critical=comparison.candidate.gaps.filter(x=>x.startsWith('CRITICAL_'));
+  const rows=[];
+  let title='Do not promote';
+
+  $('#quickBadge').className='verdict-badge '+statusClass;
+  $('#quickBadge').textContent=comparison.finality;
+
+  if(comparison.finality==='PROMOTE'){
+    title='Ready to promote';
+    rows.push('The change cleared every promotion gate.');
+    for(const item of explicit.slice(0,3)) rows.push(item);
+    if(!explicit.length) rows.push('No critical integrity or verification blocker remains.');
+  } else if(integrity.status==='CONFLICTING'){
+    title='Resolve the conflict first';
+    rows.push('WOLF found instructions that cannot safely be satisfied together.');
+    for(const item of integrity.contradictions.slice(0,2)) rows.push(item.detail);
+  } else if(comparison.finality==='HOLD'){
+    title='Not ready to promote';
+    rows.push('The candidate improves, but at least one promotion gate is still unmet.');
+  } else {
+    title='Reject this change';
+    rows.push('The candidate does not show enough verified improvement over the baseline.');
+  }
+
+  $('#quickTitle').textContent=title;
+  $('#quickMeta').innerHTML=
+    '<span>'+(comparison.delta>=0?'+':'')+comparison.delta+' improvement</span>'+
+    '<span>'+critical.length+' critical blocker'+(critical.length===1?'':'s')+'</span>';
+  $('#quickReasons').innerHTML=rows.map(row=>'<div class="quick-reason"><span>✓</span><p>'+esc(row)+'</p></div>').join('');
+  resultsEl.dataset.mode='evaluation';
+  discoveryEl.hidden=true;
+  $('#quickResult').hidden=false;
+  $('#benchmark').hidden=false;
+  resetEvidence();
+}
+function renderWebResults(results){
+  const section=$('#webSection');
+  const root=$('#webResults');
+  const items=Array.isArray(results)?results:[];
+  if(!items.length){
+    section.hidden=true;
+    root.innerHTML='';
+    return;
+  }
+  root.innerHTML=items.map(item=>{
+    const href=safeHref(item.url);
+    return '<a class="web-result" href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">'+
+      '<small>'+esc(item.domain||'source')+'</small>'+
+      '<h3>'+esc(item.title)+'</h3>'+
+      '<p>'+esc(item.description||'Open source result')+'</p>'+
+    '</a>';
+  }).join('');
+  section.hidden=false;
+}
+function renderVisualResults(results){
+  const section=$('#visualSection');
+  const root=$('#visualResults');
+  const items=Array.isArray(results)?results:[];
+  if(!items.length){
+    section.hidden=true;
+    root.innerHTML='';
+    return;
+  }
+  root.innerHTML=items.map(item=>{
+    const source=safeHref(item.sourceUrl);
+    const license=safeHref(item.licenseUrl);
+    const image=safeHref(item.thumbnail);
+    return '<article class="visual-card">'+
+      '<a class="visual-image" href="'+esc(source)+'" target="_blank" rel="noopener noreferrer">'+
+        '<img src="'+esc(image)+'" alt="'+esc(item.title||'Openverse image')+'" loading="lazy" referrerpolicy="no-referrer">'+
+      '</a>'+
+      '<div><strong>'+esc(item.title||'Untitled')+'</strong>'+
+      '<small>'+esc(item.creator||'Unknown creator')+' · '+esc(item.license||'license')+'</small>'+
+      '<div class="visual-links"><a href="'+esc(source)+'" target="_blank" rel="noopener noreferrer">Source</a><a href="'+esc(license)+'" target="_blank" rel="noopener noreferrer">License</a></div></div>'+
+    '</article>';
+  }).join('');
+  section.hidden=false;
+}
+function discoveryFallback(query){
+  const href='https://search.brave.com/search?q='+encodeURIComponent(query);
+  return 'Live web results are not enabled yet. <a href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">Search this on Brave ↗</a>';
+}
+async function renderDiscovery(request,comparison){
+  resultsEl.dataset.mode='discovery';
+  resetEvidence();
+  $('#quickResult').hidden=true;
+  discoveryEl.hidden=false;
+  $('#benchmark').hidden=true;
+  $('#discoveryTitle').textContent='Let’s clarify “'+request+'”';
+  $('#discoveryQuery').textContent=request;
+  $('#discoveryCopy').textContent='WOLF paused the promotion decision because this input is too open-ended. Here is context that can help turn it into a request worth evaluating.';
+  $('#discoveryStatus').textContent='Looking for useful context…';
+  $('#webSection').hidden=true;
+  $('#visualSection').hidden=true;
+  $('#webResults').innerHTML='';
+  $('#visualResults').innerHTML='';
+  $('#clarifyRequest').value='Research '+request+' and return the most relevant sources without inventing facts.';
+
+  try{
+    const { discoverQuery }=await import('./discovery.mjs');
+    const data=await discoverQuery(request);
+    renderWebResults(data.webResults);
+    renderVisualResults(data.visuals);
+    $('#webProvider').textContent=data.webEnabled?'Brave Search':'Brave Search · not connected';
+    const hasWeb=Array.isArray(data.webResults)&&data.webResults.length>0;
+    const hasVisuals=Array.isArray(data.visuals)&&data.visuals.length>0;
+    if(hasWeb||hasVisuals){
+      $('#discoveryStatus').innerHTML=data.webEnabled
+        ? 'Live context found. Pick a source, or rewrite the request below.'
+        : 'Openly licensed visual context found. '+discoveryFallback(request);
+    }else{
+      $('#discoveryStatus').innerHTML=discoveryFallback(request);
+    }
+  }catch{
+    $('#discoveryStatus').innerHTML=discoveryFallback(request);
+  }
+
+  const integrity=comparison.requestIntegrity;
+  $('#clarifyRequest').setAttribute('aria-description','Current specificity '+integrity.specificity+'/100. Add a concrete action or outcome before evaluation.');
 }
 async function sha256(value){
   const bytes=new TextEncoder().encode(value);
@@ -150,7 +253,6 @@ async function runEvaluation(){
     $('#blockers').textContent=blockers;
     $('#metrics').innerHTML=metricRows(comparison);
     $('#plans').innerHTML=planCard(plans.baseline,comparison.baseline,'baseline')+planCard(plans.candidate,comparison.candidate,'candidate');
-    renderQuickResult(plans,comparison);
 
     const receiptCore={
       receiptVersion:'wolf-braincore-receipt/2.0',
@@ -175,6 +277,11 @@ async function runEvaluation(){
     benchmarkEl.hidden=true;
     homeEl.hidden=true;
     resultsEl.hidden=false;
+    if(integrity.status==='NEEDS_CLARIFICATION'){
+      await renderDiscovery(request,comparison);
+    }else{
+      renderQuickResult(plans,comparison);
+    }
     scrollTo({top:0,behavior:'smooth'});
   }finally{
     runBtn.disabled=false;
@@ -184,13 +291,24 @@ async function runEvaluation(){
 function newEvaluation(){
   resultsEl.hidden=true;
   resultsEl.dataset.evidence='closed';
+  resultsEl.dataset.mode='evaluation';
   benchmarkEl.hidden=true;
+  discoveryEl.hidden=true;
+  $('#quickResult').hidden=false;
+  $('#benchmark').hidden=false;
   homeEl.hidden=false;
   errorEl.textContent='';
   requestEl.focus();
 }
 
 formEl.addEventListener('submit',event=>{event.preventDefault();runEvaluation();});
+$('#clarifyForm').addEventListener('submit',event=>{
+  event.preventDefault();
+  const clarified=$('#clarifyRequest').value.trim();
+  if(!clarified)return;
+  requestEl.value=clarified;
+  runEvaluation();
+});
 $('#back').addEventListener('click',newEvaluation);
 $('#benchmark').addEventListener('click',()=>{
   resultsEl.dataset.evidence='open';
