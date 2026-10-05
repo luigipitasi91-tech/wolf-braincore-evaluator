@@ -2,15 +2,16 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 
-test('result hierarchy is verdict first, quick summary second, evidence on demand',async()=>{
+test('result hierarchy is human summary first and technical evidence on demand',async()=>{
   const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
-  const verdict=html.indexOf('class="verdict panel"');
   const quick=html.indexOf('id="quickResult"');
+  const verdict=html.indexOf('class="verdict panel evidence-detail"');
   const integrity=html.indexOf('integrity-strip panel evidence-detail');
   const metrics=html.indexOf('metrics-panel evidence-detail');
   const plans=html.indexOf('id="plans"');
   const receipt=html.indexOf('id="receipt"');
-  assert.ok(verdict>0&&quick>verdict&&integrity>quick&&metrics>integrity&&plans>metrics&&receipt>plans);
+  assert.ok(quick>0&&verdict>quick&&integrity>verdict&&metrics>integrity&&plans>metrics&&receipt>plans);
+  assert.match(html,/I need a clearer request|Decision summary/);
 });
 
 test('judge can understand value before pressing W',async()=>{
@@ -47,5 +48,7 @@ test('evidence is collapsed behind an explicit user control',async()=>{
   ]);
   assert.match(html,/View evidence/);
   assert.match(app,/dataset\.evidence='closed'/);
+  assert.match(app,/I need a clearer request/);
+  assert.match(app,/Add the action you want the AI to take/);
   assert.match(css,/data-evidence="closed"/);
 });
