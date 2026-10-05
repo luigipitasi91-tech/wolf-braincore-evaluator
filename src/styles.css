@@ -167,3 +167,5 @@ main{min-height:100vh}
   .clarify-box>div{grid-template-columns:1fr}
   .clarify-box button{width:100%}
 }
+
+.learning-skills-link{color:#8fa5be;text-decoration:none;border-bottom:1px solid #2a3b4f;padding:5px 2px;font-size:.75rem;font-weight:750}.learning-skills-link:hover,.learning-skills-link:focus-visible{color:var(--accent);border-color:#5e9fe9;outline:none}

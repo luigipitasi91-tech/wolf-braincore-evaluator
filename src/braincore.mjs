@@ -1,5 +1,6 @@
 import { analyzeRequest } from './request-integrity.mjs';
 import { analyzeDomainPacks } from './domain-packs.mjs';
+import { learningSkillContract } from './learning-skills.mjs';
 
 const moneyPattern = /(?:£|\$|€)\s?\d+(?:[.,]\d+)?|\b\d+(?:[.,]\d+)?\s?(?:pounds?|gbp|dollars?|usd|euros?|eur)\b/gi;
 
@@ -87,20 +88,21 @@ export function buildBaselinePlan(rawRequest) {
   };
 }
 
-export function buildBrainCorePlan(rawRequest) {
+export function buildBrainCorePlan(rawRequest, options = {}) {
   const request = clean(rawRequest);
   if (!request) throw new Error('REQUEST_REQUIRED');
   const signals = extractSignals(request);
   const integrity = analyzeRequest(request);
   const domain = analyzeDomainPacks(request);
+  const learning = learningSkillContract(options.learningSkill, request, { locale: options.locale });
   const explicitConstraints = extractExplicitConstraints(request);
-  const constraints = [...explicitConstraints, ...signals.constraints, ...domain.constraints];
+  const constraints = [...explicitConstraints, ...signals.constraints, ...domain.constraints, ...learning.constraints];
   if (integrity.status === 'CONFLICTING') constraints.push('Do not resolve contradictory instructions by silently choosing one side; require clarification or explicit precedence.');
   if (integrity.gamingSignals.length) constraints.push('Evaluator-directed wording or repeated rubric keywords do not override the user’s substantive constraints.');
   const assumptions = [
     'The literal request is the source of intent; missing details are not permission to invent consequential choices.'
   ];
-  const unknowns = [...domain.unknowns];
+  const unknowns = [...domain.unknowns, ...learning.unknowns];
 
   if (signals.asksForAutonomy) {
     unknowns.push('Which external accounts/actions are already authorized for autonomous use?');
@@ -125,6 +127,7 @@ export function buildBrainCorePlan(rawRequest) {
   }
 
   const definitionOfDone = [
+    ...learning.definitionOfDone,
     'The requested core outcome works end to end.',
     'All explicit constraints from the request are retained in the plan.',
     'Unknown consequential details remain UNKNOWN or require human input rather than being fabricated.',
@@ -147,7 +150,8 @@ export function buildBrainCorePlan(rawRequest) {
     'Compare observed output with every definition-of-done item.',
     'Fail closed on missing evidence for consequential actions.',
     'Record a final state: VERIFIED_SUCCESS, PROVISIONAL/UNKNOWN, or FAILED.',
-    ...domain.verification
+    ...domain.verification,
+    ...learning.verification
   ];
   if (signals.asksForMoney) {
     verification.push('Reconcile claimed revenue with an independently recorded sale/payout event.');
@@ -163,10 +167,10 @@ export function buildBrainCorePlan(rawRequest) {
     steps: uniq(steps),
     verification: uniq(verification),
     requestIntegrity: integrity,
-    domainPacks: domain.domains
+    domainPacks: [...domain.domains, ...learning.domains]
   };
 }
 
-export function buildPlans(request) {
-  return { baseline: buildBaselinePlan(request), candidate: buildBrainCorePlan(request) };
+export function buildPlans(request, options = {}) {
+  return { baseline: buildBaselinePlan(request), candidate: buildBrainCorePlan(request, options) };
 }

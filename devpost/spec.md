@@ -85,6 +85,8 @@ Discovery outputs are not passed into `src/evaluator.mjs`.
 ## Non-Judge Extensions
 The repository may also contain domain research, transfer-pack code or external-candidate experiments.
 
+The optional **Learning Skills Pack** lives at `skills.html` with `src/learning-skills.mjs`, `src/skills-app.js`, and `src/skills.css`. It exposes six pedagogical modes in six languages. When an end user selects a skill, the skill context can be passed into BrainCore as additional planning constraints. No skill is active during the fixed competition benchmark or the `?demo=1` judge path.
+
 Those modules are deliberately excluded from the competition UI and are not part of the competition acceptance criteria.
 
 ## Data Objects
@@ -141,7 +143,7 @@ tests/
 Additional non-judge files may exist outside this core list.
 
 ## Regression Evidence
-Current suite target: **59 passing tests**.
+Current suite target: **82 passing tests**.
 
 Important known failures converted into tests:
 - short specific request falsely held;

@@ -28,6 +28,22 @@ No login, model API key, paid token or external model call is required in the de
 
 For vague input, WOLF can optionally open a clarification/discovery layer. Brave web discovery is enabled only when a server-side key is configured; Openverse visual context includes source and license links. Discovery results never affect WOLF scores or finality.
 
+## Optional Learning Skills Pack
+
+WOLF also includes a separate **Learning Skills Pack** at `/skills.html`. It is not part of the competition judge acceptance criteria.
+
+The pack contains six reusable learning modes:
+- Fast Track Coach;
+- Real Error Simulator;
+- Core Idea Translator;
+- Learning Path Architect;
+- Hidden Gap Detector;
+- Teach-Back Checker.
+
+Each mode is available in **English, Italian, Spanish, French, German and Portuguese**. The composer builds a structured request and passes the selected learning skill into BrainCore as an explicit pedagogical contract. The core evaluator and fixed benchmark remain unchanged when no learning skill is selected.
+
+The pack implements general learning mechanisms such as diagnostic questioning, error reflection, applied retrieval, progressive scaffolding and teach-back. It does not copy source-product code, branding or proprietary runtime behavior.
+
 ## Core loop
 
 1. One request enters WOLF.
@@ -107,7 +123,7 @@ npm start
 npm test
 ```
 
-Current regression suite target: **59/59 tests passing**.
+Current regression suite target: **82/82 tests passing**.
 
 ## Hackathon planning artifacts
 
@@ -138,7 +154,7 @@ The final 1–3 minute script is in:
 
 ## Competition boundary
 
-The competition judge path is intentionally narrow: **AI change evaluation only**. The optional Discovery layer improves clarification UX but remains outside evaluator scoring and benchmark evidence.
+The competition judge path is intentionally narrow: **AI change evaluation only**. The optional Discovery layer improves clarification UX but remains outside evaluator scoring and benchmark evidence. The multilingual Learning Skills Pack is also an optional non-judge extension and is hidden from the `?demo=1` judge path.
 
 Additional experiments or research that may exist elsewhere in the repository are not part of the competition acceptance criteria and are not surfaced in the judge demo.
 

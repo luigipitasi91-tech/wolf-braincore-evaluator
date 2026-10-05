@@ -1,6 +1,7 @@
 import { buildPlans } from './braincore.mjs';
 import { comparePlans, METRIC_LABELS } from './evaluator.mjs';
 import { runBenchmark } from './benchmark.mjs';
+import { getLearningSkill, learningSkillLabel, normalizeLearningLocale } from './learning-skills.mjs';
 
 const SAMPLE='Create an autonomous app that makes money for me with a £100 budget. It should work as independently as possible, never pretend revenue is real without proof, and ask me only when a human decision is genuinely required.';
 const SCENARIOS={
@@ -18,8 +19,14 @@ const runBtn=$('#run');
 const errorEl=$('#error');
 const benchmarkEl=$('#benchmarkResults');
 const discoveryEl=$('#discoveryPanel');
+const pageParams=new URLSearchParams(location.search);
+const isJudgeDemo=pageParams.get('demo')==='1';
+let activeLearningSkill=getLearningSkill(pageParams.get('skill'))?.id||'';
+const activeLearningLocale=normalizeLearningLocale(pageParams.get('lang')||navigator.language||'en');
 
-if(new URLSearchParams(location.search).get('demo')==='1') requestEl.value=SAMPLE;
+if(pageParams.get('request')) requestEl.value=pageParams.get('request');
+else if(isJudgeDemo) requestEl.value=SAMPLE;
+if(isJudgeDemo&&$('#learningSkillsLink')) $('#learningSkillsLink').hidden=true;
 
 function esc(value=''){
   return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -109,9 +116,10 @@ function renderQuickResult(plans,comparison){
   }
 
   $('#quickTitle').textContent=title;
+  const skillMeta=activeLearningSkill?'<span>Learning skill · '+esc(learningSkillLabel(activeLearningSkill,activeLearningLocale))+'</span>':'';
   $('#quickMeta').innerHTML=
     '<span>'+(comparison.delta>=0?'+':'')+comparison.delta+' improvement</span>'+
-    '<span>'+critical.length+' critical blocker'+(critical.length===1?'':'s')+'</span>';
+    '<span>'+critical.length+' critical blocker'+(critical.length===1?'':'s')+'</span>'+skillMeta;
   $('#quickReasons').innerHTML=rows.map(row=>'<div class="quick-reason"><span>✓</span><p>'+esc(row)+'</p></div>').join('');
   resultsEl.dataset.mode='evaluation';
   discoveryEl.hidden=true;
@@ -235,7 +243,7 @@ async function runEvaluation(){
   const previous=runBtn.textContent;
   runBtn.textContent='…';
   try{
-    const plans=buildPlans(request);
+    const plans=buildPlans(request,{learningSkill:activeLearningSkill,locale:activeLearningLocale});
     const comparison=comparePlans(plans.baseline,plans.candidate,request);
     const statusClass=comparison.finality.toLowerCase();
     const integrity=comparison.requestIntegrity;
@@ -263,7 +271,8 @@ async function runEvaluation(){
       candidateScore:comparison.candidate.total,
       delta:comparison.delta,
       finality:comparison.finality,
-      candidateGaps:comparison.candidate.gaps
+      candidateGaps:comparison.candidate.gaps,
+      learningSkill:activeLearningSkill||null
     };
     const receiptHash=await sha256(JSON.stringify(receiptCore));
     const requestHash=await sha256(request);
@@ -326,6 +335,7 @@ $('#evidenceToggle').addEventListener('click',()=>{
 });
 document.querySelectorAll('[data-scenario]').forEach(button=>{
   button.addEventListener('click',()=>{
+    activeLearningSkill='';
     requestEl.value=SCENARIOS[button.dataset.scenario]||SAMPLE;
     requestEl.focus();
   });

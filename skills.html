@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="WOLF Learning Skills Pack — six reusable learning modes in six languages.">
+  <meta name="theme-color" content="#05070a">
+  <title>WOLF — Learning Skills Pack</title>
+  <link rel="stylesheet" href="./src/styles.css">
+  <link rel="stylesheet" href="./src/skills.css">
+</head>
+<body>
+<main class="skills-shell">
+  <header class="skills-topbar">
+    <a href="./" class="text-button">← WOLF</a>
+    <strong>LEARNING SKILLS</strong>
+    <span class="skills-version">v1</span>
+  </header>
+
+  <section class="skills-hero">
+    <div class="home-badge">WOLF LEARNING SKILLS PACK</div>
+    <h1>Choose how you want to learn.</h1>
+    <p>Six reusable learning modes built around practice, diagnosis, teach-back and measurable progress. Pick a skill, choose a language, then send the structured request into WOLF.</p>
+  </section>
+
+  <section class="skills-toolbar panel">
+    <label for="skillsLanguage">Language</label>
+    <select id="skillsLanguage" aria-label="Learning skill language"></select>
+  </section>
+
+  <section>
+    <div id="skillGrid" class="skill-grid" aria-live="polite"></div>
+  </section>
+
+  <section id="skillComposer" class="skill-composer panel" hidden>
+    <div class="composer-head">
+      <div>
+        <div class="eyebrow">ACTIVE SKILL</div>
+        <h2 id="composerTitle">Learning skill</h2>
+        <p id="composerSummary"></p>
+      </div>
+      <button id="closeComposer" class="text-button" type="button">Close</button>
+    </div>
+
+    <form id="skillForm" class="skill-form">
+      <label>
+        <span id="topicLabel">Topic or skill</span>
+        <input id="skillTopic" type="text" required placeholder="e.g. Cabin crew interview English">
+      </label>
+      <label>
+        <span id="goalLabel">Concrete outcome</span>
+        <input id="skillGoal" type="text" placeholder="e.g. Answer five interview questions confidently">
+      </label>
+      <label>
+        <span id="timeLabel">Time / deadline</span>
+        <input id="skillTime" type="text" placeholder="e.g. 7 days · 45 min/day">
+      </label>
+      <label>
+        <span id="levelLabel">What I already know</span>
+        <textarea id="skillLevel" rows="3" placeholder="What is already solid? What still feels weak?"></textarea>
+      </label>
+      <button class="skill-build" type="submit">Build WOLF request</button>
+    </form>
+
+    <section id="skillOutput" class="skill-output" hidden>
+      <div class="skill-output-head">
+        <div>
+          <div class="eyebrow">COMPILED REQUEST</div>
+          <h3>Ready for WOLF</h3>
+        </div>
+        <button id="copySkill" class="evidence-toggle" type="button">Copy</button>
+      </div>
+      <pre id="skillPrompt"></pre>
+      <div class="skill-actions">
+        <a id="openInWolf" class="skill-primary" href="./">Open in WOLF →</a>
+      </div>
+      <p class="skill-note">The learning pack changes planning constraints only. It does not alter WOLF’s competition benchmark or deterministic promotion rules.</p>
+    </section>
+  </section>
+</main>
+<script type="module" src="./src/skills-app.js"></script>
+</body>
+</html>
