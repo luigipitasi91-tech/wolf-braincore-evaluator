@@ -33,6 +33,8 @@ jobs:
         run: |
           set -o pipefail
           npm run smoke:compat 2>&1 | tee compat-output.txt
+      - name: V8V autonomous agent smoke
+        run: node smoke/agent-live.mjs
       - name: Upload compatibility failure log
         if: failure()
         uses: actions/upload-artifact@v4
