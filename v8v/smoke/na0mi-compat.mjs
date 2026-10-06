@@ -7,7 +7,7 @@ const base='http://127.0.0.1:'+PORT;
 const child=spawn(process.execPath,['server.mjs'],{
   cwd:new URL('../',import.meta.url),
   env:{...process.env,PORT:String(PORT),V8V_API_TOKEN:TOKEN,MAX_SESSIONS:'1'},
-  stdio:['ignore','pipe','pipe']
+  stdio:'ignore'
 });
 
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -26,11 +26,19 @@ async function waitReady(){
 }
 
 async function call(path,{method='POST',body}={}){
-  const res=await fetch(base+path,{
-    method,
-    headers:{authorization:'Bearer '+TOKEN,'content-type':'application/json'},
-    body:body===undefined?undefined:JSON.stringify(body)
-  });
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),30000);
+  let res;
+  try{
+    res=await fetch(base+path,{
+      method,
+      headers:{authorization:'Bearer '+TOKEN,'content-type':'application/json'},
+      body:body===undefined?undefined:JSON.stringify(body),
+      signal:controller.signal
+    });
+  }finally{
+    clearTimeout(timer);
+  }
   const text=await res.text();
   let data={};
   try{data=text?JSON.parse(text):{}}catch{data={raw:text}}
@@ -65,5 +73,6 @@ try{
 
   console.log(JSON.stringify({status:'PASS',test:'V8V_NA0MI_REMOTE_HTTP_COMPAT',title:snap.title,url:snap.url}));
 }finally{
-  child.kill('SIGTERM');
+  child.kill('SIGKILL');
+  await sleep(100);
 }
