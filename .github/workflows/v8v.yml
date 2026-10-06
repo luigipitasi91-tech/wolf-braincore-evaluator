@@ -29,4 +29,13 @@ jobs:
         run: |
           node -e "import('./runtime.mjs').then(async m=>{const s=await m.createSession({startUrl:'https://example.com',allowedDomains:['example.com']});const snap=await m.snapshotSession(s.id,{textLimit:300});if(snap.title!=='Example Domain')throw new Error('bad title');await m.closeSession(s.id);process.exit(0)}).catch(e=>{console.error(e);process.exit(1)})"
       - name: Na0mi remote-browser compatibility smoke
-        run: npm run smoke:compat
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run smoke:compat 2>&1 | tee compat-output.txt
+      - name: Upload compatibility failure log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v8v-compat-output
+          path: v8v/compat-output.txt
