@@ -2,7 +2,7 @@ name: V8V CI
 
 on:
   push:
-    branches: [v8v-runtime]
+    branches: [v8v-runtime, v8v-production]
   pull_request:
     paths:
       - 'v8v/**'
