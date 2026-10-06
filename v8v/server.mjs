@@ -1,7 +1,7 @@
 import express from 'express';
 import {
-  createSession,closeSession,runActions,snapshotSession,
-  screenshotSession,traceSession,health
+  createSession,closeSession,runActions,snapshotSession,screenshotSession,traceSession,health,
+  navigateSession,extractSession,clickLinkSession,clickSession,fillSession,pressSession,selectSession
 } from './runtime.mjs';
 
 const app=express();
@@ -9,6 +9,9 @@ app.disable('x-powered-by');
 app.use(express.json({limit:'1mb'}));
 
 const API_TOKEN=process.env.V8V_API_TOKEN||'';
+let selftestBusy=false;
+let lastSelftestAt=0;
+
 function auth(req,res,next){
   if(!API_TOKEN)return res.status(503).json({ok:false,error:'V8V_API_TOKEN_NOT_CONFIGURED'});
   const token=req.get('authorization')?.replace(/^Bearer\s+/i,'')||req.get('x-v8v-token')||'';
@@ -23,26 +26,61 @@ function fail(res,error,status=400){
 }
 
 app.get('/health',async(_req,res)=>res.json({...await health(),controlApiLocked:!API_TOKEN}));
+
 app.get('/selftest',async(_req,res)=>{
+  const now=Date.now();
+  if(selftestBusy)return res.status(429).json({ok:false,error:'SELFTEST_BUSY'});
+  if(now-lastSelftestAt<30_000)return res.status(429).json({ok:false,error:'SELFTEST_RATE_LIMIT'});
+  selftestBusy=true;
+  lastSelftestAt=now;
   let id='';
   try{
     const session=await createSession({startUrl:'https://example.com',allowedDomains:['example.com']});
     id=session.id;
     const snapshot=await snapshotSession(id,{textLimit:600});
-    res.json({ok:true,browser:true,url:snapshot.url,title:snapshot.title,text:snapshot.text.slice(0,160),elements:snapshot.elements.length});
+    res.json({
+      ok:snapshot.title==='Example Domain',
+      browser:true,
+      url:snapshot.url,
+      title:snapshot.title,
+      text:snapshot.text.slice(0,160),
+      elements:snapshot.elements.length,
+      version:'0.2.0'
+    });
   }catch(e){
     fail(res,e,500);
   }finally{
     if(id)await closeSession(id).catch(()=>{});
+    selftestBusy=false;
   }
 });
+
 app.get('/',(_req,res)=>res.json({
   name:'V8V',
   description:'Deterministic browser runtime for AI agents',
-  version:'0.1.0',
-  endpoints:['POST /v1/sessions','POST /v1/sessions/:id/actions','GET /v1/sessions/:id/snapshot','GET /v1/sessions/:id/screenshot','GET /v1/sessions/:id/trace','DELETE /v1/sessions/:id']
+  version:'0.2.0',
+  compatibility:['V8V v1 API','Na0mi REMOTE_HTTP_BROWSER'],
+  endpoints:[
+    'POST /v1/sessions',
+    'POST /v1/sessions/:id/actions',
+    'GET /v1/sessions/:id/snapshot',
+    'GET /v1/sessions/:id/screenshot',
+    'GET /v1/sessions/:id/trace',
+    'DELETE /v1/sessions/:id',
+    'POST /session',
+    'POST /session/:id/goto',
+    'POST /session/:id/observe',
+    'POST /session/:id/extract',
+    'POST /session/:id/click-link',
+    'POST /session/:id/click',
+    'POST /session/:id/fill',
+    'POST /session/:id/press',
+    'POST /session/:id/select',
+    'DELETE /session/:id'
+  ]
 }));
 
+// V8V-native API
 app.post('/v1/sessions',auth,async(req,res)=>{
   try{res.status(201).json({ok:true,session:await createSession(req.body||{})});}
   catch(e){fail(res,e);}
@@ -67,6 +105,56 @@ app.get('/v1/sessions/:id/trace',auth,(req,res)=>{
 });
 app.delete('/v1/sessions/:id',auth,async(req,res)=>{
   try{res.json(await closeSession(req.params.id));}
+  catch(e){fail(res,e);}
+});
+
+// Compatibility API for Na0mi's REMOTE_HTTP_BROWSER adapter.
+app.post('/session',auth,async(req,res)=>{
+  try{
+    const q=req.body||{};
+    const session=await createSession({
+      allowedDomains:q.allowDomains||[],
+      blockDomains:q.blockDomains||[],
+      allowPrivateNetwork:q.allowPrivateNetwork===true
+    });
+    res.status(201).json({id:session.id});
+  }catch(e){fail(res,e);}
+});
+
+app.post('/session/:id/goto',auth,async(req,res)=>{
+  try{res.json(await navigateSession(req.params.id,req.body?.url,{timeoutMs:req.body?.timeoutMs}));}
+  catch(e){fail(res,e);}
+});
+app.post('/session/:id/observe',auth,async(req,res)=>{
+  try{res.json(await snapshotSession(req.params.id));}
+  catch(e){fail(res,e);}
+});
+app.post('/session/:id/extract',auth,async(req,res)=>{
+  try{res.json(await extractSession(req.params.id,req.body?.selector));}
+  catch(e){fail(res,e);}
+});
+app.post('/session/:id/click-link',auth,async(req,res)=>{
+  try{res.json(await clickLinkSession(req.params.id,req.body?.selector,{timeoutMs:req.body?.timeoutMs}));}
+  catch(e){fail(res,e);}
+});
+app.post('/session/:id/click',auth,async(req,res)=>{
+  try{res.json(await clickSession(req.params.id,req.body?.selector,{timeoutMs:req.body?.timeoutMs}));}
+  catch(e){fail(res,e);}
+});
+app.post('/session/:id/fill',auth,async(req,res)=>{
+  try{res.json(await fillSession(req.params.id,req.body?.selector,req.body?.value,{timeoutMs:req.body?.timeoutMs}));}
+  catch(e){fail(res,e);}
+});
+app.post('/session/:id/press',auth,async(req,res)=>{
+  try{res.json(await pressSession(req.params.id,req.body?.key,{timeoutMs:req.body?.timeoutMs}));}
+  catch(e){fail(res,e);}
+});
+app.post('/session/:id/select',auth,async(req,res)=>{
+  try{res.json(await selectSession(req.params.id,req.body?.selector,req.body?.value,{timeoutMs:req.body?.timeoutMs}));}
+  catch(e){fail(res,e);}
+});
+app.delete('/session/:id',auth,async(req,res)=>{
+  try{res.json({closed:(await closeSession(req.params.id)).ok});}
   catch(e){fail(res,e);}
 });
 
