@@ -41,3 +41,37 @@ jobs:
         with:
           name: v8v-compat-output
           path: v8v/compat-output.txt
+
+
+  production-smoke:
+    if: github.ref == 'refs/heads/v8v-production'
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Wait for Render production health
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://v8v-production.onrender.com/health"
+          for i in $(seq 1 24); do
+            body=$(curl -fsS --max-time 20 "$url" || true)
+            if echo "$body" | grep -q '"ok":true' && echo "$body" | grep -q '"version":"0.3.0"'; then
+              echo "$body"
+              exit 0
+            fi
+            echo "waiting for production deploy ($i/24)"
+            sleep 10
+          done
+          echo "production health never became ready"
+          exit 1
+
+      - name: Verify live autonomous agent self-test
+        shell: bash
+        run: |
+          set -euo pipefail
+          body=$(curl -fsS --max-time 60 "https://v8v-production.onrender.com/selftest/agent")
+          echo "$body"
+          echo "$body" | grep -q '"ok":true'
+          echo "$body" | grep -q '"version":"0.3.0"'
+          echo "$body" | grep -q '"finality":"PROVISIONAL_SUCCESS"'
