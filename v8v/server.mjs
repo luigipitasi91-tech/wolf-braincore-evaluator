@@ -12,6 +12,8 @@ app.use(express.json({limit:'1mb'}));
 const API_TOKEN=process.env.V8V_API_TOKEN||'';
 let selftestBusy=false;
 let lastSelftestAt=0;
+let agentSelftestBusy=false;
+let lastAgentSelftestAt=0;
 
 function auth(req,res,next){
   if(!API_TOKEN)return res.status(503).json({ok:false,error:'V8V_API_TOKEN_NOT_CONFIGURED'});
@@ -46,7 +48,7 @@ app.get('/selftest',async(_req,res)=>{
       title:snapshot.title,
       text:snapshot.text.slice(0,160),
       elements:snapshot.elements.length,
-      version:'0.2.0'
+      version:'0.3.0'
     });
   }catch(e){
     fail(res,e,500);
@@ -93,6 +95,11 @@ app.post('/v1/agent/run',auth,async(req,res)=>{
 });
 
 app.get('/selftest/agent',async(_req,res)=>{
+  const now=Date.now();
+  if(agentSelftestBusy)return res.status(429).json({ok:false,error:'AGENT_SELFTEST_BUSY'});
+  if(now-lastAgentSelftestAt<30_000)return res.status(429).json({ok:false,error:'AGENT_SELFTEST_RATE_LIMIT'});
+  agentSelftestBusy=true;
+  lastAgentSelftestAt=now;
   try{
     const out=await runAgent({
       url:'https://example.com',
@@ -103,6 +110,7 @@ app.get('/selftest/agent',async(_req,res)=>{
     });
     res.json({ok:out.ok,version:out.version,finality:out.finality,title:out.title,url:out.finalUrl,stepsCompleted:out.stepsCompleted});
   }catch(e){fail(res,e,500);}
+  finally{agentSelftestBusy=false;}
 });
 
 // V8V-native API
