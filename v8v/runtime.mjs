@@ -320,5 +320,5 @@ export async function health(){
     const b=await browser();
     browserReady=!!b?.isConnected();
   }catch(e){error=e?.message||String(e);}
-  return {ok:browserReady,service:'v8v-browser-runtime',version:'0.2.0',browserReady,sessions:sessions.size,maxSessions:MAX_SESSIONS,error};
+  return {ok:browserReady,service:'v8v-browser-runtime',version:'0.3.0',browserReady,sessions:sessions.size,maxSessions:MAX_SESSIONS,error};
 }
