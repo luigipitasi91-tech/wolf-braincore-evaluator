@@ -49,7 +49,7 @@ async function call(path,{method='POST',body}={}){
 try{
   const health=await waitReady();
   assert.equal(health.ok,true);
-  assert.equal(health.version,'0.2.0');
+  assert.equal(health.version,'0.3.0');
 
   const created=await call('/session',{body:{allowDomains:['example.com']}});
   assert.ok(created.id);
