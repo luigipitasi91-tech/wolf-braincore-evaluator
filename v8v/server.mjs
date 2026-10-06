@@ -3,6 +3,7 @@ import {
   createSession,closeSession,runActions,snapshotSession,screenshotSession,traceSession,health,
   navigateSession,extractSession,clickLinkSession,clickSession,fillSession,pressSession,selectSession
 } from './runtime.mjs';
+import {planAgentRun,runAgent} from './agent.mjs';
 
 const app=express();
 app.disable('x-powered-by');
@@ -57,8 +58,8 @@ app.get('/selftest',async(_req,res)=>{
 
 app.get('/',(_req,res)=>res.json({
   name:'V8V',
-  description:'Deterministic browser runtime for AI agents',
-  version:'0.2.0',
+  description:'Deterministic browser runtime and bounded agent for AI systems',
+  version:'0.3.0',
   compatibility:['V8V v1 API','Na0mi REMOTE_HTTP_BROWSER'],
   endpoints:[
     'POST /v1/sessions',
@@ -76,9 +77,33 @@ app.get('/',(_req,res)=>res.json({
     'POST /session/:id/fill',
     'POST /session/:id/press',
     'POST /session/:id/select',
-    'DELETE /session/:id'
+    'DELETE /session/:id',
+    'POST /v1/agent/plan',
+    'POST /v1/agent/run'
   ]
 }));
+
+app.post('/v1/agent/plan',auth,(req,res)=>{
+  try{res.json({ok:true,plan:planAgentRun(req.body||{})});}
+  catch(e){fail(res,e);}
+});
+app.post('/v1/agent/run',auth,async(req,res)=>{
+  try{res.json(await runAgent(req.body||{}));}
+  catch(e){fail(res,e);}
+});
+
+app.get('/selftest/agent',async(_req,res)=>{
+  try{
+    const out=await runAgent({
+      url:'https://example.com',
+      goal:'Read the public example page and collect enough evidence to verify the browser agent works.',
+      allowedDomains:['example.com'],
+      maxSteps:2,
+      minEvidenceChars:80
+    });
+    res.json({ok:out.ok,version:out.version,finality:out.finality,title:out.title,url:out.finalUrl,stepsCompleted:out.stepsCompleted});
+  }catch(e){fail(res,e,500);}
+});
 
 // V8V-native API
 app.post('/v1/sessions',auth,async(req,res)=>{
