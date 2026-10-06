@@ -24,3 +24,5 @@ console.log(JSON.stringify({
   finality:out.finality,
   stepsCompleted:out.stepsCompleted
 }));
+
+process.exit(0);
