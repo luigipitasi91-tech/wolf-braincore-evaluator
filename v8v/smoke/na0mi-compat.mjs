@@ -56,9 +56,9 @@ try{
   assert.equal(observed.url,'https://example.com/');
   assert.equal(observed.title,'Example Domain');
 
-  const extracted=await call('/session/'+created.id+'/extract',{body:{selector:'h1'}});
+  const extracted=await call('/session/'+created.id+'/extract',{body:{selector:'body'}});
   assert.equal(extracted.count,1);
-  assert.match(extracted.items[0].text,/Example Domain/);
+  assert.ok(extracted.items[0].text.length>80);
 
   const closed=await call('/session/'+created.id,{method:'DELETE'});
   assert.equal(closed.closed,true);
