@@ -148,3 +148,22 @@ Example:
 ```
 
 Public fixed verification: `GET /selftest/agent` runs a rate-limited read-only check against example.com.
+
+
+## Render production deployment
+
+On Render native Node services, set:
+
+```text
+PLAYWRIGHT_BROWSERS_PATH=0
+```
+
+Build with:
+
+```text
+cd v8v && npm install && npx playwright install chromium
+```
+
+This forces Playwright browser binaries into the application artifact under `node_modules/playwright-core/.local-browsers`. Do not use `playwright install --with-deps` on a native Render Node build: it requires privileged OS-package installation and fails because the build environment cannot switch to root.
+
+Production verification is not based on Render's "live" flag alone. The V8V CI production-smoke job must pass both `/health` and `/selftest/agent`.
