@@ -65,7 +65,7 @@ POST /v1/sessions/:id/actions
 
 ## Security boundary
 
-V8V v0.1 is not a stealth bot or CAPTCHA-bypass product. It blocks non-http(s) navigation and obvious localhost/private IP targets, supports per-session domain allowlists, and avoids arbitrary JavaScript evaluation endpoints.
+V8V v0.2 is not a stealth bot or CAPTCHA-bypass product. It blocks non-http(s) navigation and obvious localhost/private IP targets, supports per-session domain allowlists, and avoids arbitrary JavaScript evaluation endpoints.
 
 For authenticated or consequential workflows, keep human approval in the planner layer.
 
@@ -84,3 +84,42 @@ Sessions live in memory and expire by default after 15 minutes. `exportState` re
 Public verification endpoints:
 - `GET /health` — runtime/browser state only;
 - `GET /selftest` — fixed, read-only check against `https://example.com`.
+
+
+## Na0mi compatibility
+
+V8V v0.2 exposes a compatibility surface for Na0mi's existing `REMOTE_HTTP_BROWSER` adapter.
+
+Configure Na0mi with:
+
+```text
+NA0MI_BROWSER_HTTP_URL=https://v8v-runtime.onrender.com
+NA0MI_BROWSER_HTTP_TOKEN=<same value as V8V_API_TOKEN>
+```
+
+Na0mi can then use its existing browser planner while V8V performs the browser execution.
+
+Compatibility endpoints:
+
+- `POST /session`
+- `POST /session/:id/goto`
+- `POST /session/:id/observe`
+- `POST /session/:id/extract`
+- `POST /session/:id/click-link`
+- `POST /session/:id/click`
+- `POST /session/:id/fill`
+- `POST /session/:id/press`
+- `POST /session/:id/select`
+- `DELETE /session/:id`
+
+This makes TinyFish an optional fallback rather than the primary browser backend.
+
+## Security notes
+
+- Control routes require `V8V_API_TOKEN`.
+- Public/private network checks include DNS resolution to reduce SSRF through hostnames.
+- URL credentials are blocked.
+- Domain allowlists and blocklists are supported per session.
+- Navigation to private/local networks is blocked unless explicitly enabled for a trusted local test.
+- V8V does not expose arbitrary JavaScript evaluation.
+- Consequential actions still require authorization in the planner layer; V8V does not grant that authority itself.
