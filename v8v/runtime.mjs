@@ -1,6 +1,6 @@
 import {chromium} from 'playwright';
 import crypto from 'node:crypto';
-import {validateUrl,redactAction} from './policy.mjs';
+import {validateUrl,resolveAndValidateUrl,redactAction} from './policy.mjs';
 
 const sessions=new Map();
 const SESSION_TTL_MS=Number(process.env.SESSION_TTL_MS||15*60*1000);
@@ -44,13 +44,33 @@ export async function createSession({startUrl,allowedDomains=[],storageState,vie
     storageState:storageState||undefined,
     ignoreHTTPSErrors:false
   });
+  const networkVerdicts=new Map();
+  await context.route('**/*',async route=>{
+    const req=route.request();
+    const raw=req.url();
+    if(!/^https?:/i.test(raw))return route.continue();
+    try{
+      const host=new URL(raw).hostname;
+      let allowed=networkVerdicts.get(host);
+      if(allowed===undefined){
+        await resolveAndValidateUrl(raw,{allowedDomains, enforceDomain:req.resourceType()==='document'});
+        allowed=true;
+        networkVerdicts.set(host,true);
+      }else if(req.resourceType()==='document'){
+        validateUrl(raw,{allowedDomains});
+      }
+      return route.continue();
+    }catch{
+      return route.abort('blockedbyclient');
+    }
+  });
   const page=await context.newPage();
   const id=crypto.randomUUID();
   const session={id,context,page,allowedDomains,lastUsed:now(),createdAt:now(),trace:[],lastScreenshot:null};
   sessions.set(id,session);
   trace(session,'session_created',{allowedDomains});
   if(startUrl){
-    const safe=validateUrl(startUrl,{allowedDomains});
+    const safe=await resolveAndValidateUrl(startUrl,{allowedDomains});
     await page.goto(safe,{waitUntil:'domcontentloaded',timeout:20_000});
     trace(session,'navigate',{url:safe});
   }
@@ -116,6 +136,8 @@ function locatorFor(page,action){
 }
 
 export async function runActions(id,actions=[]){
+  if(!Array.isArray(actions))throw new Error('ACTIONS_ARRAY_REQUIRED');
+  if(actions.length>25)throw new Error('ACTION_LIMIT_EXCEEDED');
   const s=getSession(id);
   const results=[];
   for(const raw of actions){
@@ -123,7 +145,7 @@ export async function runActions(id,actions=[]){
     const type=String(action.type||'').toLowerCase();
     trace(s,'action',{action:redactAction(action)});
     if(type==='goto'||type==='navigate'){
-      const url=validateUrl(action.url,{allowedDomains:s.allowedDomains});
+      const url=await resolveAndValidateUrl(action.url,{allowedDomains:s.allowedDomains});
       await s.page.goto(url,{waitUntil:action.waitUntil||'domcontentloaded',timeout:Number(action.timeoutMs||20_000)});
       results.push({type,url:s.page.url()});
     } else if(type==='click'){
