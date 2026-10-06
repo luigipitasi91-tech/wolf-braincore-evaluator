@@ -1,4 +1,5 @@
 import net from 'node:net';
+import dns from 'node:dns/promises';
 
 const PRIVATE_V4=[
   /^10\./,
@@ -39,4 +40,21 @@ export function redactAction(action={}){
     out.value=/(pass|secret|token|otp|pin|card|cvv)/i.test(selector)?'[REDACTED]':String(out.value).slice(0,120);
   }
   return out;
+}
+
+
+function privateAddress(address){
+  const value=String(address||'').toLowerCase();
+  if(net.isIP(value)===4)return PRIVATE_V4.some(re=>re.test(value));
+  if(net.isIP(value)===6)return value==='::1'||value.startsWith('fe80:')||value.startsWith('fc')||value.startsWith('fd');
+  return false;
+}
+
+export async function resolveAndValidateUrl(raw,{allowedDomains=[],enforceDomain=true}={}){
+  const safe=validateUrl(raw,{allowedDomains:enforceDomain?allowedDomains:[]});
+  const url=new URL(safe);
+  const records=await dns.lookup(url.hostname,{all:true,verbatim:true});
+  if(!records.length)throw new Error('DNS_RESOLUTION_FAILED');
+  if(records.some(record=>privateAddress(record.address)))throw new Error('PRIVATE_HOST_BLOCKED');
+  return safe;
 }
