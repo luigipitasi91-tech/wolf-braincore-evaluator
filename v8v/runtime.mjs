@@ -319,6 +319,9 @@ export async function health(){
   try{
     const b=await browser();
     browserReady=!!b?.isConnected();
-  }catch(e){error=e?.message||String(e);}
+  }catch(e){
+    error=e?.message||String(e);
+    console.error('[V8V_HEALTH_BROWSER_LAUNCH_ERROR]',error);
+  }
   return {ok:browserReady,service:'v8v-browser-runtime',version:'0.3.0',browserReady,sessions:sessions.size,maxSessions:MAX_SESSIONS,error};
 }
