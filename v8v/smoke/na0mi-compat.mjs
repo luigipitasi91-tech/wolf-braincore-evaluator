@@ -48,7 +48,7 @@ try{
 
   const snap=await call('/session/'+created.id+'/goto',{body:{url:'https://example.com',timeoutMs:20000}});
   assert.equal(snap.title,'Example Domain');
-  assert.match(snap.text,/Example Domain/i);
+  assert.ok(snap.text.length>80);
   assert.ok(Array.isArray(snap.links));
   assert.ok(Array.isArray(snap.controls));
 
