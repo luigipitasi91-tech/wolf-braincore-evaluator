@@ -65,7 +65,7 @@ POST /v1/sessions/:id/actions
 
 ## Security boundary
 
-V8V v0.2 is not a stealth bot or CAPTCHA-bypass product. It blocks non-http(s) navigation and obvious localhost/private IP targets, supports per-session domain allowlists, and avoids arbitrary JavaScript evaluation endpoints.
+V8V v0.3 is not a stealth bot or CAPTCHA-bypass product. It blocks non-http(s) navigation and obvious localhost/private IP targets, supports per-session domain allowlists, and avoids arbitrary JavaScript evaluation endpoints.
 
 For authenticated or consequential workflows, keep human approval in the planner layer.
 
@@ -88,7 +88,7 @@ Public verification endpoints:
 
 ## Na0mi compatibility
 
-V8V v0.2 exposes a compatibility surface for Na0mi's existing `REMOTE_HTTP_BROWSER` adapter.
+V8V v0.3 exposes a compatibility surface for Na0mi's existing `REMOTE_HTTP_BROWSER` adapter.
 
 Configure Na0mi with:
 
@@ -123,3 +123,28 @@ This makes TinyFish an optional fallback rather than the primary browser backend
 - Navigation to private/local networks is blocked unless explicitly enabled for a trusted local test.
 - V8V does not expose arbitrary JavaScript evaluation.
 - Consequential actions still require authorization in the planner layer; V8V does not grant that authority itself.
+
+
+## Autonomous agent API
+
+V8V v0.3 includes a bounded goal-driven browser loop in addition to the low-level runtime.
+
+`POST /v1/agent/run` accepts a start URL, a goal, optional domain policy, optional success conditions and a bounded step count. V8V observes the page, scores safe read-only links against the goal, follows the most relevant link, records evidence, and returns a provisional result.
+
+The autonomous loop deliberately refuses dangerous link patterns such as delete, logout, checkout, purchase and account termination. Interactive scripted actions require `allowInteractiveActions: true`; the runtime itself does not grant purchasing, outreach, account-management or other consequential authority.
+
+Example:
+
+```json
+{
+  "url": "https://example.com",
+  "goal": "Find the documentation page",
+  "allowedDomains": ["example.com"],
+  "maxSteps": 6,
+  "successConditions": [
+    {"kind": "TEXT_CONTAINS", "value": "documentation"}
+  ]
+}
+```
+
+Public fixed verification: `GET /selftest/agent` runs a rate-limited read-only check against example.com.
