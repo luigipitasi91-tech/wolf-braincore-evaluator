@@ -21,7 +21,8 @@ const benchmarkEl=$('#benchmarkResults');
 const discoveryEl=$('#discoveryPanel');
 const pageParams=new URLSearchParams(location.search);
 const isJudgeDemo=pageParams.get('demo')==='1';
-let activeLearningSkill=getLearningSkill(pageParams.get('skill'))?.id||'';
+// The competition demo is a fixed, provider-neutral evaluator; URL skill overrides must not enter its rubric.
+let activeLearningSkill=isJudgeDemo?'':(getLearningSkill(pageParams.get('skill'))?.id||'');
 const activeLearningLocale=normalizeLearningLocale(pageParams.get('lang')||navigator.language||'en');
 
 if(pageParams.get('request')) requestEl.value=pageParams.get('request');
