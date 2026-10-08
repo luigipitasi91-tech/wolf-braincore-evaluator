@@ -52,7 +52,7 @@ This file is a factual release checklist. It is not a substitute for learner-aut
 ## Verification
 
 - [x] Standard GitHub CI restored.
-- [x] Current automated suite target: 59/59 tests passing.
+- [x] Verified GitHub Actions result for the latest inspected main commit (October 5, 2026): 68 tests passed, 0 failed (run 37355763302). Do not infer judge-browser interaction from CI alone.
 - [x] Fixed eight-case benchmark protected by tests.
 - [x] Browser client keeps Brave credentials out of source/browser.
 - [x] Discovery results cannot enter evaluator scoring.
