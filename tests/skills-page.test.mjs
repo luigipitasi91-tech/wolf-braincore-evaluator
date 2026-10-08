@@ -22,6 +22,8 @@ test('judge demo can hide the optional learning-skills entry',async()=>{
   assert.match(html,/id="learningSkillsLink"/);
   assert.match(app,/isJudgeDemo/);
   assert.match(app,/learningSkillsLink/);
+  // Hiding a link is not enough: demo mode must also ignore URL skill injection.
+  assert.match(app,/let activeLearningSkill=isJudgeDemo\?'':\(getLearningSkill\(pageParams\.get\('skill'\)\)/);
 });
 
 test('learning page remains provider-neutral',async()=>{
