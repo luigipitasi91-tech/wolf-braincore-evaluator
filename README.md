@@ -123,7 +123,7 @@ npm start
 npm test
 ```
 
-Current regression suite target: **82/82 tests passing**.
+Latest independently inspected GitHub Actions run (October 5, 2026): **68 tests passed, 0 failed** (run 37355763302). This is CI evidence for the tested commit, not a claim of external-model quality.
 
 ## Hackathon planning artifacts
 
