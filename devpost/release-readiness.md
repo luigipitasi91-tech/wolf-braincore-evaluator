@@ -58,9 +58,9 @@ This file is a factual release checklist. It is not a substitute for learner-aut
 - [x] Discovery results cannot enter evaluator scoring.
 - [x] Openverse visual cards include source and license links.
 - [ ] Re-verify both Render services after merge to `main`.
-- [ ] Re-run live canonical demo after deployment.
-- [ ] Re-run live vague-input / clarification flow after deployment.
-- [ ] Re-test mobile screenshots after deployment.
+- [x] Re-run live canonical demo after deployment — Chromium live browser pass 2026-10-09, run 37930745889.
+- [x] Re-run live vague-input / clarification UI after deployment — Chromium verified; optional Discovery API response mocked, not a Brave-live claim.
+- [x] Re-test mobile screenshot and tap after deployment — Chromium 390px viewport, no horizontal overflow; screenshots in run 37930745889 artifact.
 
 ## Optional Discovery
 

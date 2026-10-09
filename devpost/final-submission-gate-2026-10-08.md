@@ -22,7 +22,7 @@ Scope: standalone **WOLF AI Change Gate**, NOT Na0mi, V8V, the x402 seller, or u
 
 ## Unfinished, do not misrepresent
 - [ ] Record and upload **final redesigned** judge-focused 1–3 minute video; existing older YouTube clip is not evidence of the latest UI.
-- [ ] Verify mobile and desktop **real-interaction** judge flow on deployed page; static accessibility/text fetch and code tests alone cannot prove clicks, dynamic hide behavior, or screenshots.
+- [x] Verify mobile and desktop **real-interaction** judge flow on deployed page: 7/7 live Chromium scenarios pass, run https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37930745889 (2026-10-09). Browser screenshot artifact kept for 14 days. Optional Discovery API is mocked only for clarification UI state, not presented as an end-to-end Brave test.
 - [ ] Ensure actual Devpost submission is completed from the learner's authorized account before the deadline.
 - [ ] Learner completes **Skill Pack usage explanation** in their own words. AI may fact-check and proofread but must not invent an account-holder attestation.
 - [ ] Learner personally completes the **age of majority** checkbox.
