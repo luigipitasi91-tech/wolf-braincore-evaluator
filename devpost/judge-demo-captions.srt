@@ -1,0 +1,42 @@
+1
+00:00:00,000 --> 00:00:06,500
+WOLF AI Change Gate | Should this AI change be promoted?
+
+2
+00:00:06,500 --> 00:00:19,500
+One request. Baseline and candidate. Same rubric.
+Promote only when every required gate clears.
+
+3
+00:00:19,500 --> 00:00:29,500
+The candidate improves the planning score.
+Every metric and constraint is inspectable.
+
+4
+00:00:29,500 --> 00:00:41,500
+Evidence stays accessible.
+The evaluation receipt is a real SHA-256 digest.
+
+5
+00:00:41,500 --> 00:00:54,500
+Eight fixed regression cases.
+Positive cases and deliberate failures-to-promote.
+
+6
+00:00:54,500 --> 00:00:57,500
+Now test a conflicting request.
+
+7
+00:00:57,500 --> 00:01:08,500
+Contradictory constraints lead to HOLD,
+not automatic promotion.
+
+8
+00:01:08,500 --> 00:01:20,500
+Request Integrity exposes hard blockers.
+A higher score cannot override them.
+
+9
+00:01:20,500 --> 00:01:29,500
+An independent, deterministic change-gate proof of concept.
+No model API, login or paid token required.

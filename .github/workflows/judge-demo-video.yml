@@ -1,0 +1,53 @@
+name: WOLF Judge Demo Video Capture
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/judge-demo-video.yml"
+      - "scripts/capture-judge-demo.mjs"
+      - "devpost/judge-demo-captions.srt"
+
+permissions:
+  contents: read
+
+jobs:
+  authentic-screen-recording:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+      - name: Install isolated Playwright runner
+        run: npm install --no-save --no-audit --no-fund playwright@1.56.1
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Capture actual judge interactions with source and assertions
+        env:
+          WOLF_JUDGE_URL: https://wolf-braincore-evaluator.onrender.com
+        run: node scripts/capture-judge-demo.mjs
+      - name: Install system ffmpeg and ffprobe for caption encoding
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Burn explanatory captions into 1–3 minute contest demo
+        run: |
+          set -euo pipefail
+          ffmpeg -hide_banner -y -i artifacts/wolf-judge-video/wolf-judge-demo-raw.webm \
+            -vf "subtitles=devpost/judge-demo-captions.srt:force_style='FontName=DejaVu Sans,FontSize=16,Outline=2,PrimaryColour=&H00FFFFFF&,BackColour=&H7F000000&,Alignment=2,MarginV=16'" \
+            -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p -an \
+            -movflags +faststart artifacts/wolf-judge-video/wolf-judge-demo-captioned.mp4
+          ffprobe -v error -show_entries format=duration \
+            -of default=noprint_wrappers=1 artifacts/wolf-judge-video/wolf-judge-demo-captioned.mp4
+          node -e "const {execFileSync}=require('node:child_process');const d=Number(execFileSync('ffprobe',['-v','error','-show_entries','format=duration','-of','default=noprint_wrappers=1:nokey=1','artifacts/wolf-judge-video/wolf-judge-demo-captioned.mp4'],{encoding:'utf8'}).trim());if(d<60||d>180)process.exit(1);console.log('VALID_JUDGE_VIDEO_DURATION_SECONDS='+d.toFixed(1))"
+      - name: Upload captioned real UI recording
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wolf-judge-authentic-demo-video
+          path: |
+            artifacts/wolf-judge-video/wolf-judge-demo-captioned.mp4
+            artifacts/wolf-judge-video/wolf-judge-demo-raw.webm
+            devpost/judge-demo-captions.srt
+          if-no-files-found: warn
+          retention-days: 21
