@@ -17,17 +17,18 @@ Scope: standalone **WOLF AI Change Gate**, NOT Na0mi, V8V, the x402 seller, or u
 - Source-level isolation: no Na0mi runtime dependency for judge path; discovery results do not affect promotion scoring.
 - Canonical proof: request -> request-integrity -> baseline & candidate -> same rubric -> PROMOTE/HOLD/REJECT -> SHA-256 receipt.
 - Fixed 8-case suite, includes hold/refusal.
-- GitHub Actions CI **October 5, 2026**: `68 tests`, `68 pass`, `0 fail` (run 37355763302, job 111917643107).
+- GitHub Actions CI **October 9, 2026**: `68 tests`, `68 pass`, `0 fail` (run [37932007869](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37932007869), commit `d50e4bd`).
 - Public learning pack exists at `/skills.html`; it remains optional, not the primary judge task.
 
 ## Unfinished, do not misrepresent
-- [ ] Record and upload **final redesigned** judge-focused 1–3 minute video; existing older YouTube clip is not evidence of the latest UI.
+- [x] Capture final redesigned judge-focused 90.24-second real-browser MP4 with burned-in English captions; GitHub Actions [run 37931654553](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37931654553) passed. [Artifact 11617140759](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37931654553/artifacts/11617140759) expires 2026-10-30.
+- [ ] Learner reviews the final MP4 and uploads publicly to YouTube/Vimeo; GitHub artifact is **not** a substitute for the public video URL.
 - [x] Verify mobile and desktop **real-interaction** judge flow on deployed page: 7/7 live Chromium scenarios pass, run https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37930745889 (2026-10-09). Browser screenshot artifact kept for 14 days. Optional Discovery API is mocked only for clarification UI state, not presented as an end-to-end Brave test.
 - [ ] Ensure actual Devpost submission is completed from the learner's authorized account before the deadline.
 - [ ] Learner completes **Skill Pack usage explanation** in their own words. AI may fact-check and proofread but must not invent an account-holder attestation.
 - [ ] Learner personally completes the **age of majority** checkbox.
 - [ ] Confirm public repo URL occupies `Try it out`; provide judge demo link as an additional demo URL if the form allows.
-- [ ] Confirm video URL entered and the Devpost form saved/updated successfully.
+- [ ] Confirm the newly published final video URL (not older clip) is entered and Devpost form saved/updated successfully.
 
 ## Controlled demonstration sequence (video)
 1. Start with the concrete pain: an AI-agent planning change can look better while dropping constraints.
