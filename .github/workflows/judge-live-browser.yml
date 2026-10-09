@@ -1,0 +1,54 @@
+name: WOLF Judge Live Browser
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/judge-live-browser.yml"
+      - "tests/judge-live-browser-smoke.mjs"
+      - "src/app.js"
+      - "src/skills-app.js"
+      - "src/styles.css"
+      - "src/skills.css"
+      - "index.html"
+      - "skills.html"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/judge-live-browser.yml"
+      - "tests/judge-live-browser-smoke.mjs"
+      - "src/app.js"
+      - "src/skills-app.js"
+      - "src/styles.css"
+      - "src/skills.css"
+      - "index.html"
+      - "skills.html"
+
+permissions:
+  contents: read
+
+jobs:
+  live-chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+      - name: Install Playwright for this job only
+        run: npm install --no-save --no-audit --no-fund playwright@1.56.1
+      - name: Install browser and runner libraries
+        run: npx playwright install --with-deps chromium
+      - name: Exercise live judge and skills UI
+        env:
+          WOLF_JUDGE_URL: https://wolf-braincore-evaluator.onrender.com
+        run: node tests/judge-live-browser-smoke.mjs
+      - name: Upload browser evidence screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wolf-live-judge-chromium
+          path: artifacts/judge-browser/
+          if-no-files-found: warn
+          retention-days: 14
