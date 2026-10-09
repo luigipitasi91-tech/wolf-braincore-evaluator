@@ -37,7 +37,7 @@ Build mode: fast
 ## Final verification
 GitHub CI: PASS.
 
-Automated tests target: **82/82 PASS**.
+Latest GitHub Actions verification (2026-10-09): **68/68 PASS, 0 FAIL** (run [37932007869](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37932007869)). Any older 82-test figure was a target, not a measured result.
 
 Public live verification:
 - Landing explains the change-gate problem, offers one request bar, W action and three deterministic demo scenarios.
@@ -62,11 +62,12 @@ Regression path:
 - [x] Public live demo.
 - [x] Existing public YouTube demo: https://www.youtube.com/watch?v=PMyaJutqnRE
 - [x] Final redesigned demo recording plan.
-- [ ] Record and upload the final judge-focused video publicly to YouTube or Vimeo.
+- [x] Capture authentic 90.24-second judge-focused MP4 with English captions (GitHub Actions [run 37931654553](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37931654553); video artifact [11617140759](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37931654553/artifacts/11617140759), expires 2026-10-30).
+- [ ] Review captioned MP4 and upload it publicly to YouTube or Vimeo (not proven complete).
 - [ ] Configure optional Brave Search API key on the discovery service (not required for core judging).
 - [x] Official judging criteria reviewed and build aligned to Design / Impact / Innovation / Presentation.
 - [x] Public agent-eval guidance reviewed and applied through fixed criteria, multi-case regression evidence and fail-closed behavior.
-- [ ] Devpost final submission — requires the learner's authenticated account, learner-authored submission answers, and final public video URL.
+- [ ] Devpost final submission — requires authenticated learner account, learner-authored Skill Pack usage answer, age-of-majority confirmation, public repository in 'Try it out', and public video URL. Do not claim submitted without confirmation.
 
 ## Revisions
 - Fixed early mobile `hidden` CSS bug.

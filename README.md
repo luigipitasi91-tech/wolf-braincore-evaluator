@@ -123,7 +123,7 @@ npm start
 npm test
 ```
 
-Latest independently inspected GitHub Actions run (October 5, 2026): **68 tests passed, 0 failed** (run 37355763302). This is CI evidence for the tested commit, not a claim of external-model quality.
+Latest independently inspected GitHub Actions run (October 9, 2026): **68 tests passed, 0 failed** (run [37932007869](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37932007869), commit `d50e4bd`). This is CI evidence for the tested commit, not a claim of external-model quality.
 
 ## Hackathon planning artifacts
 
@@ -146,7 +146,7 @@ Planning follows the official Devpost Learn Skill Pack:
 
 ## Competition video
 
-The final judge-focused recording is still to be recorded.
+The 90.24-second **real judge-screen recording** was successfully captured and packaged with burned-in English captions in GitHub Actions on October 9, 2026. [Download the video artifact](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37931654553/artifacts/11617140759) (artifact expires October 30). **It still must be reviewed, uploaded publicly to YouTube/Vimeo, and linked from the Devpost submission; the submission is not yet verified complete.**
 
 The final 1–3 minute script is in:
 
