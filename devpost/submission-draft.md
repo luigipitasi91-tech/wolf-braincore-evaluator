@@ -100,7 +100,7 @@ Another challenge was keeping scoring and finality separate. WOLF now requires b
 - Five shared planning-quality metrics.
 - SHA-256 evidence receipts.
 - Eight fixed regression cases with both pass and fail-closed outcomes.
-- **59/59 automated tests passing.**
+- **68/68 automated tests passing (GitHub Actions run 37932007869, Oct 9, 2026).**
 - No runtime API key required for the judge path.
 
 ## New-project disclosure
@@ -116,7 +116,7 @@ https://github.com/luigipitasi91-tech/wolf-braincore-evaluator
 https://wolf-braincore-evaluator.onrender.com/?demo=1
 
 ### Demo video
-Replace this line with the final 1–3 minute publicly visible YouTube or Vimeo URL after recording.
+Final 90.24-second captioned MP4 captured and recovered from GitHub Actions artifact 11617140759; the REQUIRED YouTube/Vimeo URL remains pending. Never paste an artifact link in the public-video field.
 
 ## Recommended Devpost field mapping
 - **Project name:** WOLF — AI Change Gate

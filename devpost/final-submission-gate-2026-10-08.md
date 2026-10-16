@@ -22,7 +22,8 @@ Scope: standalone **WOLF AI Change Gate**, NOT Na0mi, V8V, the x402 seller, or u
 
 ## Unfinished, do not misrepresent
 - [x] Capture final redesigned judge-focused 90.24-second real-browser MP4 with burned-in English captions; GitHub Actions [run 37931654553](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37931654553) passed. [Artifact 11617140759](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37931654553/artifacts/11617140759) expires 2026-10-30.
-- [ ] Learner reviews the final MP4 and uploads publicly to YouTube/Vimeo; GitHub artifact is **not** a substitute for the public video URL.
+- [x] Final MP4 technical + representative visual QA, October 16: H.264 1280×720, 90.24 seconds, 2,037,050 bytes; full decode successful, 12 distributed frames reviewed (PROMOTE, evidence/receipt, 8-case benchmark, contradictory HOLD); burned-in English captions, **no audio track**. User should make final acceptance check in YouTube.
+- [ ] Publish final MP4 publicly accessible as YouTube/Vimeo link (Unlisted YouTube works with judge links); GitHub artifact is **not** a substitute for the public video URL.
 - [x] Verify mobile and desktop **real-interaction** judge flow on deployed page: 7/7 live Chromium scenarios pass, run https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37930745889 (2026-10-09). Browser screenshot artifact kept for 14 days. Optional Discovery API is mocked only for clarification UI state, not presented as an end-to-end Brave test.
 - [ ] Ensure actual Devpost submission is completed from the learner's authorized account before the deadline.
 - [ ] Learner completes **Skill Pack usage explanation** in their own words. AI may fact-check and proofread but must not invent an account-holder attestation.
