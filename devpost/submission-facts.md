@@ -15,7 +15,7 @@ This file is intentionally factual and not drafted Devpost prose.
 - Finance Evidence Pack: 10 transformed financial-analysis families derived from user-provided screenshots, without copying their prompt text.
 - Browser Runtime Contract: 10 provider-neutral requirements informed by global browser-agent research across Canada, Australia, Europe, and Asia.
 - External Candidate Contract allows structured Na0mi/GPT/other-agent outputs to be evaluated under the same WOLF rubric.
-- Automated verification: `npm test`, **59 passing tests**.
+- Automated verification: `npm test`, **68 passing tests** (GitHub Actions run 37932007869, October 9, 2026).
 - GitHub pull-request CI for the final code upgrade: PASS.
 - Final live smoke test on 2026-10-05: **9/9 checks PASS** across vague-input discovery, human-first verdict, collapsed evidence, canonical PROMOTE path and benchmark opening.
 - Public live verification:
@@ -32,7 +32,7 @@ This file is intentionally factual and not drafted Devpost prose.
 - Public live demo: https://wolf-braincore-evaluator.onrender.com
 - Judge-ready preloaded demo: https://wolf-braincore-evaluator.onrender.com/?demo=1
 - Existing public YouTube demo: https://www.youtube.com/watch?v=PMyaJutqnRE
-- Final redesigned competition video is still to be recorded and uploaded publicly; the existing public YouTube demo is not treated as proof that the final recording is complete.
+- Final redesigned competition video was captured October 9 and recovered October 16: 90.24s, H.264 1280×720, captions burned in, silent, complete-frame playback checked, 12 storyboard frames visually reviewed. Public YouTube/Vimeo upload and Devpost submission are NOT confirmed.
 - Official submission deadline recorded from contest rules: October 26, 2026 at 5:00 PM EDT.
 
 ## Stage-one evidence
