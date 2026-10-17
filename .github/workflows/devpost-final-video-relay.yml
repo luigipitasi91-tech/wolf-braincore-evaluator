@@ -1,0 +1,55 @@
+name: WOLF Final Demo Public Video Relay
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/devpost-final-video-relay.yml"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: wolf-devpost-video-relay
+  cancel-in-progress: false
+
+jobs:
+  publish-verified-mp4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Download the already verified 90.24s authentic demo
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/wolf-demo"
+          gh run download 37931654553 \
+            -R "${GITHUB_REPOSITORY}" \
+            --name wolf-judge-authentic-demo-video \
+            --dir "$RUNNER_TEMP/wolf-demo"
+          source="$RUNNER_TEMP/wolf-demo/artifacts/wolf-judge-video/wolf-judge-demo-captioned.mp4"
+          test -s "$source"
+          cp "$source" "$RUNNER_TEMP/wolf-demo/WOLF_AI_Change_Gate_Final_Demo.mp4"
+          echo '093068b686d122c6d790dadc9c53a86cdf2cd25b1d0b58c6595cbdc6a166a02f  '"$RUNNER_TEMP/wolf-demo/WOLF_AI_Change_Gate_Final_Demo.mp4" | sha256sum --check
+          test "$(stat -c %s "$source")" -eq 2037050
+          echo "Verified WOLF final MP4 SHA-256 and byte size."
+      - name: Publish public downloadable video asset for YouTube import
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="wolf-devpost-final-video-20261017"
+          FILE="$RUNNER_TEMP/wolf-demo/WOLF_AI_Change_Gate_Final_Demo.mp4"
+          if gh release view "$TAG" -R "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$FILE" -R "${GITHUB_REPOSITORY}" --clobber
+          else
+            gh release create "$TAG" "$FILE" -R "${GITHUB_REPOSITORY}" \
+              --title "WOLF — Build With AI: Basics (final video asset)" \
+              --notes "The authentic 90.24-second English-captioned WOLF AI Change Gate demo, staged as a direct MP4 download for YouTube upload. This GitHub release is not a Devpost submission and not a YouTube publication." \
+              --latest=false
+          fi
+          gh release view "$TAG" -R "${GITHUB_REPOSITORY}" --json url,assets \
+            --jq '{url:.url,assets:[.assets[]|{name:.name,url:.url,size:.size}]}'
