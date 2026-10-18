@@ -1,4 +1,4 @@
-# Devpost submission draft — WOLF
+# Devpost submission reference — WOLF
 
 ## Project name
 **WOLF — AI Change Gate**
@@ -125,8 +125,9 @@ The separate /external.html lab can compare TWO user-supplied structured plans w
 - [x] Final video published: https://www.youtube.com/watch?v=ZB4sRaqIco0
 - [x] Public source: https://github.com/luigipitasi91-tech/wolf-braincore-evaluator
 - [x] Public judge demo: https://wolf-braincore-evaluator.onrender.com/?demo=1
-- [ ] Learner must independently confirm the Skill Pack usage description, age of majority and submission terms.
-- [ ] Devpost form successfully submitted from learner account and receipt/entry URL verified. **Do not claim entered before this happens.**
+- [x] Account holder completed the Devpost submission workflow; their `My hackathon projects` screen displayed the green `SUBMITTED` state for WOLF on 18 October 2026. Personal declarations remain the account holder's responsibility.
+- [x] Public Devpost entry verified: https://devpost.com/software/wolf-ai-change-gate (`Submitted to: Build With AI: Basics`).
+- [ ] Independent evidence of actual **official** Devpost Learn Skill Pack execution within the coding agent has not been established from the public repository alone. `scope.md`, `prd.md`, and `spec.md` exist, but are not proof that the pack was run. WOLF's optional Learning Skills Pack is separate.
 
 ## Recommended Devpost field mapping
 - **Project name:** WOLF — AI Change Gate

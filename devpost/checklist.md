@@ -60,14 +60,15 @@ Regression path:
 - [x] MIT license.
 - [x] Devpost Learn planning docs.
 - [x] Public live demo.
-- [x] Existing public YouTube demo: https://www.youtube.com/watch?v=PMyaJutqnRE
+- [x] Earlier public YouTube demo (not the final submitted video): https://www.youtube.com/watch?v=PMyaJutqnRE
 - [x] Final redesigned demo recording plan.
 - [x] Capture authentic 90.24-second judge-focused MP4 with English captions (GitHub Actions [run 37931654553](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37931654553); video artifact [11617140759](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37931654553/artifacts/11617140759), expires 2026-10-30).
 - [x] Captioned MP4 reviewed (complete decode and representative visual frames) and published to YouTube Unlisted: https://www.youtube.com/watch?v=ZB4sRaqIco0 (Metricool PUBLISHED, 17 October 2026).
 - [ ] Configure optional Brave Search API key on the discovery service (not required for core judging).
 - [x] Official judging criteria reviewed and build aligned to Design / Impact / Innovation / Presentation.
 - [x] Public agent-eval guidance reviewed and applied through fixed criteria, multi-case regression evidence and fail-closed behavior.
-- [ ] Devpost final submission — **still not confirmed as of 18 October 2026**. Requires authenticated learner account, learner-approved account-specific Skill Pack usage answer, age-of-majority confirmation, public repository in 'Try it out', YouTube URL above, and a Devpost confirmation/entry URL. Do not claim submitted without a receipt.
+- [x] **Devpost submission confirmed 18 October 2026.** The account holder provided the Devpost `My hackathon projects` screen showing the green **SUBMITTED** label for WOLF — AI Change Gate. The [public entry](https://devpost.com/software/wolf-ai-change-gate) shows `Submitted to: Build With AI: Basics`, the submitted video, and the repository/live-demo links.
+- [ ] **Eligibility evidence check (separate from submission):** verify with the learner's actual coding-agent history that the **official** Devpost Learn Skill Pack was run, including flipped interaction, rather than inferring execution from the planning documents alone. The repository's optional WOLF Learning Skills Pack is unrelated. Do not claim independent proof of this requirement without an execution record.
 
 ## Revisions
 - Fixed early mobile `hidden` CSS bug.
