@@ -63,11 +63,11 @@ Regression path:
 - [x] Existing public YouTube demo: https://www.youtube.com/watch?v=PMyaJutqnRE
 - [x] Final redesigned demo recording plan.
 - [x] Capture authentic 90.24-second judge-focused MP4 with English captions (GitHub Actions [run 37931654553](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37931654553); video artifact [11617140759](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37931654553/artifacts/11617140759), expires 2026-10-30).
-- [ ] Review captioned MP4 and upload it publicly to YouTube or Vimeo (not proven complete).
+- [x] Captioned MP4 reviewed (complete decode and representative visual frames) and published to YouTube Unlisted: https://www.youtube.com/watch?v=ZB4sRaqIco0 (Metricool PUBLISHED, 17 October 2026).
 - [ ] Configure optional Brave Search API key on the discovery service (not required for core judging).
 - [x] Official judging criteria reviewed and build aligned to Design / Impact / Innovation / Presentation.
 - [x] Public agent-eval guidance reviewed and applied through fixed criteria, multi-case regression evidence and fail-closed behavior.
-- [ ] Devpost final submission — requires authenticated learner account, learner-authored Skill Pack usage answer, age-of-majority confirmation, public repository in 'Try it out', and public video URL. Do not claim submitted without confirmation.
+- [ ] Devpost final submission — **still not confirmed as of 18 October 2026**. Requires authenticated learner account, learner-approved account-specific Skill Pack usage answer, age-of-majority confirmation, public repository in 'Try it out', YouTube URL above, and a Devpost confirmation/entry URL. Do not claim submitted without a receipt.
 
 ## Revisions
 - Fixed early mobile `hidden` CSS bug.
