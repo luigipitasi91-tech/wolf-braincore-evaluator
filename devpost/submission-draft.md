@@ -116,7 +116,17 @@ https://github.com/luigipitasi91-tech/wolf-braincore-evaluator
 https://wolf-braincore-evaluator.onrender.com/?demo=1
 
 ### Demo video
-Final 90.24-second captioned MP4 captured and recovered from GitHub Actions artifact 11617140759; the REQUIRED YouTube/Vimeo URL remains pending. Never paste an artifact link in the public-video field.
+Published final 90.24-second English-captioned WOLF demo (YouTube, unlisted and accessible by link): https://www.youtube.com/watch?v=ZB4sRaqIco0 . Metricool verified PUBLISHED on 17 October 2026. This is the final competition video, not the earlier public clip.
+
+## Optional independently supplied external-agent comparison
+The separate /external.html lab can compare TWO user-supplied structured plans with the same heuristic rubric, including explicit lexical constraint checks. The browser UI passed CI/Chromium tests. It does NOT prove model intelligence, authenticate provider identity, independently verify real-world outcomes, or call an external model. The original judge demo at /?demo=1 is unchanged. This optional lab should not distract from the primary competition demo.
+
+## Final submission status (18 October 2026)
+- [x] Final video published: https://www.youtube.com/watch?v=ZB4sRaqIco0
+- [x] Public source: https://github.com/luigipitasi91-tech/wolf-braincore-evaluator
+- [x] Public judge demo: https://wolf-braincore-evaluator.onrender.com/?demo=1
+- [ ] Learner must independently confirm the Skill Pack usage description, age of majority and submission terms.
+- [ ] Devpost form successfully submitted from learner account and receipt/entry URL verified. **Do not claim entered before this happens.**
 
 ## Recommended Devpost field mapping
 - **Project name:** WOLF — AI Change Gate
