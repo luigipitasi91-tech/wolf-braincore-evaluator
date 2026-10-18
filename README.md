@@ -140,13 +140,15 @@ Competition support material:
 - `devpost/submission-draft.md`
 - `devpost/video-script.md`
 
-Planning follows the official Devpost Learn Skill Pack:
+Planning documents were prepared against the official Devpost Learn Skill Pack approach:
 
 <https://github.com/challengepost/learn-ai-basics>
 
+**Evidence boundary:** the repository contains `scope.md`, `prd.md`, and `spec.md`, but the public repository alone does not independently prove that the official Skill Pack commands were executed in the learner's coding agent. That history should be checked against the learner's actual agent session. WOLF's own optional *Learning Skills Pack* (`/skills.html`) is a different feature and is not a substitute.
+
 ## Competition video
 
-The 90.24-second **real judge-screen recording** was successfully captured and packaged with burned-in English captions in GitHub Actions on October 9, 2026. [Download the video artifact](https://github.com/luigipitasi91-tech/wolf-braincore-evaluator/actions/runs/37931654553/artifacts/11617140759) (artifact expires October 30). **It still must be reviewed, uploaded publicly to YouTube/Vimeo, and linked from the Devpost submission; the submission is not yet verified complete.**
+The 90.24-second **real judge-screen recording** with burned-in English captions was published to [YouTube](https://www.youtube.com/watch?v=ZB4sRaqIco0) on 17 October 2026 and embedded in the [public Devpost project](https://devpost.com/software/wolf-ai-change-gate). **The submission was confirmed `SUBMITTED` on 18 October 2026** in the account holder's Devpost hackathon dashboard; the public project page also shows `Submitted to: Build With AI: Basics`. This confirms the submission state, not the judges' eligibility decision.
 
 The final 1–3 minute script is in:
 
